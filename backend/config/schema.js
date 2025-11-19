@@ -38,6 +38,8 @@ const schemaQueries = [
         buyer_id INTEGER REFERENCES users(id),
         is_public BOOLEAN DEFAULT TRUE,
         evaluation_criteria JSONB,
+        is_archived BOOLEAN DEFAULT FALSE,
+        archived_at TIMESTAMP WITH TIME ZONE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         created_by INTEGER,
@@ -65,6 +67,8 @@ const schemaQueries = [
         encrypted_data TEXT,
         decryption_key_id VARCHAR(255),
         encryption_iv VARCHAR(255),
+        is_archived BOOLEAN DEFAULT FALSE,
+        archived_at TIMESTAMP WITH TIME ZONE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         created_by INTEGER,
@@ -89,6 +93,8 @@ const schemaQueries = [
         items JSONB,
         attachments JSONB,
         notes TEXT,
+        is_archived BOOLEAN DEFAULT FALSE,
+        archived_at TIMESTAMP WITH TIME ZONE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         created_by INTEGER,
@@ -112,6 +118,8 @@ const schemaQueries = [
         payment_date TIMESTAMP WITH TIME ZONE,
         attachments JSONB,
         notes TEXT,
+        is_archived BOOLEAN DEFAULT FALSE,
+        archived_at TIMESTAMP WITH TIME ZONE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         created_by INTEGER,
@@ -149,14 +157,28 @@ const schemaQueries = [
     );`,
 
     `CREATE TABLE IF NOT EXISTS messages (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         sender_id INTEGER REFERENCES users(id),
         receiver_id INTEGER REFERENCES users(id),
+        related_entity_type VARCHAR(50),
+        related_entity_id INTEGER,
         subject VARCHAR(255),
         content TEXT,
         is_read BOOLEAN DEFAULT FALSE,
-        tender_id INTEGER REFERENCES tenders(id),
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        attachments JSONB DEFAULT '[]',
+        parent_message_id UUID REFERENCES messages(id),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS archive_policies (
+        id SERIAL PRIMARY KEY,
+        entity_type VARCHAR(50) UNIQUE NOT NULL,
+        retention_days INTEGER NOT NULL DEFAULT 2555,
+        archive_action VARCHAR(20) DEFAULT 'archive',
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );`,
 
     `CREATE TABLE IF NOT EXISTS reviews (
@@ -311,7 +333,14 @@ const schemaQueries = [
     `CREATE INDEX IF NOT EXISTS idx_supplier_verifications_status ON supplier_verifications(verification_status);`,
     `CREATE INDEX IF NOT EXISTS idx_encryption_keys_active ON encryption_keys(is_active);`,
     `CREATE INDEX IF NOT EXISTS idx_tender_award_items_tender ON tender_award_line_items(tender_id);`,
-    `CREATE INDEX IF NOT EXISTS idx_tender_award_items_status ON tender_award_line_items(status);`
+    `CREATE INDEX IF NOT EXISTS idx_tender_award_items_status ON tender_award_line_items(status);`,
+    `CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_messages_receiver ON messages(receiver_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_messages_entity ON messages(related_entity_type, related_entity_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_tenders_archived ON tenders(is_archived);`,
+    `CREATE INDEX IF NOT EXISTS idx_offers_archived ON offers(is_archived);`,
+    `CREATE INDEX IF NOT EXISTS idx_po_archived ON purchase_orders(is_archived);`,
+    `CREATE INDEX IF NOT EXISTS idx_invoices_archived ON invoices(is_archived);`
 ];
 
 async function initializeSchema(pool) {

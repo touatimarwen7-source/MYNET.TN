@@ -3,6 +3,7 @@ const authRoutes = require('./routes/authRoutes');
 const procurementRoutes = require('./routes/procurementRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const searchRoutes = require('./routes/searchRoutes');
+const messagingRoutes = require('./routes/messagingRoutes');
 const stripeWebhookRoutes = require('./routes/webhooks/stripeRoutes');
 
 const app = express();
@@ -31,7 +32,8 @@ app.get('/', (req, res) => {
             auth: '/api/auth',
             procurement: '/api/procurement',
             admin: '/api/admin',
-            search: '/api/search'
+            search: '/api/search',
+            messaging: '/api/messaging'
         }
     });
 });
@@ -40,6 +42,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/procurement', procurementRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/messaging', messagingRoutes);
 app.use('/api/webhooks', stripeWebhookRoutes);
 
 const ErrorHandler = require('./middleware/errorHandler');
