@@ -1,8 +1,9 @@
 
-const pool = require('../config/db');
+const { getPool } = require('../config/db');
 
 class QueueService {
   async logTenderHistory(tenderHistoryData) {
+    const pool = getPool();
     await pool.query(
       `INSERT INTO tender_history 
       (id, tender_id, user_id, action, previous_state, new_state, metadata, ip_address, user_agent) 
@@ -21,6 +22,7 @@ class QueueService {
   }
 
   async getTenderHistory(tenderId) {
+    const pool = getPool();
     const result = await pool.query(
       `SELECT th.*, u.full_name as user_name 
        FROM tender_history th 

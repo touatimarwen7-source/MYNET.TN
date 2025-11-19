@@ -1,5 +1,6 @@
 
-const pool = require('../config/db');
+const { getPool } = require('../config/db');
+const pool = getPool();
 const Invoice = require('../models/Invoice');
 
 class InvoiceService {

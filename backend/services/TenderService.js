@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { getPool } = require('../config/db');
 const Tender = require('../models/Tender');
 const NotificationService = require('./NotificationService');

@@ -211,6 +211,35 @@ const schemaQueries = [
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );`,
 
+    `CREATE TABLE IF NOT EXISTS tender_history (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tender_id INTEGER REFERENCES tenders(id),
+        user_id INTEGER REFERENCES users(id),
+        action VARCHAR(100) NOT NULL,
+        previous_state VARCHAR(50),
+        new_state VARCHAR(50),
+        metadata JSONB,
+        ip_address VARCHAR(45),
+        user_agent TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS purchase_requests (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        buyer_id INTEGER REFERENCES users(id),
+        supplier_id INTEGER REFERENCES users(id),
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        category VARCHAR(100),
+        quantity INTEGER,
+        unit VARCHAR(50),
+        budget DECIMAL(15, 2),
+        status VARCHAR(20) DEFAULT 'pending',
+        notes TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );`,
+
     `CREATE INDEX IF NOT EXISTS idx_tenders_status ON tenders(status);`,
     `CREATE INDEX IF NOT EXISTS idx_tenders_buyer ON tenders(buyer_id);`,
     `CREATE INDEX IF NOT EXISTS idx_offers_tender ON offers(tender_id);`,
@@ -220,7 +249,10 @@ const schemaQueries = [
     `CREATE INDEX IF NOT EXISTS idx_messages_receiver ON messages(receiver_id);`,
     `CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_id);`,
     `CREATE INDEX IF NOT EXISTS idx_audit_entity ON audit_logs(entity_type, entity_id);`,
-    `CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON user_subscriptions(user_id);`
+    `CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON user_subscriptions(user_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_tender_history_tender ON tender_history(tender_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_purchase_requests_buyer ON purchase_requests(buyer_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_purchase_requests_supplier ON purchase_requests(supplier_id);`
 ];
 
 async function initializeSchema(pool) {

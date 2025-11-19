@@ -2,6 +2,10 @@
 const { getPool } = require('../config/db');
 
 class AuditLogService {
+    async log(userId, entityType, entityId, action, message, details = {}) {
+        return this.logAction(userId, action, entityType, entityId, { ...details, message });
+    }
+
     async logAction(userId, action, entityType, entityId, details = {}) {
         const pool = getPool();
         

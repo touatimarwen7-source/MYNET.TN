@@ -136,6 +136,56 @@ class SubscriptionService {
             throw new Error(`Failed to check subscription limits: ${error.message}`);
         }
     }
+
+    async activateSubscription(subscriptionData) {
+        const pool = getPool();
+        try {
+            await pool.query(
+                `UPDATE user_subscriptions 
+                 SET status = 'active', updated_at = CURRENT_TIMESTAMP 
+                 WHERE transaction_id = $1`,
+                [subscriptionData.id]
+            );
+        } catch (error) {
+            console.error('Failed to activate subscription:', error.message);
+        }
+    }
+
+    async updateSubscription(subscriptionData) {
+        const pool = getPool();
+        try {
+            await pool.query(
+                `UPDATE user_subscriptions 
+                 SET status = $1, updated_at = CURRENT_TIMESTAMP 
+                 WHERE transaction_id = $2`,
+                [subscriptionData.status, subscriptionData.id]
+            );
+        } catch (error) {
+            console.error('Failed to update subscription:', error.message);
+        }
+    }
+
+    async cancelSubscription(subscriptionData) {
+        const pool = getPool();
+        try {
+            await pool.query(
+                `UPDATE user_subscriptions 
+                 SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP 
+                 WHERE transaction_id = $1`,
+                [subscriptionData.id]
+            );
+        } catch (error) {
+            console.error('Failed to cancel subscription:', error.message);
+        }
+    }
+
+    async handlePaymentSuccess(invoiceData) {
+        console.log('Payment succeeded for invoice:', invoiceData.id);
+    }
+
+    async handlePaymentFailure(invoiceData) {
+        console.log('Payment failed for invoice:', invoiceData.id);
+    }
 }
 
 module.exports = new SubscriptionService();
