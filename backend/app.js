@@ -5,11 +5,14 @@ const adminRoutes = require('./routes/adminRoutes');
 const searchRoutes = require('./routes/searchRoutes');
 const messagingRoutes = require('./routes/messagingRoutes');
 const stripeWebhookRoutes = require('./routes/webhooks/stripeRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const { ipMiddleware } = require('./middleware/ipMiddleware');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(ipMiddleware);
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -40,6 +43,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/procurement', procurementRoutes);
+app.use('/api/procurement/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/messaging', messagingRoutes);

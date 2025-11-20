@@ -1,83 +1,98 @@
-
 const { getPool } = require('../config/db');
-const Review = require('../models/Review');
+const AuditLogService = require('./AuditLogService');
 
 class ReviewService {
-  async createReview(reviewData) {
-    const pool = getPool();
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
+    async createReview(reviewData, buyerId, ipAddress) {
+        const pool = getPool();
+        const { offer_id, supplier_id, rating, comment, po_id } = reviewData;
 
-      // Verify purchase order is completed
-      const poCheck = await client.query(
-        `SELECT * FROM purchase_orders 
-         WHERE id = $1 AND status = 'completed' 
-         AND (buyer_id = $2 OR supplier_id = $2)`,
-        [reviewData.purchase_order_id, reviewData.reviewer_id]
-      );
+        if (rating < 1 || rating > 5) {
+            throw new Error('Rating must be between 1 and 5');
+        }
 
-      if (poCheck.rows.length === 0) {
-        throw new Error('Cannot review incomplete or unauthorized purchase order');
-      }
+        try {
+            // تحقق من أن PO قد انتهى
+            const poResult = await pool.query(
+                'SELECT status FROM purchase_orders WHERE id = $1 AND supplier_id = $2',
+                [po_id, supplier_id]
+            );
 
-      // Check if already reviewed
-      const existingReview = await client.query(
-        'SELECT * FROM reviews WHERE purchase_order_id = $1 AND reviewer_id = $2',
-        [reviewData.purchase_order_id, reviewData.reviewer_id]
-      );
+            if (!poResult.rows[0]) {
+                throw new Error('Purchase order not found');
+            }
 
-      if (existingReview.rows.length > 0) {
-        throw new Error('You have already reviewed this transaction');
-      }
+            if (!['completed', 'paid'].includes(poResult.rows[0].status)) {
+                throw new Error('Can only review after PO is completed or paid');
+            }
 
-      const review = new Review({
-        ...reviewData,
-        is_verified: true // Auto-verify since PO is completed
-      });
+            const result = await pool.query(
+                `INSERT INTO reviews (offer_id, reviewer_id, reviewee_id, rating, comment, 
+                 po_id, is_verified, created_at)
+                 VALUES ($1, $2, $3, $4, $5, $6, TRUE, CURRENT_TIMESTAMP)
+                 RETURNING *`,
+                [offer_id, buyerId, supplier_id, rating, comment, po_id]
+            );
 
-      const result = await client.query(
-        `INSERT INTO reviews 
-        (id, purchase_order_id, reviewer_id, reviewee_id, rating, comment, is_verified) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7) 
-        RETURNING *`,
-        [review.id, review.purchase_order_id, review.reviewer_id, 
-         review.reviewee_id, review.rating, review.comment, review.is_verified]
-      );
+            await AuditLogService.log(buyerId, 'review', result.rows[0].id, 'create', 
+                `Supplier rated: ${rating}/5`, { ip_address: ipAddress });
 
-      await client.query('COMMIT');
-      return result.rows[0];
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
+            return result.rows[0];
+        } catch (error) {
+            throw new Error(`Failed to create review: ${error.message}`);
+        }
     }
-  }
 
-  async getUserReviews(userId) {
-    const pool = getPool();
-    const result = await pool.query(
-      `SELECT r.*, u.full_name as reviewer_name 
-       FROM reviews r 
-       JOIN users u ON r.reviewer_id = u.id 
-       WHERE r.reviewee_id = $1 
-       ORDER BY r.created_at DESC`,
-      [userId]
-    );
-    return result.rows;
-  }
+    async getSupplierReviews(supplierId) {
+        const pool = getPool();
 
-  async getUserRating(userId) {
-    const pool = getPool();
-    const result = await pool.query(
-      `SELECT AVG(rating)::numeric(3,2) as average_rating, COUNT(*) as total_reviews 
-       FROM reviews 
-       WHERE reviewee_id = $1 AND is_verified = true`,
-      [userId]
-    );
-    return result.rows[0];
-  }
+        try {
+            const result = await pool.query(
+                `SELECT r.*, u.username as reviewer_name 
+                 FROM reviews r 
+                 JOIN users u ON r.reviewer_id = u.id 
+                 WHERE r.reviewee_id = $1 AND r.is_verified = TRUE
+                 ORDER BY r.created_at DESC`,
+                [supplierId]
+            );
+
+            if (result.rows.length === 0) {
+                return { average_rating: 0, total_reviews: 0, reviews: [] };
+            }
+
+            const avgRating = (result.rows.reduce((sum, r) => sum + r.rating, 0) / result.rows.length).toFixed(2);
+
+            return {
+                average_rating: parseFloat(avgRating),
+                total_reviews: result.rows.length,
+                reviews: result.rows
+            };
+        } catch (error) {
+            throw new Error(`Failed to get supplier reviews: ${error.message}`);
+        }
+    }
+
+    async updateSupplierAverageRating(supplierId) {
+        const pool = getPool();
+
+        try {
+            const result = await pool.query(
+                `SELECT AVG(rating)::DECIMAL(3,2) as avg_rating 
+                 FROM reviews WHERE reviewee_id = $1 AND is_verified = TRUE`,
+                [supplierId]
+            );
+
+            const avgRating = result.rows[0]?.avg_rating || 0;
+
+            await pool.query(
+                'UPDATE users SET average_rating = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+                [avgRating, supplierId]
+            );
+
+            return avgRating;
+        } catch (error) {
+            throw new Error(`Failed to update supplier rating: ${error.message}`);
+        }
+    }
 }
 
 module.exports = new ReviewService();
