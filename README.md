@@ -1,16 +1,182 @@
-# React + Vite
+# MyNet.tn - نظام المناقصات والمشتريات
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+نظام شامل لإدارة المناقصات والعطاءات والمشتريات الحكومية التونسية.
 
-Currently, two official plugins are available:
+## 📁 هيكل المشروع
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+MyNet.tn/
+├── backend/              # API Backend (Node.js + Express + PostgreSQL)
+│   ├── config/          # التكوينات
+│   ├── security/        # الأمان والمصادقة
+│   ├── models/          # نماذج البيانات
+│   ├── services/        # الخدمات الأساسية
+│   ├── controllers/     # المتحكمات
+│   ├── routes/          # المسارات
+│   ├── middleware/      # الوسائط
+│   ├── utils/           # الأدوات المساعدة
+│   ├── package.json
+│   ├── server.js        # نقطة الدخول
+│   └── app.js
+│
+├── frontend/            # React Frontend (Vite + React Router + Axios)
+│   ├── src/
+│   │   ├── pages/       # صفحات التطبيق (7 صفحات)
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── TenderList.jsx
+│   │   │   ├── TenderDetail.jsx
+│   │   │   ├── CreateTender.jsx
+│   │   │   ├── MyOffers.jsx
+│   │   │   └── Profile.jsx
+│   │   ├── api.js       # خدمة الاتصالات
+│   │   ├── App.jsx      # التطبيق الرئيسي
+│   │   ├── App.css      # الأنماط
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── public/          # الملفات الثابتة
+│   ├── vite.config.js
+│   ├── package.json
+│   ├── .env
+│   └── node_modules/
+│
+├── package.json         # Root dependencies
+├── server.js            # Backend entry point
+├── README.md
+└── .env
+```
 
-## React Compiler
+## 🚀 التثبيت والتشغيل
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Backend
 
-## Expanding the ESLint configuration
+```bash
+# التثبيت
+npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# التشغيل
+npm run dev
+# أو
+PORT=5000 npm run dev
+```
+
+**الخادم سيعمل على**: `http://localhost:5000`
+
+### Frontend
+
+```bash
+cd frontend
+
+# التثبيت
+npm install
+
+# التشغيل في وضع التطوير
+npm run dev
+
+# البناء للإنتاج
+npm run build
+
+# معاينة الإنتاج
+npm run preview
+```
+
+**الواجهة ستعمل على**: `http://localhost:5000`
+
+## 🔌 الاتصالات
+
+- **Backend**: يعمل على `http://localhost:5000`
+- **Frontend**: يتصل بـ `/api` والتي يتم توجيهها تلقائياً إلى Backend
+
+## 📋 المميزات
+
+### Backend
+- ✅ نظام أمان متقدم (JWT + PBKDF2)
+- ✅ قاعدة بيانات PostgreSQL
+- ✅ 10 جداول مع علاقات
+- ✅ نظام الأدوار والصلاحيات (RBAC)
+- ✅ البحث المتقدم
+- ✅ نظام الإشعارات
+- ✅ معالجة الأخطاء المركزية
+
+### Frontend
+- ✅ 7 صفحات React جاهزة
+- ✅ React Router للتنقل
+- ✅ Axios للاتصالات
+- ✅ تصميم عربي RTL
+- ✅ واجهة حديثة وسهلة الاستخدام
+- ✅ معالجة التوكنات تلقائياً
+
+## 🔐 الأدوار المدعومة
+
+1. **Admin** - مدير النظام
+2. **Buyer** - المشتري/الجهة الحكومية
+3. **Supplier** - المورد/البائع
+4. **Accountant** - المحاسب
+5. **Viewer** - المشاهد فقط
+
+## 📝 API Endpoints
+
+### المصادقة
+- `POST /api/auth/register` - التسجيل
+- `POST /api/auth/login` - تسجيل الدخول
+- `GET /api/auth/profile` - الملف الشخصي
+
+### المناقصات
+- `GET /api/procurement/tenders` - قائمة المناقصات
+- `POST /api/procurement/tenders` - إنشاء مناقصة
+- `GET /api/procurement/tenders/:id` - تفاصيل المناقصة
+
+### العروض
+- `POST /api/procurement/offers` - تقديم عرض
+- `GET /api/procurement/my-offers` - عروضي
+
+## 🛠️ التكنولوجيات المستخدمة
+
+### Backend
+- Node.js + Express.js
+- PostgreSQL (Neon)
+- JWT للمصادقة
+- Axios للاتصالات الداخلية
+
+### Frontend
+- React 19
+- Vite
+- React Router DOM
+- Axios
+- CSS3 مع دعم RTL
+
+## 📧 البريد الإلكتروني والتكوينات
+
+تأكد من وجود متغيرات البيئة التالية:
+
+```env
+# Backend .env
+DATABASE_URL=postgresql://...
+JWT_SECRET=your_secret_key
+JWT_REFRESH_SECRET=your_refresh_secret
+PORT=5000
+
+# Frontend .env
+VITE_API_URL=http://localhost:5000/api
+```
+
+## 🚀 الإطلاق والنشر
+
+### الإنتاج
+```bash
+# Backend
+npm start
+
+# Frontend
+cd frontend && npm run build
+```
+
+## 📞 الدعم والمساعدة
+
+للمزيد من المعلومات راجع:
+- Backend: `/README.md` (إن وجد)
+- Frontend: `/frontend/` (الملفات والأكواد)
+
+---
+
+تم التطوير بـ ❤️ لنظام المناقصات والمشتريات التونسي
