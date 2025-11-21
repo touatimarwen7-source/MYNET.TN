@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
+import FeaturesPage from './pages/FeaturesPage';
+import PricingPage from './pages/PricingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import TenderList from './pages/TenderList';
@@ -130,9 +132,11 @@ function App() {
 
         <main className="main-content">
           <Routes>
-            {/* Page d'Accueil */}
+            {/* Pages Publiques */}
             <Route path="/" element={!user ? <HomePage /> : <Navigate to="/tenders" />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
 
             {/* Authentification */}
             <Route path="/login" element={<Login setUser={setUser} />} />
