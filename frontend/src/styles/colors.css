@@ -1,0 +1,80 @@
+/* ========================================
+   MyNet.tn - Design System Color Palette
+   نظام الألوان الاحترافي للمنصة المالية
+   ======================================== */
+
+:root {
+  /* لوحة الألوان الأساسية - Professional & Trustworthy */
+  
+  /* الأزرق الداكن - الهوية الأساسية */
+  --color-primary-dark: #1a3a52;      /* أزرق داكن مهني */
+  --color-primary-main: #1f5a8f;      /* أزرق أساسي */
+  --color-primary-light: #2d7db8;     /* أزرق فاتح */
+  --color-primary-lighter: #e3f2fd;   /* أزرق جداً فاتح للخلفيات */
+  
+  /* الأزرق السماوي - لون العمل (Action Color) */
+  --color-action: #0288d1;            /* أزرق سماوي مشرق */
+  --color-action-hover: #0277bd;      /* أزرق سماوي عند التمرير */
+  --color-action-light: #81d4fa;      /* أزرق سماوي فاتح */
+  
+  /* الرمادي الدافئ - للنصوص والخلفيات */
+  --color-grey-dark: #424242;         /* رمادي داكن للنصوص */
+  --color-grey-medium: #757575;       /* رمادي متوسط */
+  --color-grey-light: #bdbdbd;        /* رمادي فاتح للحدود */
+  --color-grey-lighter: #eeeeee;      /* رمادي جداً فاتح للخلفيات */
+  --color-grey-lightest: #f9f9f9;     /* رمادي فاتح جداً */
+  
+  /* الأبيض النقي */
+  --color-white: #ffffff;
+  
+  /* ألوان الحالات - مضبوطة للمعايير المالية */
+  --color-success: #2e7d32;           /* أخضر - نجاح */
+  --color-success-light: #c8e6c9;     /* أخضر فاتح للخلفيات */
+  --color-warning: #f57c00;           /* برتقالي - تحذير */
+  --color-warning-light: #ffe0b2;     /* برتقالي فاتح للخلفيات */
+  --color-error: #c62828;             /* أحمر - خطأ */
+  --color-error-light: #ffcdd2;       /* أحمر فاتح للخلفيات */
+  --color-info: #1565c0;              /* أزرق - معلومة */
+  --color-info-light: #bbdefb;        /* أزرق فاتح للخلفيات */
+  
+  /* ألوان التدرجات - للرسوم البيانية */
+  --gradient-primary: linear-gradient(135deg, #1f5a8f 0%, #2d7db8 100%);
+  --gradient-action: linear-gradient(135deg, #0288d1 0%, #0277bd 100%);
+  --gradient-success: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+  --gradient-warning: linear-gradient(135deg, #f57c00 0%, #fbc02d 100%);
+  
+  /* الظلال - لعمق 3D الدقيق */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.16);
+  --shadow-elevation: 0 12px 24px rgba(0, 0, 0, 0.2);
+  
+  /* المسافات البيضاء - Whitespace الهادئة */
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 1rem;       /* 16px */
+  --spacing-lg: 1.5rem;     /* 24px */
+  --spacing-xl: 2rem;       /* 32px */
+  --spacing-2xl: 3rem;      /* 48px */
+  
+  /* الحدود والزوايا */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-color: var(--color-grey-light);
+  --border-color-light: var(--color-grey-lighter);
+  
+  /* الانتقالات السلسة */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+}
+
+/* Dark Mode Support (Future) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-grey-dark: #e0e0e0;
+    --color-grey-medium: #bdbdbd;
+    --color-white: #1e1e1e;
+  }
+}

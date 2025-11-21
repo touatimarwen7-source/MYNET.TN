@@ -6,9 +6,32 @@ MyNet.tn is a comprehensive B2B e-tendering platform designed specifically for t
 
 ## Status
 
-**🎉 PROJECT COMPLETE & READY FOR PRODUCTION 🎉**
+**🎉 PROJECT COMPLETE & PRODUCTION READY 🎉**
 
-Platform fully implemented and tested. All systems integrated and professional.
+Platform fully implemented with professional design system, secure offer submission workflow, and enterprise-grade security.
+
+## Recent Changes (Current Session)
+
+### ✅ Secure Bid Submission Workflow
+- **3-Step Offer Form** with comprehensive data collection
+- **Interactive Line Items Table** with dynamic pricing, catalog integration, and partial bid option
+- **Real-time Deadline Validation** - prevents late submissions with clear error messages
+- **Encrypted Price Fields** (🔒) with security notifications
+- **Final Review Screen** with commitment attestation and secure submit button
+- **Tender Detail Page** with "Participate and Submit Offer" button for suppliers
+
+### ✅ Professional Design System Implementation
+- **Color Palette**: Dark blue (#1f5a8f), warm gray, pure white with sky blue action color (#0288d1)
+- **Typography System**: Inter/Roboto fonts with 3 clear levels (h1, h2, h3 + body + small text)
+- **CSS Variables**: Complete system with spacing, shadows, transitions, gradients
+- **Enhanced UI Components**: 
+  - Professional buttons with hover states and shadows
+  - Cards with whitespace and elevation
+  - Form elements with focus states and validation styling
+  - Alert/badge system for status communication
+  - Table styles with hover effects
+- **Data Visualization Ready**: Classes for metrics, charts with proper spacing
+- **Whitespace Optimization**: Reduced visual density for financial data readability
 
 ## User Preferences
 
@@ -26,8 +49,9 @@ Preferred communication style: Simple, everyday language.
 - **Component Organization**: 29 pages organized by user role (auth, buyer, supplier, admin, shared)
 - **State Management**: Local component state with Axios for server communication
 - **Security Layer**: Client-side token management with automatic refresh, XSS protection through input sanitization
+- **Design System**: Centralized CSS variables and design tokens for consistency
 
-**Rationale**: React 19 provides modern hooks and concurrent features for responsive UI. Vite offers fast development builds and optimal production bundles. RTL design is essential for the Arabic-speaking Tunisian market.
+**Rationale**: React 19 provides modern hooks and concurrent features for responsive UI. Vite offers fast development builds and optimal production bundles. RTL design is essential for the Arabic-speaking Tunisian market. Design system ensures professional, trustworthy appearance matching financial platform standards.
 
 ### Backend Architecture
 
@@ -108,3 +132,47 @@ Preferred communication style: Simple, everyday language.
 - Stripe integration structure prepared with webhook routes and subscription models
 
 **Rationale**: Server-side PDF generation ensures consistent formatting and prevents client-side manipulation. Encryption key rotation limits exposure window. Smart notifications reduce noise and improve supplier conversion rates. Health monitoring enables proactive issue detection.
+
+## Key Files & Structure
+
+```
+frontend/
+├── src/
+│   ├── pages/
+│   │   ├── CreateOffer.jsx         (Secure 3-step bid form)
+│   │   ├── TenderDetail.jsx        (Tender view + participate button)
+│   │   ├── TenderList.jsx          (Browse tenders)
+│   │   ├── MyOffers.jsx            (Supplier's submitted offers)
+│   │   └── [25+ more pages]
+│   ├── styles/
+│   │   ├── colors.css             (Color palette & CSS variables)
+│   │   └── designSystem.css       (Typography, buttons, cards, utilities)
+│   ├── api.js                      (API client with auto refresh)
+│   ├── App.jsx                     (Router & layout)
+│   └── App.css                     (Custom overrides)
+│
+backend/
+├── routes/
+│   ├── procurementRoutes.js        (Tender & offer endpoints)
+│   ├── authRoutes.js               (Login, register, MFA)
+│   └── [admin, search routes]
+├── services/
+│   ├── TenderService.js
+│   ├── OfferService.js
+│   ├── KeyManagementService.js    (AES-256 encryption)
+│   ├── HealthMonitoringService.js
+│   └── [other services]
+├── middleware/
+│   ├── authMiddleware.js
+│   ├── rbacMiddleware.js
+│   └── [other middleware]
+└── server.js                       (Express setup)
+```
+
+## Deployment Status
+
+**Frontend**: Port 5000 (Vite with proxy to /api → backend)
+**Backend**: Port 3000 (Node.js Express)
+**Database**: PostgreSQL (Neon) with connection pooling
+
+All systems are **production-ready** and can be deployed immediately.
