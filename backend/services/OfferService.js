@@ -4,10 +4,64 @@ const crypto = require('crypto');
 const KeyManagementService = require('../security/KeyManagementService');
 
 class OfferService {
+    // 🚀 PERFORMANCE: Batch processing queue
+    constructor() {
+        this.offerQueue = [];
+        this.queueProcessingInterval = null;
+        this.batchSize = 10;
+        this.batchTimeoutMs = 500; // Process batch every 500ms or when full
+    }
+
     generateOfferNumber() {
         const timestamp = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
         return `OFF-${timestamp}-${randomPart}`;
+    }
+
+    // 🚀 OPTIMIZATION: Batch insert for high-frequency bid submissions
+    async createOfferBatch(offersData, userId) {
+        const pool = getPool();
+        
+        try {
+            const values = [];
+            let paramIndex = 1;
+            
+            offersData.forEach(offerData => {
+                const offer = new Offer(offerData);
+                const offerNumber = this.generateOfferNumber();
+                const sensitiveData = JSON.stringify({
+                    total_amount: offer.total_amount,
+                    financial_proposal: offer.financial_proposal,
+                    payment_terms: offer.payment_terms
+                });
+                const { iv, encryptedData } = KeyManagementService.encryptData(sensitiveData);
+                const keyId = `key_${offerNumber}`;
+                
+                values.push([
+                    offer.tender_id, userId, offerNumber, offer.total_amount, offer.currency,
+                    offer.delivery_time, offer.payment_terms, offer.technical_proposal,
+                    offer.financial_proposal, JSON.stringify(offer.attachments), offer.status,
+                    encryptedData, keyId, iv, userId
+                ]);
+            });
+
+            // Multi-row insert (faster than individual inserts)
+            const placeholders = values.map((_, idx) => {
+                const start = idx * 15;
+                return `($${start + 1},$${start + 2},$${start + 3},$${start + 4},$${start + 5},$${start + 6},$${start + 7},$${start + 8},$${start + 9},$${start + 10},$${start + 11},$${start + 12},$${start + 13},$${start + 14},$${start + 15})`;
+            }).join(',');
+
+            const flatValues = values.flat();
+            const query = `INSERT INTO offers (tender_id, supplier_id, offer_number, total_amount, currency, 
+                 delivery_time, payment_terms, technical_proposal, financial_proposal, attachments, 
+                 status, encrypted_data, decryption_key_id, encryption_iv, created_by)
+                 VALUES ${placeholders} RETURNING *`;
+            
+            const result = await pool.query(query, flatValues);
+            return result.rows;
+        } catch (error) {
+            throw new Error(`Failed to batch create offers: ${error.message}`);
+        }
     }
 
     async createOffer(offerData, userId) {
