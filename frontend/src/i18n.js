@@ -24,7 +24,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    defaultLanguage: 'fr',
+    lng: 'fr',
     fallbackLng: 'fr',
     ns: ['common'],
     defaultNS: 'common',
@@ -33,8 +33,10 @@ i18n
     },
     detection: {
       order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
-    }
+      caches: ['localStorage'],
+      checkWhitelist: true
+    },
+    supportedLngs: ['fr', 'ar', 'en']
   });
 
 export default i18n;
