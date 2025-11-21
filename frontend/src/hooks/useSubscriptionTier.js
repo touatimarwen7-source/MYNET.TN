@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { isFeatureAvailable, getCurrentTier } from '../utils/subscriptionTiers';
 
 export const useSubscriptionTier = (userSubscription) => {
   const [upgradeModal, setUpgradeModal] = useState({
@@ -7,23 +6,14 @@ export const useSubscriptionTier = (userSubscription) => {
     featureKey: null
   });
 
-  const currentTier = getCurrentTier(userSubscription);
+  // ✅ Toutes les fonctionnalités sont disponibles pour tous
+  const checkFeatureAccess = useCallback(() => {
+    return true; // Toujours accessible
+  }, []);
 
-  const checkFeatureAccess = useCallback((featureKey) => {
-    return isFeatureAvailable(userSubscription, featureKey);
-  }, [userSubscription]);
-
-  const handleLockedFeatureClick = useCallback((featureKey, e) => {
-    if (e) e.preventDefault();
-    if (!checkFeatureAccess(featureKey)) {
-      setUpgradeModal({
-        isOpen: true,
-        featureKey
-      });
-      return true;
-    }
-    return false;
-  }, [checkFeatureAccess]);
+  const handleLockedFeatureClick = useCallback(() => {
+    return false; // Aucune fonction verrouillée
+  }, []);
 
   const closeUpgradeModal = useCallback(() => {
     setUpgradeModal({
@@ -33,7 +23,7 @@ export const useSubscriptionTier = (userSubscription) => {
   }, []);
 
   return {
-    currentTier,
+    currentTier: 'enterprise', // Tier maximum pour tous
     checkFeatureAccess,
     handleLockedFeatureClick,
     closeUpgradeModal,

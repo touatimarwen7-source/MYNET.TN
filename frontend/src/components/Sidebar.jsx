@@ -213,10 +213,6 @@ export default function Sidebar({ user, onLogout }) {
   };
 
   const handleNavigation = (path, label, featureKey) => {
-    if (featureKey && !checkFeatureAccess(featureKey)) {
-      handleLockedFeatureClick(featureKey);
-      return;
-    }
     setPageTitle(label);
     navigate(path);
   };
@@ -274,21 +270,16 @@ export default function Sidebar({ user, onLogout }) {
                   {/* Submenu */}
                   {expandedMenus[item.id] && (
                     <div className="submenu">
-                      {item.subItems.map((subItem, idx) => {
-                        const isAvailable = checkFeatureAccess(subItem.featureKey);
-                        return (
-                          <button
-                            key={idx}
-                            className={`submenu-item ${isMenuItemActive(subItem.path) ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}
-                            onClick={() => handleNavigation(subItem.path, subItem.label, subItem.featureKey)}
-                            disabled={!isAvailable}
-                          >
-                            <span className="submenu-dot">•</span>
-                            <span className="submenu-label">{subItem.label}</span>
-                            {!isAvailable && <span className="upgrade-badge-sm">PRO</span>}
-                          </button>
-                        );
-                      })}
+                      {item.subItems.map((subItem, idx) => (
+                        <button
+                          key={idx}
+                          className={`submenu-item ${isMenuItemActive(subItem.path) ? 'active' : ''}`}
+                          onClick={() => handleNavigation(subItem.path, subItem.label, subItem.featureKey)}
+                        >
+                          <span className="submenu-dot">•</span>
+                          <span className="submenu-label">{subItem.label}</span>
+                        </button>
+                      ))}
                     </div>
                   )}
                 </>
@@ -325,13 +316,6 @@ export default function Sidebar({ user, onLogout }) {
         />
       )}
 
-      {/* Upgrade Modal */}
-      <UpgradeModal
-        isOpen={upgradeModal.isOpen}
-        onClose={closeUpgradeModal}
-        currentTier={currentTier}
-        featureKey={upgradeModal.featureKey}
-      />
     </>
   );
 }
