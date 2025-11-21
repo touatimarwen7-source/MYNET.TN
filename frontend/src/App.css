@@ -536,3 +536,378 @@ body {
 .btn-success:hover {
   background: #218838;
 }
+
+/* Buyer Dashboard Styles */
+.buyer-dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.kpi-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.kpi-card.highlight {
+  border-left: 4px solid #667eea;
+}
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.kpi-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0.5rem 0;
+}
+
+.kpi-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Traffic Light System */
+.traffic-light {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.traffic-light.green {
+  background: #28a745;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+.traffic-light.blue {
+  background: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+.traffic-light.orange {
+  background: #fd7e14;
+  box-shadow: 0 0 10px rgba(253, 126, 20, 0.5);
+}
+
+.traffic-light.red {
+  background: #dc3545;
+  box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+}
+
+.status-excellent {
+  border-right: 4px solid #28a745;
+}
+
+.status-good {
+  border-right: 4px solid #007bff;
+}
+
+.status-normal {
+  border-right: 4px solid #fd7e14;
+}
+
+/* Recent Tenders */
+.recent-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.tenders-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.tender-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.tender-item:hover {
+  background: #f9f9f9;
+}
+
+.tender-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.tender-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.status {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.status-active {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-closed {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* Legend */
+.legend {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.legend-items {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Offer Analysis */
+.offer-analysis-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.comparison-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 0.75rem;
+  text-align: right;
+  border-bottom: 1px solid #eee;
+}
+
+.comparison-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.comparison-table tr.selected {
+  background: #e8f5e9;
+}
+
+.comparison-table td.best {
+  color: #28a745;
+  font-weight: 600;
+}
+
+/* Statistics Grid */
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.stat-card .value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-card.highlight {
+  background: #e3f2fd;
+  border-left: 4px solid #667eea;
+}
+
+/* Price Distribution */
+.price-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.price-bar-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.price-bar {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  flex-grow: 1;
+}
+
+.price-bar-container span {
+  min-width: 150px;
+  text-align: right;
+}
+
+/* Invoice Management */
+.invoice-management {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.invoices-table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.invoices-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoices-table th {
+  background: #f5f5f5;
+  padding: 1rem;
+  text-align: right;
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+}
+
+.invoices-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.invoices-table .actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-approve, .btn-reject, .btn-erp {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-approve {
+  background: #28a745;
+  color: white;
+}
+
+.btn-approve:hover {
+  background: #218838;
+}
+
+.btn-reject {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-reject:hover {
+  background: #c82333;
+}
+
+.btn-erp {
+  background: #667eea;
+  color: white;
+}
+
+.btn-erp:hover {
+  background: #5568d3;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+}
