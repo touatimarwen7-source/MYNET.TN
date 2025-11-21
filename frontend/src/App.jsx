@@ -76,6 +76,9 @@ import './styles/buyer-active-tenders.css';
 import './styles/financial-reports.css';
 import './styles/budget-management.css';
 import './styles/tender-lifecycle.css';
+import './styles/corporate-design.css';
+import './styles/header-unified-formal.css';
+import './styles/tables-formal.css';
 import './App.css';
 
 function App() {
