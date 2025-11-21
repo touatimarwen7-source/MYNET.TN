@@ -7,8 +7,9 @@ import QuickActions from '../components/QuickActions';
 import ImportantDocuments from '../components/ImportantDocuments';
 import '../styles/corporate-design.css';
 import '../styles/dashboard-header-corporate.css';
-import '../styles/dashboardCards-corporate.css';
+import '../styles/dashboardCards-compact.css';
 import '../styles/dashboard-general-corporate.css';
+import '../styles/tables-dense.css';
 
 export default function SupplierDashboard() {
   const navigate = useNavigate();

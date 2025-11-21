@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import '../styles/unified-header.css';
+import '../styles/header-condensed.css';
 
 export default function UnifiedHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
