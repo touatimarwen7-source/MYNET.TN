@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { setPageTitle } from '../utils/pageTitle';
+import '../styles/profile-modern.css';
 
 export default function SupplierProfile() {
   const [profile, setProfile] = useState(null);
@@ -10,6 +11,8 @@ export default function SupplierProfile() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setPageTitle('Profil du Fournisseur');
@@ -26,7 +29,7 @@ export default function SupplierProfile() {
       setDocuments(response.data.documents || []);
       setCategories(response.data.categories || []);
     } catch (error) {
-      console.error('Erreur:', error);
+      setError('Erreur lors du chargement du profil');
     } finally {
       setLoading(false);
     }
@@ -47,10 +50,11 @@ export default function SupplierProfile() {
           'Content-Type': 'multipart/form-data'
         }
       });
-      alert('Document uploadé avec succès');
+      setSuccess('Document uploadé avec succès ✓');
+      setTimeout(() => setSuccess(''), 3000);
       fetchProfile();
     } catch (error) {
-      alert('Erreur: ' + error.response?.data?.error);
+      setError('Erreur: ' + error.response?.data?.error);
     }
   };
 
@@ -60,10 +64,11 @@ export default function SupplierProfile() {
       await axios.delete(`http://localhost:3000/api/supplier/documents/${docId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      alert('Document supprimé');
+      setSuccess('Document supprimé ✓');
+      setTimeout(() => setSuccess(''), 3000);
       fetchProfile();
     } catch (error) {
-      alert('Erreur: ' + error.response?.data?.error);
+      setError('Erreur: ' + error.response?.data?.error);
     }
   };
 
@@ -74,158 +79,262 @@ export default function SupplierProfile() {
       });
       setProfile(editData);
       setEditing(false);
-      alert('Profil mis à jour avec succès');
+      setSuccess('Profil mis à jour avec succès ✓');
+      setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
-      alert('Erreur: ' + error.response?.data?.error);
+      setError('Erreur: ' + error.response?.data?.error);
     }
   };
 
-  if (loading) return <div className="loading">Chargement en cours...</div>;
+  if (loading) {
+    return (
+      <div className="page-container">
+        <div className="loading-skeleton" style={{ height: '400px', borderRadius: '12px' }}></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="supplier-profile">
-      <h1>🏢 Profil du Fournisseur</h1>
+    <div className="page-container">
+      {/* Page Header */}
+      <div className="page-header animate-slide-down">
+        <h1 className="page-title">🏢 Profil du Fournisseur</h1>
+        <p className="page-subtitle">Gérez votre profil professionnel et vos documents</p>
+      </div>
 
-      <div className="profile-layout">
-        {/* Données de l'Entreprise */}
-        <div className="profile-section">
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-            <h2>📋 Données de l'Entreprise</h2>
-            {!editing && <button className="btn btn-primary" onClick={() => setEditing(true)}>✏️ Modifier</button>}
-          </div>
+      {/* Alerts */}
+      {error && (
+        <div className="alert alert-danger animate-slide-up">
+          <span>❌</span>
+          <div>{error}</div>
+        </div>
+      )}
+      {success && (
+        <div className="alert alert-success animate-slide-up">
+          <span>✓</span>
+          <div>{success}</div>
+        </div>
+      )}
 
-          {profile && (
-            <div className="company-info">
-              {editing ? (
-                <div>
-                  <div className="form-group">
-                    <label>Nom de l'Entreprise:</label>
-                    <input type="text" value={editData.company_name || ''} onChange={(e) => setEditData({...editData, company_name: e.target.value})} />
-                  </div>
-                  <div className="form-group">
-                    <label>Numéro Commercial:</label>
-                    <input type="text" value={editData.commercial_number || ''} onChange={(e) => setEditData({...editData, commercial_number: e.target.value})} />
-                  </div>
-                  <div className="form-group">
-                    <label>Siège Social:</label>
-                    <input type="text" value={editData.location || ''} onChange={(e) => setEditData({...editData, location: e.target.value})} />
-                  </div>
-                  <div className="form-group">
-                    <label>Téléphone:</label>
-                    <input type="tel" value={editData.phone || ''} onChange={(e) => setEditData({...editData, phone: e.target.value})} />
-                  </div>
-                  <button className="btn btn-success" onClick={handleSaveProfile}>💾 Sauvegarder</button>
-                  <button className="btn btn-secondary" onClick={() => setEditing(false)}>Annuler</button>
-                </div>
-              ) : (
-                <div>
-                  <div className="info-row">
-                    <label>Nom de l'Entreprise:</label>
-                    <p>{profile.company_name}</p>
-                  </div>
-                  <div className="info-row">
-                    <label>Numéro Commercial:</label>
-                    <p>{profile.commercial_number}</p>
-                  </div>
-                  <div className="info-row">
-                    <label>Siège Social:</label>
-                    <p>{profile.location}</p>
-                  </div>
-                  <div className="info-row">
-                    <label>Téléphone:</label>
-                    <p>{profile.phone}</p>
-                  </div>
-                </div>
+      {profile && (
+        <div className="supplier-profile-layout">
+          {/* Company Information Card */}
+          <div className="profile-card animate-scale-in">
+            <div className="profile-card-header">
+              <div className="profile-avatar">🏢</div>
+              <div className="profile-header-info">
+                <h2 className="profile-name">{profile.company_name}</h2>
+                <p className="profile-role">Fournisseur Professionnel</p>
+              </div>
+              {!editing && (
+                <button 
+                  className="btn btn-primary hover-lift"
+                  onClick={() => setEditing(true)}
+                  style={{ marginLeft: 'auto' }}
+                >
+                  ✏️ Modifier
+                </button>
               )}
             </div>
-          )}
-        </div>
 
-        {/* Domaines d'Expertise */}
-        <div className="profile-section">
-          <h2>🎯 Domaines d'Expertise</h2>
-          <div className="categories-tags">
-            {categories.length === 0 ? (
-              <p className="empty-state">Aucun domaine défini</p>
+            {editing ? (
+              /* Edit Mode */
+              <div className="profile-edit-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Nom de l'Entreprise</label>
+                    <input 
+                      type="text" 
+                      value={editData.company_name || ''} 
+                      onChange={(e) => setEditData({...editData, company_name: e.target.value})}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Numéro Commercial</label>
+                    <input 
+                      type="text" 
+                      value={editData.commercial_number || ''} 
+                      onChange={(e) => setEditData({...editData, commercial_number: e.target.value})}
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Siège Social</label>
+                    <input 
+                      type="text" 
+                      value={editData.location || ''} 
+                      onChange={(e) => setEditData({...editData, location: e.target.value})}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Téléphone</label>
+                    <input 
+                      type="tel" 
+                      value={editData.phone || ''} 
+                      onChange={(e) => setEditData({...editData, phone: e.target.value})}
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-actions">
+                  <button className="btn btn-secondary" onClick={() => setEditing(false)}>
+                    ✕ Annuler
+                  </button>
+                  <button className="btn btn-primary" onClick={handleSaveProfile}>
+                    💾 Sauvegarder
+                  </button>
+                </div>
+              </div>
             ) : (
-              categories.map((cat, idx) => (
-                <span key={idx} className="tag badge">{cat}</span>
-              ))
+              /* View Mode */
+              <div className="profile-info-grid">
+                <div className="info-group">
+                  <div className="info-item">
+                    <label className="info-label">📍 Siège Social</label>
+                    <p className="info-value">{profile.location || '—'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label className="info-label">📱 Téléphone</label>
+                    <p className="info-value">{profile.phone || '—'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label className="info-label">🔢 Numéro Commercial</label>
+                    <p className="info-value">{profile.commercial_number || '—'}</p>
+                  </div>
+                </div>
+
+                <div className="info-group">
+                  <div className="info-item">
+                    <label className="info-label">⭐ Note Moyenne</label>
+                    <p className="info-value">
+                      <span className="rating-stars">{'⭐'.repeat(Math.round(profile.average_rating || 0))}</span>
+                      {profile.average_rating || 0}/5
+                    </p>
+                  </div>
+                  <div className="info-item">
+                    <label className="info-label">📊 Soumissions</label>
+                    <p className="info-value">{profile.submission_count || 0}</p>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
-        </div>
 
-        {/* Documents et Certificats */}
-        <div className="profile-section">
-          <h2>📄 Documents et Certificats</h2>
-          
-          <div className="document-upload">
-            <label>Télécharger un Document:</label>
-            <input 
-              type="file" 
-              onChange={handleDocumentUpload}
-              accept=".pdf,.jpg,.jpeg,.png"
-            />
-          </div>
-
-          <div className="documents-list">
-            {documents.length === 0 ? (
-              <p className="empty-state">Aucun document uploadé</p>
-            ) : (
-              <table style={{width: '100%', marginTop: '1rem'}}>
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Date d'Upload</th>
-                    <th>Date d'Expiration</th>
-                    <th>Statut</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {documents.map((doc, idx) => (
-                    <tr key={idx}>
-                      <td>{doc.type}</td>
-                      <td>{new Date(doc.uploaded_at).toLocaleDateString('fr-FR')}</td>
-                      <td>{new Date(doc.expiry_date).toLocaleDateString('fr-FR')}</td>
-                      <td>
-                        {doc.days_left < 30 ? (
-                          <span className="badge badge-warning">⚠️ {doc.days_left} jours</span>
-                        ) : (
-                          <span className="badge badge-success">✓ Valide</span>
-                        )}
-                      </td>
-                      <td>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDeleteDocument(doc.id)}>🗑️</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-
-        {/* Profil Public */}
-        <div className="profile-section">
-          <h2>🌐 Profil Public</h2>
-          <button 
-            className="btn btn-primary"
-            onClick={() => setShowPublicProfile(!showPublicProfile)}
-          >
-            {showPublicProfile ? '🔒 Masquer le Profil Public' : '👁️ Afficher le Profil Public'}
-          </button>
-
-          {showPublicProfile && profile && (
-            <div className="public-profile-preview" style={{marginTop: '1rem', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '8px'}}>
-              <h3>{profile.company_name}</h3>
-              <p><strong>Localisation:</strong> {profile.location}</p>
-              <p><strong>Domaines:</strong> {categories.join(', ')}</p>
-              <p><strong>Note:</strong> ⭐ {profile.average_rating || 0}/5</p>
+          {/* Expertise Areas */}
+          <div className="profile-section animate-slide-up">
+            <h3 className="section-title">🎯 Domaines d'Expertise</h3>
+            <div className="categories-tags">
+              {categories.length === 0 ? (
+                <div className="empty-state">
+                  <p>Aucun domaine défini</p>
+                </div>
+              ) : (
+                categories.map((cat, idx) => (
+                  <span key={idx} className="badge badge-primary">{cat}</span>
+                ))
+              )}
             </div>
-          )}
+          </div>
+
+          {/* Documents and Certificates */}
+          <div className="profile-section animate-slide-up">
+            <h3 className="section-title">📄 Documents et Certificats</h3>
+            
+            <div className="document-upload-area">
+              <label className="upload-label">
+                <input 
+                  type="file" 
+                  onChange={handleDocumentUpload}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  className="upload-input"
+                />
+                <span className="upload-button">📤 Télécharger un Document</span>
+              </label>
+              <p className="upload-help">PDF, JPG ou PNG • Maximum 10 MB</p>
+            </div>
+
+            {documents.length === 0 ? (
+              <div className="empty-state">
+                <p>Aucun document uploadé</p>
+              </div>
+            ) : (
+              <div className="documents-table-wrapper">
+                <table className="documents-table">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Date d'Upload</th>
+                      <th>Expiration</th>
+                      <th>Statut</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {documents.map((doc, idx) => {
+                      const daysLeft = doc.days_left || 0;
+                      const isExpiringSoon = daysLeft < 30;
+                      
+                      return (
+                        <tr key={idx} className={isExpiringSoon ? 'warning-row' : ''}>
+                          <td><strong>{doc.type}</strong></td>
+                          <td>{new Date(doc.uploaded_at).toLocaleDateString('fr-FR')}</td>
+                          <td>{new Date(doc.expiry_date).toLocaleDateString('fr-FR')}</td>
+                          <td>
+                            {isExpiringSoon ? (
+                              <span className="badge badge-warning">⚠️ {daysLeft} jours</span>
+                            ) : (
+                              <span className="badge badge-success">✓ Valide</span>
+                            )}
+                          </td>
+                          <td>
+                            <button 
+                              className="btn btn-sm btn-outline"
+                              onClick={() => handleDeleteDocument(doc.id)}
+                              title="Supprimer"
+                            >
+                              🗑️
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Public Profile Preview */}
+          <div className="profile-section animate-slide-up">
+            <h3 className="section-title">🌐 Profil Public</h3>
+            <button 
+              className="btn btn-outline"
+              onClick={() => setShowPublicProfile(!showPublicProfile)}
+            >
+              {showPublicProfile ? '🔒 Masquer le Profil' : '👁️ Afficher Profil Public'}
+            </button>
+
+            {showPublicProfile && (
+              <div className="public-profile-preview">
+                <div className="preview-header">
+                  <h4>{profile.company_name}</h4>
+                  <p className="preview-location">📍 {profile.location}</p>
+                </div>
+                <div className="preview-content">
+                  <p><strong>Domaines:</strong> {categories.join(', ') || '—'}</p>
+                  <p><strong>Note:</strong> ⭐ {profile.average_rating || 0}/5</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
