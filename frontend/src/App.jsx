@@ -353,6 +353,7 @@ function App() {
       </Router>
         </ToastContext.Provider>
       </DarkModeProvider>
+    </ThemeProvider>
   );
 }
 
