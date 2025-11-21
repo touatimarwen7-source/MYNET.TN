@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { setPageTitle } from '../utils/pageTitle';
+import UpgradeModal from './UpgradeModal';
+import { useSubscriptionTier } from '../hooks/useSubscriptionTier';
 import '../styles/sidebar.css';
 
 export default function Sidebar({ user, onLogout }) {
@@ -8,6 +10,7 @@ export default function Sidebar({ user, onLogout }) {
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { checkFeatureAccess, handleLockedFeatureClick, closeUpgradeModal, upgradeModal, currentTier } = useSubscriptionTier(user?.subscription);
 
   // Menus par rôle
   const buyerMenu = [
@@ -16,6 +19,7 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Tableau de Bord',
       icon: '📊',
       path: '/buyer-dashboard',
+      featureKey: 'dashboard',
       subItems: []
     },
     {
@@ -23,10 +27,10 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Appels d\'Offres',
       icon: '📋',
       subItems: [
-        { label: 'Actifs', path: '/tenders?status=active' },
-        { label: 'Créer un Appel', path: '/create-tender' },
-        { label: 'Archivés', path: '/tenders?status=archived' },
-        { label: 'Évaluation', path: '/tender-analysis' }
+        { label: 'Actifs', path: '/tenders?status=active', featureKey: 'browsetenders' },
+        { label: 'Créer un Appel', path: '/create-tender', featureKey: 'createtender' },
+        { label: 'Archivés', path: '/tenders?status=archived', featureKey: 'browsetenders' },
+        { label: 'Évaluation', path: '/tender-analysis', featureKey: 'analytics' }
       ]
     },
     {
@@ -34,9 +38,9 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Finances',
       icon: '💰',
       subItems: [
-        { label: 'Factures', path: '/invoices' },
-        { label: 'Budgets', path: '/budgets' },
-        { label: 'Rapports', path: '/financial-reports' }
+        { label: 'Factures', path: '/invoices', featureKey: 'invoices' },
+        { label: 'Budgets', path: '/budgets', featureKey: 'budgets' },
+        { label: 'Rapports', path: '/financial-reports', featureKey: 'customreports' }
       ]
     },
     {
@@ -44,8 +48,8 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Équipe',
       icon: '👥',
       subItems: [
-        { label: 'Gestion d\'équipe', path: '/team-management' },
-        { label: 'Permissions', path: '/team-permissions' }
+        { label: 'Gestion d\'équipe', path: '/team-management', featureKey: 'teammanagement' },
+        { label: 'Permissions', path: '/team-permissions', featureKey: 'teammanagement' }
       ]
     },
     {
@@ -53,16 +57,18 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Notifications',
       icon: '🔔',
       path: '/notifications',
+      featureKey: 'notifications',
       subItems: []
     },
     {
       id: 'profile',
       label: 'Profil',
       icon: '⚙️',
+      featureKey: 'profile',
       subItems: [
-        { label: 'Paramètres', path: '/profile' },
-        { label: 'Sécurité', path: '/security' },
-        { label: 'Préférences', path: '/preferences' }
+        { label: 'Paramètres', path: '/profile', featureKey: 'profile' },
+        { label: 'Sécurité', path: '/security', featureKey: 'profile' },
+        { label: 'Préférences', path: '/preferences', featureKey: 'profile' }
       ]
     }
   ];
@@ -73,6 +79,7 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Tableau de Bord',
       icon: '📊',
       path: '/supplier-search',
+      featureKey: 'dashboard',
       subItems: []
     },
     {
@@ -80,10 +87,10 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Appels d\'Offres',
       icon: '📋',
       subItems: [
-        { label: 'Parcourir', path: '/tenders' },
-        { label: 'Mes Offres', path: '/my-offers' },
-        { label: 'Soumises', path: '/my-offers?status=submitted' },
-        { label: 'Évaluées', path: '/my-offers?status=evaluated' }
+        { label: 'Parcourir', path: '/tenders', featureKey: 'browsetenders' },
+        { label: 'Mes Offres', path: '/my-offers', featureKey: 'myoffers' },
+        { label: 'Soumises', path: '/my-offers?status=submitted', featureKey: 'myoffers' },
+        { label: 'Évaluées', path: '/my-offers?status=evaluated', featureKey: 'myoffers' }
       ]
     },
     {
@@ -91,9 +98,9 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Catalogue',
       icon: '📦',
       subItems: [
-        { label: 'Mon Catalogue', path: '/supplier-catalog' },
-        { label: 'Produits', path: '/supplier-products' },
-        { label: 'Services', path: '/supplier-services' }
+        { label: 'Mon Catalogue', path: '/supplier-catalog', featureKey: 'catalog' },
+        { label: 'Produits', path: '/supplier-products', featureKey: 'catalog' },
+        { label: 'Services', path: '/supplier-services', featureKey: 'catalog' }
       ]
     },
     {
@@ -101,9 +108,9 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Finances',
       icon: '💰',
       subItems: [
-        { label: 'Factures', path: '/supplier-invoices' },
-        { label: 'Paiements', path: '/supplier-payments' },
-        { label: 'Rapports', path: '/supplier-reports' }
+        { label: 'Factures', path: '/supplier-invoices', featureKey: 'invoices' },
+        { label: 'Paiements', path: '/supplier-payments', featureKey: 'invoices' },
+        { label: 'Rapports', path: '/supplier-reports', featureKey: 'customreports' }
       ]
     },
     {
@@ -111,16 +118,18 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Notifications',
       icon: '🔔',
       path: '/notifications',
+      featureKey: 'notifications',
       subItems: []
     },
     {
       id: 'profile',
       label: 'Profil',
       icon: '⚙️',
+      featureKey: 'profile',
       subItems: [
-        { label: 'Paramètres', path: '/profile' },
-        { label: 'Sécurité', path: '/security' },
-        { label: 'Entreprise', path: '/company-info' }
+        { label: 'Paramètres', path: '/profile', featureKey: 'profile' },
+        { label: 'Sécurité', path: '/security', featureKey: 'profile' },
+        { label: 'Entreprise', path: '/company-info', featureKey: 'profile' }
       ]
     }
   ];
@@ -203,7 +212,11 @@ export default function Sidebar({ user, onLogout }) {
     }));
   };
 
-  const handleNavigation = (path, label) => {
+  const handleNavigation = (path, label, featureKey) => {
+    if (featureKey && !checkFeatureAccess(featureKey)) {
+      handleLockedFeatureClick(featureKey);
+      return;
+    }
     setPageTitle(label);
     navigate(path);
   };
@@ -261,16 +274,21 @@ export default function Sidebar({ user, onLogout }) {
                   {/* Submenu */}
                   {expandedMenus[item.id] && (
                     <div className="submenu">
-                      {item.subItems.map((subItem, idx) => (
-                        <button
-                          key={idx}
-                          className={`submenu-item ${isMenuItemActive(subItem.path) ? 'active' : ''}`}
-                          onClick={() => handleNavigation(subItem.path, subItem.label)}
-                        >
-                          <span className="submenu-dot">•</span>
-                          <span className="submenu-label">{subItem.label}</span>
-                        </button>
-                      ))}
+                      {item.subItems.map((subItem, idx) => {
+                        const isAvailable = checkFeatureAccess(subItem.featureKey);
+                        return (
+                          <button
+                            key={idx}
+                            className={`submenu-item ${isMenuItemActive(subItem.path) ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}
+                            onClick={() => handleNavigation(subItem.path, subItem.label, subItem.featureKey)}
+                            disabled={!isAvailable}
+                          >
+                            <span className="submenu-dot">•</span>
+                            <span className="submenu-label">{subItem.label}</span>
+                            {!isAvailable && <span className="upgrade-badge-sm">PRO</span>}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </>
@@ -306,6 +324,14 @@ export default function Sidebar({ user, onLogout }) {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={upgradeModal.isOpen}
+        onClose={closeUpgradeModal}
+        currentTier={currentTier}
+        featureKey={upgradeModal.featureKey}
+      />
     </>
   );
 }

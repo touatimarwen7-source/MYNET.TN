@@ -304,6 +304,80 @@
   text-align: left;
 }
 
+/* Disabled State */
+.submenu-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #5a6270;
+}
+
+.submenu-item.disabled:hover {
+  background: transparent;
+  color: #5a6270;
+  padding-left: 32px;
+}
+
+.submenu-item.disabled .submenu-dot {
+  color: rgba(0, 212, 255, 0.2);
+}
+
+/* Upgrade Badge Small */
+.upgrade-badge-sm {
+  display: inline-block;
+  font-size: 9px;
+  padding: 4px 8px;
+  background: linear-gradient(135deg, rgba(255, 200, 87, 0.3), rgba(255, 150, 50, 0.2));
+  border: 1px solid rgba(255, 200, 87, 0.4);
+  border-radius: 4px;
+  color: #ffc857;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+/* Integration Status Indicator */
+.integration-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.integration-status.active {
+  background: rgba(100, 255, 218, 0.15);
+  color: #64ffda;
+  border: 1px solid rgba(100, 255, 218, 0.3);
+}
+
+.integration-status.inactive {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 80, 80, 0.3);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.integration-status.active .status-dot {
+  background: #64ffda;
+  box-shadow: 0 0 8px rgba(100, 255, 218, 0.6);
+}
+
+.integration-status.inactive .status-dot {
+  background: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 80, 80, 0.6);
+}
+
 /* Sidebar Footer */
 .sidebar-footer {
   padding: 16px;
