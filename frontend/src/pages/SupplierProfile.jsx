@@ -116,8 +116,8 @@ export default function SupplierProfile() {
                 <div key={idx} className="document-item">
                   <div className="doc-info">
                     <h4>{doc.type}</h4>
-                    <p>تاريخ الرفع: {new Date(doc.uploaded_at).toLocaleDateString('ar-TN')}</p>
-                    <p>تاريخ الانتهاء: {new Date(doc.expiry_date).toLocaleDateString('ar-TN')}</p>
+                    <p>تاريخ الرفع: {new Date(doc.uploaded_at).toLocaleDateString('fr-FR')}</p>
+                    <p>تاريخ الانتهاء: {new Date(doc.expiry_date).toLocaleDateString('fr-FR')}</p>
                   </div>
                   <div className={`expiry-status ${doc.days_left < 30 ? 'warning' : 'ok'}`}>
                     {doc.days_left < 30 ? `⚠️ ${doc.days_left} يوم متبقي` : '✓ صحيح'}

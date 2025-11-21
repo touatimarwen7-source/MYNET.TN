@@ -554,7 +554,7 @@ export default function CreateTenderImproved() {
               <h3>📅 الجدولة</h3>
               <p><strong>تاريخ الإغلاق:</strong> {new Date(tenderData.submissionDeadline).toLocaleString('ar-TN')}</p>
               <p><strong>تاريخ الفتح:</strong> {new Date(tenderData.decryptionDate).toLocaleString('ar-TN')}</p>
-              <p><strong>فترة الاستفسارات:</strong> من {new Date(tenderData.questionsStartDate).toLocaleDateString('ar-TN')} إلى {new Date(tenderData.questionsEndDate).toLocaleDateString('ar-TN')}</p>
+              <p><strong>فترة الاستفسارات:</strong> من {new Date(tenderData.questionsStartDate).toLocaleDateString('fr-FR')} إلى {new Date(tenderData.questionsEndDate).toLocaleDateString('fr-FR')}</p>
               <p><strong>صلاحية العرض:</strong> {tenderData.bidValidityDays} يوم</p>
             </div>
 

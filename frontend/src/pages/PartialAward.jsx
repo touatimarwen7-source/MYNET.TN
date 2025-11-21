@@ -22,7 +22,7 @@ export default function PartialAward() {
       const offersRes = await procurementAPI.getOffers(tenderId);
       setOffers(offersRes.data.offers || []);
     } catch (err) {
-      setError(err.response?.data?.error || 'خطأ في تحميل البيانات');
+      setError(err.response?.data?.error || 'Erreur lors du chargement des données');
     } finally {
       setLoading(false);
     }
@@ -57,9 +57,9 @@ export default function PartialAward() {
         }));
 
       await procurementAPI.submitAwards(tenderId, awardData);
-      alert('تم تقديم الترسية بنجاح');
+      alert('Attribution soumise avec succès');
     } catch (err) {
-      setError(err.response?.data?.error || 'خطأ في تقديم الترسية');
+      setError(err.response?.data?.error || 'Erreur lors de la soumission de l'''attribution');
     }
   };
 

@@ -79,7 +79,7 @@ export default function SupplierInvoices() {
                   <td>{invoice.number}</td>
                   <td>{invoice.po_number}</td>
                   <td>{invoice.amount} {invoice.currency}</td>
-                  <td>{new Date(invoice.date).toLocaleDateString('ar-TN')}</td>
+                  <td>{new Date(invoice.date).toLocaleDateString('fr-FR')}</td>
                   <td className={`status status-${invoice.status}`}>{invoice.status}</td>
                 </tr>
               ))}

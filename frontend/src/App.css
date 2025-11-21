@@ -351,7 +351,7 @@
 .audit-log-table th,
 .audit-log-table td {
   padding: 0.75rem;
-  text-align: right;
+  text-align: left;
   border-bottom: 1px solid #eee;
 }
 
@@ -400,7 +400,7 @@
 .award-table th,
 .award-table td {
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   border-bottom: 1px solid #eee;
 }
 
@@ -445,7 +445,7 @@
 }
 
 .verify-section ol {
-  text-align: right;
+  text-align: left;
   margin: 1rem 0;
   padding-right: 2rem;
 }
@@ -503,7 +503,7 @@
   margin-bottom: 1rem;
   border-radius: 4px;
   border-right: 4px solid;
-  text-align: right;
+  text-align: left;
 }
 
 .alert-error {
@@ -722,7 +722,7 @@
 .comparison-table th,
 .comparison-table td {
   padding: 0.75rem;
-  text-align: right;
+  text-align: left;
   border-bottom: 1px solid #eee;
 }
 
@@ -803,7 +803,7 @@
 
 .price-bar-container span {
   min-width: 150px;
-  text-align: right;
+  text-align: left;
 }
 
 /* Invoice Management */
@@ -850,7 +850,7 @@
 .invoices-table th {
   background: #f5f5f5;
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   font-weight: 600;
   border-bottom: 2px solid #eee;
 }
@@ -1489,7 +1489,7 @@
 .invoices-table th {
   background: #f5f5f5;
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   font-weight: 600;
   border-bottom: 2px solid #eee;
 }
@@ -1779,7 +1779,7 @@
 .team-table th {
   background: #f5f5f5;
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   font-weight: 600;
   border-bottom: 2px solid #eee;
 }
@@ -1857,7 +1857,7 @@
 .logs-table th {
   background: #f5f5f5;
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   font-weight: 600;
   border-bottom: 2px solid #eee;
 }
@@ -2316,7 +2316,7 @@
 .features-table th,
 .features-table td {
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   border-bottom: 1px solid #eee;
 }
 
@@ -2354,7 +2354,7 @@
 .users-table th {
   background: #f5f5f5;
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   font-weight: 600;
   border-bottom: 2px solid #eee;
 }
@@ -3081,7 +3081,7 @@
 .items-review-table th,
 .items-review-table td {
   padding: 0.75rem;
-  text-align: right;
+  text-align: left;
   border-bottom: 1px solid #eee;
 }
 
@@ -3237,7 +3237,7 @@
 .items-table th,
 .items-table td {
   padding: 1rem;
-  text-align: right;
+  text-align: left;
   border-bottom: 1px solid #eee;
 }
 
@@ -3527,7 +3527,7 @@
 
 /* RTL Symmetry - All Components */
 [dir='rtl'] {
-  text-align: right;
+  text-align: left;
 }
 
 [dir='ltr'] {
@@ -3545,7 +3545,7 @@
 [dir='rtl'] textarea,
 [dir='rtl'] select {
   direction: rtl;
-  text-align: right;
+  text-align: left;
 }
 
 [dir='ltr'] input,
@@ -3558,7 +3558,7 @@
 /* Tables RTL/LTR Symmetry */
 [dir='rtl'] table th,
 [dir='rtl'] table td {
-  text-align: right;
+  text-align: left;
 }
 
 [dir='ltr'] table th,

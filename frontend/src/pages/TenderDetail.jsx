@@ -64,10 +64,10 @@ export default function TenderDetail() {
           <p><strong>الوصف:</strong> {tender.description}</p>
           <p><strong>الفئة:</strong> {tender.category}</p>
           <p><strong>الميزانية:</strong> {tender.budget_min} - {tender.budget_max} {tender.currency}</p>
-          <p><strong>آخر تعديل:</strong> {new Date(tender.updated_at).toLocaleDateString('ar-TN')}</p>
+          <p><strong>آخر تعديل:</strong> {new Date(tender.updated_at).toLocaleDateString('fr-FR')}</p>
           
           {tender.deadline && (
-            <p><strong>موعد الإغلاق:</strong> {new Date(tender.deadline).toLocaleDateString('ar-TN')}</p>
+            <p><strong>موعد الإغلاق:</strong> {new Date(tender.deadline).toLocaleDateString('fr-FR')}</p>
           )}
         </div>
 

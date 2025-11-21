@@ -113,22 +113,22 @@
 }
 
 /* RTL Support */
-[dir='rtl'] .language-menu {
+[dir='ltr'] .language-menu {
   right: auto;
   left: 0;
 }
 
-[dir='rtl'] .language-option {
-  text-align: right;
+[dir='ltr'] .language-option {
+  text-align: left;
 }
 
-[dir='rtl'] .language-option.active {
+[dir='ltr'] .language-option.active {
   border-left: none;
   border-right: 3px solid var(--color-primary-main);
   padding-left: 1rem;
   padding-right: calc(1rem - 3px);
 }
 
-[dir='rtl'] [data-theme='dark'] .language-option.active {
+[dir='ltr'] [data-theme='dark'] .language-option.active {
   border-right-color: var(--color-action);
 }

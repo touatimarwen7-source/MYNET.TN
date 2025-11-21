@@ -124,7 +124,7 @@
 }
 
 /* RTL Support */
-[dir='rtl'] .verified-badge,
-[dir='rtl'] .encryption-badge {
+[dir='ltr'] .verified-badge,
+[dir='ltr'] .encryption-badge {
   /* لا تحتاج تعديل - تتجاوب تلقائياً مع flexbox */
 }

@@ -311,7 +311,7 @@ export default function CreateOffer() {
                 {offerData.attachments.length > 0 && (
                   <div style={{ marginTop: '1rem' }}>
                     <p><strong>Fichiers téléchargés:</strong></p>
-                    <ul style={{ paddingRight: '1.5rem' }}>
+                    <ul style={{ paddingLeft: '1.5rem' }}>
                       {offerData.attachments.map((file, idx) => (
                         <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                           <span>{file.name}</span>

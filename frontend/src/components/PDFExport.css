@@ -97,8 +97,8 @@
   margin-bottom: 10px;
   font-size: 14px;
   width: 100%;
-  text-align: right;
-  direction: rtl;
+  text-align: left;
+  direction: ltr;
 }
 
 /* طباعة */

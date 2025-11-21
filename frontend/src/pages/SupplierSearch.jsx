@@ -53,7 +53,7 @@ export default function SupplierSearch() {
         <p><strong>الفئة:</strong> {tender.category}</p>
         <p><strong>الموقع:</strong> {tender.location}</p>
         <p><strong>الميزانية:</strong> {tender.budget_max} {tender.currency}</p>
-        <p><strong>تاريخ الإغلاق:</strong> {new Date(tender.closing_date).toLocaleDateString('ar-TN')}</p>
+        <p><strong>تاريخ الإغلاق:</strong> {new Date(tender.closing_date).toLocaleDateString('fr-FR')}</p>
       </div>
       <button className="btn-bid">عرض التفاصيل</button>
     </div>
