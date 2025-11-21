@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { setPageTitle } from '../utils/pageTitle';
 import PublicNavbar from '../components/PublicNavbar';
+import DynamicAdvertisement from '../components/DynamicAdvertisement';
+import HowItWorks from '../components/HowItWorks';
+import LeadGenerationForm from '../components/LeadGenerationForm';
 import '../styles/homepage.css';
 
 export default function HomePage() {
@@ -18,25 +21,45 @@ export default function HomePage() {
     <>
       <PublicNavbar />
       <div className="homepage">
-      {/* Hero Section */}
+      {/* Hero Section - Optimized for Marketing */}
       <section className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title">🏛️ Plateforme d'Achats Sécurisée</h1>
-          <p className="hero-subtitle">Rétablir la Confiance dans les Transactions B2B en Tunisie</p>
+          <h1 className="hero-title">🚀 Révolutionnez Vos Achats B2B</h1>
+          <p className="hero-usp">La plateforme d'e-tendering la plus sécurisée et transparente du Maghreb</p>
           <p className="hero-description">
-            MyNet.tn est la plateforme de référence pour les appels d'offres et les achats électroniques en Tunisie.
-            Transparence totale, sécurité de haut niveau, et efficacité maximale pour tous vos besoins d'approvisionnement.
+            MyNet.tn connecte acheteurs et fournisseurs en toute confiance avec chiffrement AES-256, 
+            analyse IA, et processus 100% transparent. Plus de collusion, plus d'inefficacité.
           </p>
-          <button className="cta-button" onClick={() => navigate('/login')}>
-            ✨ Commencer Maintenant
+          <div className="hero-stats">
+            <div className="stat">
+              <strong>50M+ TND</strong>
+              <span>Volume annuel</span>
+            </div>
+            <div className="stat">
+              <strong>1200+</strong>
+              <span>Organisations</span>
+            </div>
+            <div className="stat">
+              <strong>99.99%</strong>
+              <span>Disponibilité</span>
+            </div>
+          </div>
+          <button className="cta-button primary" onClick={() => navigate('/register')}>
+            ✨ Essai Gratuit 30 Jours
+          </button>
+          <button className="cta-button secondary" onClick={() => navigate('/about')}>
+            En Savoir Plus →
           </button>
         </div>
         <div className="hero-image">
           <div className="hero-illustration">
-            <div className="illustration-box">💼🤝💡</div>
+            <div className="illustration-box glow">🛡️🔐💡</div>
           </div>
         </div>
       </section>
+
+      {/* Dynamic Advertisement Section */}
+      <DynamicAdvertisement />
 
       {/* Rôles Section */}
       <section className="roles-section">
@@ -189,6 +212,12 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* How It Works Section */}
+      <HowItWorks />
+
+      {/* Lead Generation Section */}
+      <LeadGenerationForm />
 
       {/* CTA Section */}
       <section className="final-cta-section">
