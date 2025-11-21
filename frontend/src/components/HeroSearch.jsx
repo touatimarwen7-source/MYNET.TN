@@ -4,18 +4,26 @@ import '../styles/hero-search.css';
 
 export default function HeroSearch() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('tenders');
   const [searchData, setSearchData] = useState({
-    category: 'all',
+    category: 'tous',
     keywords: '',
-    region: 'all'
+    region: 'all',
+    type: 'tenders'
   });
 
+  const searchTabs = [
+    { id: 'markets', label: '🏪 Nouveaux Marchés', icon: '🏪' },
+    { id: 'tenders', label: '📋 Appels d\'Offres', icon: '📋' },
+    { id: 'awards', label: '🏆 Attributions', icon: '🏆' },
+    { id: 'data', label: '📊 Données Essentielles', icon: '📊' }
+  ];
+
   const categories = [
-    { value: 'all', label: 'Toutes les Catégories' },
-    { value: 'technology', label: 'Technologie' },
+    { value: 'tous', label: 'Tous' },
+    { value: 'travaux', label: 'Travaux' },
     { value: 'services', label: 'Services' },
-    { value: 'construction', label: 'Construction' },
-    { value: 'supplies', label: 'Fournitures' }
+    { value: 'fournitures', label: 'Fournitures' }
   ];
 
   const regions = [
@@ -52,11 +60,24 @@ export default function HeroSearch() {
     // Construct query string
     const params = new URLSearchParams();
     if (searchData.keywords) params.append('q', searchData.keywords);
-    if (searchData.category !== 'all') params.append('category', searchData.category);
+    if (searchData.category !== 'tous') params.append('category', searchData.category);
     if (searchData.region !== 'all') params.append('region', searchData.region);
+    params.append('type', activeTab);
     
-    // Navigate to search/tenders page with filters
-    navigate(`/tenders?${params.toString()}`);
+    // Navigate to search page with filters
+    const routeMap = {
+      tenders: '/tenders',
+      awards: '/awards',
+      markets: '/markets',
+      data: '/data'
+    };
+    
+    navigate(`${routeMap[activeTab]}?${params.toString()}`);
+  };
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setSearchData({ ...searchData, type: tabId });
   };
 
   const handleCategoryChange = (e) => {
@@ -73,6 +94,21 @@ export default function HeroSearch() {
 
   return (
     <div className="hero-search-container">
+      {/* Search Type Tabs */}
+      <div className="search-tabs">
+        {searchTabs.map(tab => (
+          <button
+            key={tab.id}
+            type="button"
+            className={`search-tab ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => handleTabChange(tab.id)}
+          >
+            <span className="tab-icon">{tab.icon}</span>
+            <span className="tab-label">{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={handleSearch} className="hero-search-form">
         {/* Category Filter */}
         <div className="search-filters">

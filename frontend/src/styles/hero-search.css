@@ -6,6 +6,56 @@
   padding: 0;
 }
 
+/* Search Tabs Navigation */
+.search-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.search-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  background-color: #f5f5f5;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.search-tab:hover {
+  background-color: #efefef;
+  border-color: #1a2b4d;
+  color: #1a2b4d;
+}
+
+.search-tab.active {
+  background-color: #1a2b4d;
+  border-color: #1a2b4d;
+  color: white;
+  box-shadow: 0 2px 8px rgba(26, 43, 77, 0.2);
+}
+
+.tab-icon {
+  font-size: 16px;
+}
+
+.tab-label {
+  font-size: 12px;
+}
+
 .hero-search-form {
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
   border: 1px solid #e0e0e0;
@@ -226,6 +276,27 @@
 
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
+  .search-tabs {
+    border-bottom-color: #333;
+  }
+
+  .search-tab {
+    background-color: #2a2a2a;
+    color: #aaa;
+  }
+
+  .search-tab:hover {
+    background-color: #333;
+    border-color: #5a9fd4;
+    color: #5a9fd4;
+  }
+
+  .search-tab.active {
+    background-color: #1a2b4d;
+    border-color: #5a9fd4;
+    color: #fff;
+  }
+
   .hero-search-form {
     background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
     border-color: #333;
@@ -259,5 +330,34 @@
   .search-select:focus {
     border-color: #5a9fd4;
     box-shadow: 0 0 0 3px rgba(90, 159, 212, 0.15);
+  }
+}
+
+/* Responsive Tabs */
+@media (max-width: 768px) {
+  .search-tabs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .search-tab {
+    padding: 0.75rem 1rem;
+    font-size: 12px;
+  }
+
+  .tab-label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-tabs {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .search-tab {
+    padding: 0.75rem;
+    justify-content: flex-start;
   }
 }
