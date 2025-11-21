@@ -27,6 +27,14 @@ import TenderAwarding from './pages/TenderAwarding';
 import TeamPermissions from './pages/TeamPermissions';
 import SupplierProductsManagement from './pages/SupplierProductsManagement';
 import SupplierServicesManagement from './pages/SupplierServicesManagement';
+import BidSubmission from './pages/BidSubmission';
+import ContractManagement from './pages/ContractManagement';
+import DeliveryManagement from './pages/DeliveryManagement';
+import AwardNotifications from './pages/AwardNotifications';
+import PerformanceMonitoring from './pages/PerformanceMonitoring';
+import DisputeManagement from './pages/DisputeManagement';
+import InvoiceGeneration from './pages/InvoiceGeneration';
+import MonitoringSubmissions from './pages/MonitoringSubmissions';
 import CreateTenderImproved from './pages/CreateTenderImproved';
 import TenderChat from './pages/TenderChat';
 import TenderSecuritySettings from './pages/TenderSecuritySettings';
@@ -230,12 +238,36 @@ function App() {
               element={user?.role === 'supplier' ? <SupplierDashboard /> : <Navigate to="/tenders" />} 
             />
             <Route 
-              path="/supplier-products" 
-              element={user?.role === 'supplier' ? <SupplierCatalog /> : <Navigate to="/tenders" />} 
+              path="/bid-submission/:tenderId" 
+              element={user?.role === 'supplier' ? <BidSubmission /> : <Navigate to="/tenders" />} 
             />
             <Route 
-              path="/supplier-services" 
-              element={user?.role === 'supplier' ? <SupplierCatalog /> : <Navigate to="/tenders" />} 
+              path="/contracts" 
+              element={user?.role === 'buyer' ? <ContractManagement /> : <Navigate to="/tenders" />} 
+            />
+            <Route 
+              path="/deliveries" 
+              element={user?.role === 'buyer' ? <DeliveryManagement /> : <Navigate to="/tenders" />} 
+            />
+            <Route 
+              path="/award-notifications" 
+              element={user?.role === 'buyer' ? <AwardNotifications /> : <Navigate to="/tenders" />} 
+            />
+            <Route 
+              path="/performance" 
+              element={user?.role === 'buyer' ? <PerformanceMonitoring /> : <Navigate to="/tenders" />} 
+            />
+            <Route 
+              path="/disputes" 
+              element={user?.role === 'buyer' ? <DisputeManagement /> : <Navigate to="/tenders" />} 
+            />
+            <Route 
+              path="/invoice-generation" 
+              element={user?.role === 'buyer' ? <InvoiceGeneration /> : <Navigate to="/tenders" />} 
+            />
+            <Route 
+              path="/monitoring-submissions" 
+              element={user?.role === 'buyer' ? <MonitoringSubmissions /> : <Navigate to="/tenders" />} 
             />
             <Route 
               path="/supplier-payments" 

@@ -30,8 +30,10 @@ export default function Sidebar({ user, onLogout }) {
       subItems: [
         { label: 'Actifs', path: '/buyer-active-tenders', featureKey: 'browsetenders' },
         { label: 'Créer un Appel', path: '/create-tender', featureKey: 'createtender' },
+        { label: 'Soumissions', path: '/monitoring-submissions', featureKey: 'browsetenders' },
         { label: 'Évaluation', path: '/tender-evaluation', featureKey: 'analytics' },
-        { label: 'Attribution', path: '/tender-awarding', featureKey: 'analytics' }
+        { label: 'Attribution', path: '/tender-awarding', featureKey: 'analytics' },
+        { label: 'Notifications', path: '/award-notifications', featureKey: 'analytics' }
       ]
     },
     {
@@ -40,8 +42,20 @@ export default function Sidebar({ user, onLogout }) {
       icon: '💰',
       subItems: [
         { label: 'Factures', path: '/invoices', featureKey: 'invoices' },
+        { label: 'Génération', path: '/invoice-generation', featureKey: 'invoices' },
         { label: 'Budgets', path: '/budgets', featureKey: 'budgets' },
         { label: 'Rapports Financiers', path: '/financial-reports', featureKey: 'customreports' }
+      ]
+    },
+    {
+      id: 'operations',
+      label: 'Opérations',
+      icon: '⚙️',
+      subItems: [
+        { label: 'Contrats', path: '/contracts', featureKey: 'operations' },
+        { label: 'Livraisons', path: '/deliveries', featureKey: 'operations' },
+        { label: 'Performance', path: '/performance', featureKey: 'operations' },
+        { label: 'Litiges', path: '/disputes', featureKey: 'operations' }
       ]
     },
     {
