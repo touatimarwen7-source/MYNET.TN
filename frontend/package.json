@@ -1,13 +1,17 @@
 {
   "name": "mynet-frontend",
-  "private": true,
-  "version": "1.0.0",
+  "version": "1.2.0",
+  "description": "MyNet.tn - Professional Procurement & Tender Management System",
   "type": "module",
+  "license": "MIT",
+  "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0 --port 5000",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint . --ext .js,.jsx",
+    "format": "prettier --write .",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -21,9 +25,11 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
+    "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "prettier": "^3.1.0",
     "vite": "^7.2.4"
   }
 }
