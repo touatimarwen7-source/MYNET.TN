@@ -32,6 +32,7 @@
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .success-alert {
@@ -39,9 +40,10 @@
   border-left: 4px solid #10b981;
   color: #7bed9f;
   padding: 1rem;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-bottom: 1rem;
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 /* Form Tabs */
@@ -58,7 +60,7 @@
   cursor: pointer;
   padding: 0.8rem 1rem;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
+  border-radius: 8px;
   transition: all 0.3s ease;
   font-weight: 500;
 }
@@ -69,11 +71,13 @@
 
 .tab-label:hover {
   background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
 }
 
 .tab-label.active {
   background: rgba(255, 255, 255, 0.3);
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Form Grid */
@@ -87,7 +91,7 @@
 .form-input {
   padding: 0.8rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
   font-size: 1rem;
@@ -103,6 +107,7 @@
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
 }
 
 /* Submit Button */
@@ -112,12 +117,13 @@
   background: white;
   color: #00a8e8;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -125,16 +131,13 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.submit-btn:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-.form-disclaimer {
-  text-align: center;
-  font-size: 0.85rem;
-  opacity: 0.85;
-  margin: 0;
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Responsive */
@@ -143,23 +146,15 @@
     padding: 2rem;
   }
 
-  .lead-content h2 {
-    font-size: 1.5rem;
-  }
-
-  .lead-content p {
-    font-size: 1rem;
-  }
-
   .form-grid {
     grid-template-columns: 1fr;
   }
 
-  .form-tabs {
-    flex-direction: column;
-  }
-
   .lead-form {
     padding: 1.5rem;
+  }
+
+  .lead-content h2 {
+    font-size: 1.5rem;
   }
 }

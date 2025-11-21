@@ -18,6 +18,7 @@ body.dark-mode .how-it-works {
   text-align: center;
   color: #333;
   margin-bottom: 0.5rem;
+  font-weight: 700;
 }
 
 body.dark-mode .section-title {
@@ -45,6 +46,7 @@ body.dark-mode .section-subtitle {
   color: #333;
   margin-bottom: 2rem;
   text-align: center;
+  font-weight: 600;
 }
 
 body.dark-mode .journey-title {
@@ -65,15 +67,20 @@ body.dark-mode .journey-title {
   text-align: center;
   transition: all 0.3s ease;
   position: relative;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 body.dark-mode .step-card {
   background: linear-gradient(135deg, #252535 0%, #2a2a3e 100%);
+  border: 1px solid #444;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .step-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 35px rgba(0, 168, 232, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 168, 232, 0.15);
+  border-color: #00a8e8;
 }
 
 .step-number {
@@ -86,6 +93,7 @@ body.dark-mode .step-card {
   line-height: 40px;
   font-weight: 800;
   margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 168, 232, 0.3);
 }
 
 .step-icon {
@@ -97,6 +105,7 @@ body.dark-mode .step-card {
   font-size: 1.2rem;
   color: #333;
   margin: 1rem 0;
+  font-weight: 600;
 }
 
 body.dark-mode .step-card h4 {
@@ -105,58 +114,60 @@ body.dark-mode .step-card h4 {
 
 .step-card p {
   color: #666;
+  line-height: 1.8;
   font-size: 0.95rem;
-  line-height: 1.5;
 }
 
 body.dark-mode .step-card p {
   color: #b0b0b0;
 }
 
-.step-arrow {
-  position: absolute;
-  right: -1.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.5rem;
-  color: #00a8e8;
-  font-weight: bold;
+/* Benefits Section */
+.benefits-section {
+  margin-top: 3rem;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(0, 168, 232, 0.05) 0%, rgba(0, 212, 255, 0.02) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 168, 232, 0.1);
 }
 
-/* Benefits */
-.benefits-section {
+body.dark-mode .benefits-section {
+  background: linear-gradient(135deg, rgba(0, 168, 232, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+  border: 1px solid rgba(0, 168, 232, 0.2);
+}
+
+.benefits-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
-  margin-top: 3rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, rgba(0, 168, 232, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
-  border-radius: 12px;
-  border-left: 4px solid #00a8e8;
 }
 
 .benefit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
 .benefit-icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
 }
 
-.benefit-item h4 {
+.benefit-item h5 {
+  font-size: 1rem;
   color: #333;
   margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
-body.dark-mode .benefit-item h4 {
+body.dark-mode .benefit-item h5 {
   color: #e0e0e0;
 }
 
 .benefit-item p {
+  font-size: 0.85rem;
   color: #666;
-  font-size: 0.9rem;
 }
 
 body.dark-mode .benefit-item p {
@@ -164,34 +175,30 @@ body.dark-mode .benefit-item p {
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .steps-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .step-arrow {
-    display: none;
-  }
-
-  .benefits-section {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .how-it-works {
-    padding: 2rem 1rem;
+    padding: 3rem 2rem;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .step-card {
+    padding: 1.5rem;
   }
 
   .section-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
-  .steps-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .benefits-section {
-    grid-template-columns: 1fr;
+  .journey-title {
+    font-size: 1.25rem;
   }
 }
