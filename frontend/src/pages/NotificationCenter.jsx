@@ -26,7 +26,7 @@ export default function NotificationCenter() {
   const handleDNDMode = (hours) => {
     setDndMode(true);
     const until = new Date(Date.now() + hours * 60 * 60 * 1000);
-    setDndUntil(until.toLocaleString('ar-TN'));
+    setDndUntil(until.toLocaleString('fr-FR'));
   };
 
   const handleFrequency = async (newFrequency) => {
@@ -43,83 +43,83 @@ export default function NotificationCenter() {
 
   return (
     <div className="notification-center">
-      <h1>مركز الإشعارات</h1>
+      <h1>Centre des Notifications</h1>
 
-      {/* إعدادات الإشعارات */}
+      {/* Paramètres des Notifications */}
       <div className="notification-settings">
         <div className="setting-group">
-          <h3>تكرار الإشعارات</h3>
+          <h3>Fréquence des Notifications</h3>
           <div className="frequency-buttons">
             <button 
               className={`freq-btn ${frequency === 'instant' ? 'active' : ''}`}
               onClick={() => handleFrequency('instant')}
             >
-              فوري
+              Instantané
             </button>
             <button 
               className={`freq-btn ${frequency === 'daily' ? 'active' : ''}`}
               onClick={() => handleFrequency('daily')}
             >
-              يومي
+              Quotidien
             </button>
             <button 
               className={`freq-btn ${frequency === 'weekly' ? 'active' : ''}`}
               onClick={() => handleFrequency('weekly')}
             >
-              أسبوعي
+              Hebdomadaire
             </button>
           </div>
         </div>
 
         <div className="setting-group">
-          <h3>وضع عدم الإزعاج</h3>
+          <h3>Mode Ne pas Déranger</h3>
           {!dndMode ? (
             <div className="dnd-buttons">
-              <button onClick={() => handleDNDMode(1)} className="dnd-btn">1 ساعة</button>
-              <button onClick={() => handleDNDMode(4)} className="dnd-btn">4 ساعات</button>
-              <button onClick={() => handleDNDMode(8)} className="dnd-btn">8 ساعات</button>
+              <button onClick={() => handleDNDMode(1)} className="dnd-btn">1 heure</button>
+              <button onClick={() => handleDNDMode(4)} className="dnd-btn">4 heures</button>
+              <button onClick={() => handleDNDMode(8)} className="dnd-btn">8 heures</button>
             </div>
           ) : (
             <div className="dnd-active">
-              <p>✓ وضع عدم الإزعاج مفعل حتى: {dndUntil}</p>
-              <button onClick={() => setDndMode(false)} className="btn-cancel">إلغاء</button>
+              <p>✓ Mode Ne pas Déranger activé jusqu'à: {dndUntil}</p>
+              <button onClick={() => setDndMode(false)} className="btn-cancel">Annuler</button>
             </div>
           )}
         </div>
       </div>
 
-      {/* التصفية */}
+      {/* Filtres */}
       <div className="notification-filters">
         <button 
           className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
           onClick={() => setFilter('all')}
         >
-          الكل
+          Tous
         </button>
         <button 
           className={`filter-btn ${filter === 'critical' ? 'active' : ''}`}
           onClick={() => setFilter('critical')}
         >
-          حرج
+          Critique
         </button>
         <button 
           className={`filter-btn ${filter === 'high' ? 'active' : ''}`}
           onClick={() => setFilter('high')}
         >
-          مهم
+          Important
         </button>
         <button 
           className={`filter-btn ${filter === 'normal' ? 'active' : ''}`}
           onClick={() => setFilter('normal')}
         >
-          عادي
+          Normal
         </button>
       </div>
 
-      {/* قائمة الإشعارات */}
+      {/* Liste des Notifications */}
       <div className="notifications-list">
         {notifications.length === 0 ? (
-          <p className="empty-state">لا توجد إشعارات</p>
+          <p className="empty-state">Aucune notification</p>
         ) : (
           notifications.map((notif, idx) => (
             <div key={idx} className={`notification-item priority-${notif.priority}`}>
@@ -128,7 +128,7 @@ export default function NotificationCenter() {
                 <span className="priority-badge">{notif.priority}</span>
               </div>
               <p className="notif-message">{notif.message}</p>
-              <p className="notif-time">{new Date(notif.created_at).toLocaleString('ar-TN')}</p>
+              <p className="notif-time">{new Date(notif.created_at).toLocaleString('fr-FR')}</p>
             </div>
           ))
         )}
