@@ -3503,3 +3503,76 @@
     gap: 0.5rem;
   }
 }
+
+/* Dark Mode Toggle Button */
+.btn-dark-mode {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-dark-mode:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1) rotate(20deg);
+}
+
+.btn-dark-mode:active {
+  transform: scale(0.95) rotate(20deg);
+}
+
+/* RTL Symmetry - All Components */
+[dir='rtl'] {
+  text-align: right;
+}
+
+[dir='ltr'] {
+  text-align: left;
+}
+
+/* Navbar RTL/LTR Symmetry */
+[dir='rtl'] .nav-links,
+[dir='ltr'] .nav-links {
+  flex-direction: row;
+}
+
+/* Form Elements RTL/LTR Symmetry */
+[dir='rtl'] input,
+[dir='rtl'] textarea,
+[dir='rtl'] select {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir='ltr'] input,
+[dir='ltr'] textarea,
+[dir='ltr'] select {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Tables RTL/LTR Symmetry */
+[dir='rtl'] table th,
+[dir='rtl'] table td {
+  text-align: right;
+}
+
+[dir='ltr'] table th,
+[dir='ltr'] table td {
+  text-align: left;
+}
+
+/* Badge & Icon Alignment RTL/LTR */
+[dir='rtl'] .verified-badge,
+[dir='rtl'] .encryption-badge {
+  flex-direction: row;
+}
+
+[dir='ltr'] .verified-badge,
+[dir='ltr'] .encryption-badge {
+  flex-direction: row;
+}

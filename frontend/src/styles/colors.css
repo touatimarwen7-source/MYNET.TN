@@ -70,11 +70,67 @@
   --transition-slow: 350ms ease-in-out;
 }
 
-/* Dark Mode Support (Future) */
+/* Dark Mode Support - Comprehensive */
+[data-theme='dark'] {
+  /* الألوان الأساسية - Dark Palette */
+  --color-primary-dark: #87ceeb;      /* أزرق فاتح للخلفيات الداكنة */
+  --color-primary-main: #4db8e8;      /* أزرق متوسط */
+  --color-primary-light: #2d8fb8;     /* أزرق داكن */
+  --color-primary-lighter: #1a2a3a;   /* خلفية داكنة جداً */
+  
+  /* لون العمل - Action Color */
+  --color-action: #64b5f6;            /* أزرق سماوي مشرق */
+  --color-action-hover: #42a5f5;      /* أزرق سماوي مع تمرير */
+  --color-action-light: #1976d2;      /* أزرق سماوي داكن */
+  
+  /* الرمادي - Dark Mode */
+  --color-grey-dark: #e0e0e0;         /* رمادي فاتح للنصوص */
+  --color-grey-medium: #bdbdbd;       /* رمادي متوسط */
+  --color-grey-light: #616161;        /* رمادي داكن للحدود */
+  --color-grey-lighter: #424242;      /* رمادي جداً داكن للخلفيات */
+  --color-grey-lightest: #1e1e1e;     /* رمادي فاتح جداً (خلفية) */
+  
+  /* الأبيض - Dark Mode (معكوس) */
+  --color-white: #121212;             /* الخلفية الداكنة */
+  
+  /* ألوان الحالات - Dark Mode */
+  --color-success: #66bb6a;           /* أخضر فاتح */
+  --color-success-light: #1b5e20;     /* خلفية أخضر داكنة */
+  --color-warning: #ffa726;           /* برتقالي فاتح */
+  --color-warning-light: #e65100;     /* خلفية برتقالي داكنة */
+  --color-error: #ef5350;             /* أحمر فاتح */
+  --color-error-light: #b71c1c;       /* خلفية أحمر داكنة */
+  --color-info: #42a5f5;              /* أزرق فاتح */
+  --color-info-light: #0d47a1;        /* خلفية أزرق داكنة */
+  
+  /* التدرجات - Dark Mode */
+  --gradient-primary: linear-gradient(135deg, #4db8e8 0%, #2d8fb8 100%);
+  --gradient-action: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+  --gradient-success: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+  --gradient-warning: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
+  
+  /* الظلال - Dark Mode */
+  --shadow-light: 0 2px 4px rgba(255, 255, 255, 0.1);
+  --shadow-medium: 0 4px 8px rgba(255, 255, 255, 0.15);
+  --shadow-heavy: 0 8px 16px rgba(255, 255, 255, 0.2);
+  --shadow-elevation: 0 12px 24px rgba(255, 255, 255, 0.25);
+  
+  /* الحدود - Dark Mode */
+  --border-color: #424242;
+  --border-color-light: #303030;
+}
+
+/* System Preference Fallback */
 @media (prefers-color-scheme: dark) {
-  :root {
+  [data-theme='light'] {
+    /* Keep light mode even if system prefers dark */
+  }
+  
+  :root:not([data-theme]) {
+    /* Apply dark mode colors if no theme is set */
+    --color-primary-dark: #87ceeb;
+    --color-primary-main: #4db8e8;
+    --color-white: #121212;
     --color-grey-dark: #e0e0e0;
-    --color-grey-medium: #bdbdbd;
-    --color-white: #1e1e1e;
   }
 }

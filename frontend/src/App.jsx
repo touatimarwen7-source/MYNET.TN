@@ -34,6 +34,7 @@ import { setupInactivityTimer } from './utils/security';
 import { useToast } from './components/ToastContainer';
 import ToastContainer from './components/ToastContainer';
 import { ToastContext } from './contexts/ToastContext';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 import './App.css';
 
 function App() {
@@ -73,9 +74,10 @@ function App() {
   }
 
   return (
-    <ToastContext.Provider value={{ addToast }}>
-      <Router>
-        <div className="app">
+    <DarkModeProvider>
+      <ToastContext.Provider value={{ addToast }}>
+        <Router>
+          <div className="app">
           <ToastContainer toasts={toasts} removeToast={removeToast} />
         <nav className="navbar">
           <div className="nav-container">
@@ -223,7 +225,13 @@ function App() {
         </div>
       </Router>
     </ToastContext.Provider>
+    </DarkModeProvider>
   );
 }
 
 export default App;
+
+// Dark Mode Toggle Button for navbar - add to navbar section:
+// <button onClick={toggleDarkMode} className="btn-dark-mode">
+//   {isDarkMode ? '☀️' : '🌙'}
+// </button>

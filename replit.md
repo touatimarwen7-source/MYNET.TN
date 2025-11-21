@@ -8,9 +8,15 @@ MyNet.tn is a comprehensive B2B e-tendering platform designed specifically for t
 
 **🎉 PROJECT COMPLETE & PRODUCTION READY 🎉**
 
-Full implementation with professional design system, secure offer submission workflow, advanced UX/UI, and enterprise-grade security.
+Full implementation with professional design system, secure offer submission workflow, advanced UX/UI, global platform support, and enterprise-grade security.
 
-## Recent Changes (Final Implementation)
+## Recent Changes (Final Implementation - Global Platform Ready)
+
+### ✅ Global Platform Support (Latest)
+- **Dark Mode** - Full dark theme with proper color palette for eye comfort during long FinTech sessions
+- **Visual Trust Indicators** - Verified badges and encryption indicators for trustworthy appearance
+- **RTL/LTR Symmetry** - All components properly support Arabic (RTL) and English (LTR) layouts
+- **Comprehensive Color System** - Light and dark palettes optimized for accessibility
 
 ### ✅ Advanced UX/UI Enhancements
 - **Toast Notification System** - Elegant slide-in notifications for success/error/warning messages
@@ -47,14 +53,15 @@ Preferred communication style: Simple, everyday language.
 
 **Key Architectural Decisions**:
 - **Single Page Application (SPA)**: React Router v6 for client-side routing with role-based page access
-- **RTL-First Design**: Full Right-to-Left layout support for Arabic language users
+- **RTL-First Design**: Full Right-to-Left layout support for Arabic language users with LTR fallback
+- **Dark Mode Support**: Context-based theme switching with CSS variables
 - **Component Organization**: 30+ pages organized by user role (auth, buyer, supplier, admin, shared)
 - **State Management**: Local component state with Axios for server communication
 - **Security Layer**: Client-side token management with automatic refresh, XSS protection
 - **Design System**: Centralized CSS variables and design tokens for consistency
-- **UX Components**: Toast notifications, tooltips, enhanced tables, micro-interactions
+- **UX Components**: Toast notifications, tooltips, enhanced tables, micro-interactions, verified badges
 
-**Rationale**: React 19 provides modern hooks and concurrent features. Vite offers fast development. RTL design essential for Arabic-speaking Tunisian market. Toast system reduces complexity vs. browser alerts. Micro-interactions enhance perceived performance and user delight.
+**Rationale**: React 19 provides modern hooks and concurrent features. Vite offers fast development. RTL/Dark mode essential for global markets. Toast system reduces complexity vs. browser alerts. Verified badges enhance trust. Micro-interactions enhance user delight.
 
 ### Backend Architecture
 
@@ -135,11 +142,12 @@ Preferred communication style: Simple, everyday language.
 - **Toast Notification System**: React Context for global toast management across all pages
 - **Enhanced Components**: Tables with sticky headers, sorting, grouping, tooltips
 - **Micro-Interactions**: Smooth animations for user feedback and perceived performance
+- **Dark Mode**: Context-based theme switching with CSS variables for all components
 
 **Payment Integration** (planned):
 - Stripe integration structure prepared with webhook routes and subscription models
 
-**Rationale**: Server-side PDF ensures consistent formatting. Encryption key rotation limits exposure. Smart notifications reduce noise. Toast system provides non-intrusive feedback. Enhanced tables improve data comprehension for financial information.
+**Rationale**: Server-side PDF ensures consistent formatting. Encryption key rotation limits exposure. Smart notifications reduce noise. Toast system provides non-intrusive feedback. Dark mode improves comfort. Verified badges enhance trust signals. Enhanced tables improve data comprehension for financial information.
 
 ## Key Files & Structure
 
@@ -147,28 +155,33 @@ Preferred communication style: Simple, everyday language.
 frontend/
 ├── src/
 │   ├── pages/
-│   │   ├── CreateOffer.jsx         (Secure 3-step bid form + Toast integration)
+│   │   ├── CreateOffer.jsx         (Secure 3-step bid form + Toast)
 │   │   ├── TenderDetail.jsx        (Tender view + participate button)
 │   │   ├── TenderList.jsx          (Browse tenders)
 │   │   ├── MyOffers.jsx            (Supplier's submitted offers)
 │   │   └── [25+ more pages]
 │   ├── components/
-│   │   ├── ToastNotification.jsx   (Toast component with animations)
-│   │   ├── ToastContainer.jsx      (Toast management system)
+│   │   ├── ToastNotification.jsx   (Toast component)
+│   │   ├── ToastContainer.jsx      (Toast management)
 │   │   ├── Tooltip.jsx             (Smart tooltips)
-│   │   ├── EnhancedTable.jsx       (Interactive tables with features)
+│   │   ├── EnhancedTable.jsx       (Interactive tables)
+│   │   ├── VerifiedBadge.jsx       (Trust indicator)
+│   │   ├── EncryptionBadge.jsx     (Security indicator)
+│   │   ├── DarkModeToggle.jsx      (Theme switcher)
 │   │   └── [PDFExport components]
 │   ├── contexts/
-│   │   └── ToastContext.jsx        (Global toast context)
+│   │   ├── ToastContext.jsx        (Global toast)
+│   │   └── DarkModeContext.jsx     (Theme management)
 │   ├── styles/
-│   │   ├── colors.css             (Color palette & CSS variables)
-│   │   ├── designSystem.css       (Typography, buttons, cards, utilities)
-│   │   ├── toasts.css             (Toast notification styles)
-│   │   ├── tooltips.css           (Tooltip styles)
-│   │   └── tables.css             (Enhanced table styles)
-│   ├── api.js                      (API client with auto refresh)
-│   ├── App.jsx                     (Router & layout + ToastContext)
-│   └── App.css                     (Custom overrides & imports)
+│   │   ├── colors.css             (Light & Dark palettes)
+│   │   ├── designSystem.css       (Typography, components)
+│   │   ├── badges.css             (Trust/Security badges)
+│   │   ├── toasts.css             (Toast notifications)
+│   │   ├── tooltips.css           (Tooltips)
+│   │   └── tables.css             (Enhanced tables)
+│   ├── api.js                      (API client)
+│   ├── App.jsx                     (Router + Dark Mode)
+│   └── App.css                     (Custom + RTL support)
 │
 backend/
 ├── routes/
@@ -179,7 +192,6 @@ backend/
 │   ├── TenderService.js
 │   ├── OfferService.js
 │   ├── KeyManagementService.js    (AES-256 encryption)
-│   ├── HealthMonitoringService.js
 │   └── [other services]
 ├── middleware/
 │   ├── authMiddleware.js
@@ -187,6 +199,28 @@ backend/
 │   └── [other middleware]
 └── server.js                       (Express setup)
 ```
+
+## Global Platform Features
+
+### Dark Mode
+- **Automatic Detection**: Respects system preferences (prefers-color-scheme)
+- **Manual Toggle**: User can switch anytime (stored in localStorage)
+- **Optimized Palettes**: 
+  - Light mode: Professional blues, warm grays, white backgrounds
+  - Dark mode: Bright blues on dark backgrounds, designed for eye comfort during long sessions
+- **Smooth Transitions**: All components support theme switching without reloads
+
+### RTL/LTR Support
+- **Full Symmetry**: All components work seamlessly in both directions
+- **Language Detection**: Automatic switching based on language selection
+- **Consistent Styling**: Flexbox and grid layouts adapt automatically
+- **Text Alignment**: Proper alignment in forms, tables, and buttons
+
+### Visual Trust Indicators
+- **Verified Badges** ✓: Shows when suppliers are verified
+- **Encryption Badges** 🔒: Indicates encrypted data fields
+- **Pulsing Animations**: Draws attention to security features
+- **Hover Tooltips**: Provides context on trust signals
 
 ## Deployment Status
 
@@ -196,39 +230,9 @@ backend/
 
 All systems are **production-ready** and can be deployed immediately via Replit Publishing.
 
-## Component Features
-
-### Toast Notification System
-- Slide-in animations with auto-dismiss
-- Types: success, error, warning, info
-- Global context for use in any page
-- Progress indicator showing remaining time
-
-### Enhanced Tables
-- Sticky headers for easy scrolling
-- Sortable columns with visual indicators
-- Grouping by field (e.g., by compliance status)
-- Striped rows with hover effects
-- Responsive design for mobile
-
-### Smart Tooltips
-- Positioned auto-adjust (top, bottom, left, right)
-- Non-intrusive hover activation
-- Accessible design with focus states
-- Works with KPI metrics and info icons
-
-### Micro-Interactions
-- Button press and release animations
-- Success checkmark effects
-- Form focus pulse animations
-- Card flip effects on hover
-- Smooth slide-in/out transitions for pages
-- Skeleton loading with shimmer effect
-- State-based animations (success/error shake)
-
 ## Performance Optimizations
 
-- CSS variables for fast theme switching (future dark mode support)
+- CSS variables for instant theme switching (no page reloads)
 - Lazy loading components via React Router
 - Memoized table operations for large datasets
 - Debounced API calls in search and filtering
@@ -247,19 +251,6 @@ All systems are **production-ready** and can be deployed immediately via Replit 
 - XSS protection through input sanitization
 - CSRF token support (ready for implementation)
 - Audit logging of all sensitive operations
-
-## Testing Checklist
-
-- ✅ Login/Register flow with role-based redirection
-- ✅ Tender creation and publication by buyers
-- ✅ Tender browsing and filtering by suppliers
-- ✅ Secure 3-step offer submission with encryption
-- ✅ Toast notifications for user feedback
-- ✅ Deadline validation preventing late submissions
-- ✅ Offer evaluation and award workflow
-- ✅ PDF generation for documents
-- ✅ MFA setup and verification
-- ✅ Responsive design on mobile/tablet
 
 ## Next Steps for Production
 
