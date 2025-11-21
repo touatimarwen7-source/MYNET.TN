@@ -1,5 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import {
+  Container,
+  Box,
+  Card,
+  CardContent,
+  Button,
+  Typography,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+  Stack,
+  Chip,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { procurementAPI } from '../api';
 
 export default function TenderDetail() {
@@ -18,7 +37,7 @@ export default function TenderDetail() {
         const tokenData = JSON.parse(atob(token.split('.')[1]));
         setUser(tokenData);
       } catch (e) {
-        console.error('خطأ في فك التوكن:', e);
+        console.error('Erreur lors du décodage du jeton:', e);
       }
     }
   }, []);
@@ -40,79 +59,237 @@ export default function TenderDetail() {
         // Offers might not be accessible
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'خطأ في تحميل المناقصة');
+      setError(err.response?.data?.error || 'Erreur lors du chargement de la marchandise');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="loading">Chargement en cours...</div>;
-  if (error) return <div className="alert alert-error">{error}</div>;
-  if (!tender) return <div className="alert alert-error">المناقصة غير موجودة</div>;
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress sx={{ color: '#1565c0' }} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="lg" sx={{ paddingY: '40px' }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+  }
+
+  if (!tender) {
+    return (
+      <Container maxWidth="lg" sx={{ paddingY: '40px' }}>
+        <Alert severity="error">La marchandise n'existe pas</Alert>
+      </Container>
+    );
+  }
 
   return (
-    <div>
-      <button onClick={() => window.history.back()} className="btn btn-secondary">
-        ← رجوع
-      </button>
+    <Box sx={{ backgroundColor: '#fafafa', paddingY: '40px' }}>
+      <Container maxWidth="lg">
+        {/* Back Button */}
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => window.history.back()}
+          sx={{
+            color: '#1565c0',
+            textTransform: 'none',
+            fontWeight: 500,
+            marginBottom: '24px',
+            '&:hover': { backgroundColor: '#f5f5f5' },
+          }}
+        >
+          Retour
+        </Button>
 
-      <div className="card" style={{ marginTop: '1rem' }}>
-        <h2>{tender.title}</h2>
-        <span className={`badge badge-${tender.status}`}>{tender.status}</span>
+        {/* Header */}
+        <Card sx={{ marginBottom: '32px', border: '1px solid #e0e0e0' }}>
+          <CardContent sx={{ padding: '32px' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="h2"
+                  sx={{
+                    fontSize: '28px',
+                    fontWeight: 500,
+                    color: '#212121',
+                    marginBottom: '16px',
+                  }}
+                >
+                  {tender.title}
+                </Typography>
+                <Typography sx={{ color: '#616161', marginBottom: '12px' }}>
+                  {tender.description}
+                </Typography>
+              </Box>
+              <Chip
+                label={tender.status === 'active' ? 'Actif' : 'Clôturé'}
+                sx={{
+                  backgroundColor: tender.status === 'active' ? '#e8f5e9' : '#ffebee',
+                  color: tender.status === 'active' ? '#1b5e20' : '#c62828',
+                  fontWeight: 600,
+                }}
+              />
+            </Box>
+          </CardContent>
+        </Card>
 
-        <div style={{ marginTop: '1.5rem', lineHeight: '1.8' }}>
-          <p><strong>الوصف:</strong> {tender.description}</p>
-          <p><strong>Catégorie:</strong> {tender.category}</p>
-          <p><strong>Budget:</strong> {tender.budget_min} - {tender.budget_max} {tender.currency}</p>
-          <p><strong>آخر تعديل:</strong> {new Date(tender.updated_at).toLocaleDateString('fr-FR')}</p>
-          
-          {tender.deadline && (
-            <p><strong>موعد الإغلاق:</strong> {new Date(tender.deadline).toLocaleDateString('fr-FR')}</p>
-          )}
-        </div>
+        {/* Details */}
+        <Card sx={{ marginBottom: '32px', border: '1px solid #e0e0e0' }}>
+          <CardContent sx={{ padding: '32px' }}>
+            <Typography variant="h4" sx={{ fontSize: '18px', fontWeight: 600, color: '#212121', marginBottom: '24px' }}>
+              Détails de la marchandise
+            </Typography>
+            
+            <Stack spacing={2}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: '24px' }}>
+                <Box>
+                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Catégorie
+                  </Typography>
+                  <Typography sx={{ fontSize: '16px', color: '#212121', fontWeight: 500 }}>
+                    {tender.category || 'N/A'}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Budget
+                  </Typography>
+                  <Typography sx={{ fontSize: '16px', color: '#1565c0', fontWeight: 600 }}>
+                    {tender.budget_min} - {tender.budget_max} {tender.currency}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Date limite
+                  </Typography>
+                  <Typography sx={{ fontSize: '16px', color: '#212121', fontWeight: 500 }}>
+                    {new Date(tender.deadline).toLocaleDateString('fr-FR')}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Dernier mise à jour
+                  </Typography>
+                  <Typography sx={{ fontSize: '16px', color: '#212121', fontWeight: 500 }}>
+                    {new Date(tender.updated_at).toLocaleDateString('fr-FR')}
+                  </Typography>
+                </Box>
+              </Box>
+            </Stack>
+          </CardContent>
+        </Card>
 
+        {/* Requirements */}
         {tender.requirements && tender.requirements.length > 0 && (
-          <div style={{ marginTop: '1.5rem' }}>
-            <h3>المتطلبات</h3>
-            <ul>
-              {tender.requirements.map((req, idx) => (
-                <li key={idx}>{req}</li>
-              ))}
-            </ul>
-          </div>
+          <Card sx={{ marginBottom: '32px', border: '1px solid #e0e0e0' }}>
+            <CardContent sx={{ padding: '32px' }}>
+              <Typography variant="h4" sx={{ fontSize: '18px', fontWeight: 600, color: '#212121', marginBottom: '16px' }}>
+                Exigences
+              </Typography>
+              <Stack spacing={1}>
+                {tender.requirements.map((req, idx) => (
+                  <Typography key={idx} sx={{ fontSize: '14px', color: '#212121', display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ display: 'inline-block', width: '6px', height: '6px', backgroundColor: '#1565c0', borderRadius: '50%', marginRight: '8px' }} />
+                    {req}
+                  </Typography>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
         )}
-      </div>
 
-      {/* زر المشاركة للمورد */}
-      {user?.role === 'supplier' && (
-        <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: '#f5f5f5', borderRadius: '8px', textAlign: 'center' }}>
-          <h3 style={{ marginBottom: '1rem' }}>هل تريد تقديم عرض على هذه المناقصة؟</h3>
-          <p style={{ color: '#666', marginBottom: '1.5rem' }}>انقر على الزر أدناه لتقديم عرض آمن</p>
-          <button 
-            onClick={() => navigate(`/create-offer/${id}`)}
-            className="btn btn-primary"
-            style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
-          >
-            📝 المشاركة وتقديم عرض
-          </button>
-        </div>
-      )}
+        {/* Call to Action for Suppliers */}
+        {user?.role === 'supplier' && tender.status === 'active' && (
+          <Card sx={{ marginBottom: '32px', backgroundColor: '#e3f2fd', border: '1px solid #1565c0' }}>
+            <CardContent sx={{ padding: '32px', textAlign: 'center' }}>
+              <Typography variant="h4" sx={{ fontSize: '20px', fontWeight: 600, color: '#0d47a1', marginBottom: '12px' }}>
+                Prêt à soumettre une offre?
+              </Typography>
+              <Typography sx={{ color: '#1565c0', marginBottom: '24px', fontSize: '14px' }}>
+                Cliquez sur le bouton ci-dessous pour soumettre votre offre en toute sécurité
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={() => navigate(`/create-offer/${id}`)}
+                sx={{
+                  backgroundColor: '#1565c0',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  padding: '12px 32px',
+                  minHeight: '44px',
+                  '&:hover': { backgroundColor: '#0d47a1' },
+                }}
+              >
+                📝 Soumettre une Offre
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-      {offers.length > 0 && (
-        <div style={{ marginTop: '2rem' }}>
-          <h3>العروض المقدمة</h3>
-          <div className="tender-list">
-            {offers.map(offer => (
-              <div key={offer.id} className="card">
-                <p><strong>المورد:</strong> {offer.full_name}</p>
-                <p><strong>Montant:</strong> {offer.total_amount} {offer.currency}</p>
-                <p><strong>وقت التسليم:</strong> {offer.delivery_time}</p>
-                <p><strong>Statut:</strong> {offer.status}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+        {/* Offers List */}
+        {offers.length > 0 && (
+          <Card sx={{ border: '1px solid #e0e0e0' }}>
+            <CardContent sx={{ padding: 0 }}>
+              <Box sx={{ padding: '24px' }}>
+                <Typography variant="h4" sx={{ fontSize: '18px', fontWeight: 600, color: '#212121' }}>
+                  Offres Reçues ({offers.length})
+                </Typography>
+              </Box>
+              <Paper sx={{ border: '1px solid #e0e0e0', borderRadius: 0, overflow: 'hidden' }}>
+                <Table>
+                  <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                    <TableRow sx={{ height: '56px' }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                        Fournisseur
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }} align="right">
+                        Montant
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                        Délai
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                        Statut
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {offers.map(offer => (
+                      <TableRow key={offer.id} sx={{ height: '56px', borderBottom: '1px solid #e0e0e0' }}>
+                        <TableCell sx={{ color: '#212121', fontSize: '14px', fontWeight: 500 }}>
+                          {offer.full_name}
+                        </TableCell>
+                        <TableCell sx={{ color: '#1565c0', fontSize: '14px', fontWeight: 600 }} align="right">
+                          {offer.total_amount} {offer.currency}
+                        </TableCell>
+                        <TableCell sx={{ color: '#616161', fontSize: '14px' }}>
+                          {offer.delivery_time}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={offer.status}
+                            size="small"
+                            sx={{
+                              backgroundColor: offer.status === 'submitted' ? '#e3f2fd' : '#f5f5f5',
+                              color: offer.status === 'submitted' ? '#0d47a1' : '#616161',
+                            }}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Paper>
+            </CardContent>
+          </Card>
+        )}
+      </Container>
+    </Box>
   );
 }
