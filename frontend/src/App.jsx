@@ -35,12 +35,15 @@ import { useToast } from './components/ToastContainer';
 import ToastContainer from './components/ToastContainer';
 import { ToastContext } from './contexts/ToastContext';
 import { DarkModeProvider } from './contexts/DarkModeContext';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const { toasts, addToast, removeToast } = useToast();
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -85,6 +88,7 @@ function App() {
               <h1>MyNet.tn</h1>
               <span>نظام المناقصات والمشتريات</span>
             </div>
+            <LanguageSwitcher />
             <div className="nav-links">
               {user ? (
                 <>
@@ -235,3 +239,6 @@ export default App;
 // <button onClick={toggleDarkMode} className="btn-dark-mode">
 //   {isDarkMode ? '☀️' : '🌙'}
 // </button>
+
+// Add to navbar after nav-brand (around line 85):
+// <LanguageSwitcher />
