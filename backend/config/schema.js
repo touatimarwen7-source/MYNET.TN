@@ -222,6 +222,8 @@ const schemaQueries = [
         features JSONB,
         max_tenders INTEGER,
         max_offers INTEGER,
+        max_products INTEGER DEFAULT 50,
+        storage_limit INTEGER DEFAULT 5,
         is_active BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -240,6 +242,26 @@ const schemaQueries = [
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );`,
+
+    `CREATE TABLE IF NOT EXISTS supplier_features (
+        id SERIAL PRIMARY KEY,
+        supplier_id INTEGER REFERENCES users(id) NOT NULL,
+        feature_key VARCHAR(100) NOT NULL,
+        feature_name VARCHAR(255),
+        category VARCHAR(50),
+        is_enabled BOOLEAN DEFAULT FALSE,
+        enabled_by INTEGER REFERENCES users(id),
+        reason TEXT,
+        enabled_at TIMESTAMP WITH TIME ZONE,
+        expires_at TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(supplier_id, feature_key)
+    );`,
+
+    `CREATE INDEX IF NOT EXISTS idx_supplier_features_supplier ON supplier_features(supplier_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_supplier_features_enabled ON supplier_features(is_enabled);`,
+    `CREATE INDEX IF NOT EXISTS idx_supplier_features_expires ON supplier_features(expires_at);`,
 
     `CREATE TABLE IF NOT EXISTS tender_history (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
