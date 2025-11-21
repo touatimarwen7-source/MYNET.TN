@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
+import DashboardCards from '../components/DashboardCards';
+import QuickActions from '../components/QuickActions';
+import ImportantDocuments from '../components/ImportantDocuments';
 
 export default function BuyerDashboard() {
   const [stats, setStats] = useState({
@@ -61,11 +64,113 @@ export default function BuyerDashboard() {
     return 'normal';
   };
 
+  // Cartes de résumé des services
+  const summaryCards = [
+    {
+      icon: '📋',
+      label: 'Appels d\'Offres',
+      value: stats.activeTenders,
+      subtitle: 'Appels actifs',
+      status: 'active',
+      type: 'metric'
+    },
+    {
+      icon: '📊',
+      label: 'Total Offres',
+      value: stats.totalBids,
+      subtitle: 'Offres reçues',
+      status: 'active',
+      type: 'metric'
+    },
+    {
+      icon: '💰',
+      label: 'Économies',
+      value: `${stats.totalSavings}%`,
+      subtitle: 'Du budget',
+      progress: parseInt(stats.totalSavings) || 0,
+      status: parseInt(stats.totalSavings) >= 15 ? 'active' : 'pending',
+      type: 'metric'
+    },
+    {
+      icon: '⚡',
+      label: 'Vélocité',
+      value: `${stats.bidVelocity}x`,
+      subtitle: 'Offres/Appel',
+      status: 'active',
+      type: 'metric'
+    }
+  ];
+
+  // Actions rapides pour acheteur
+  const quickActions = [
+    {
+      icon: '➕',
+      label: 'Créer Appel',
+      priority: 'high',
+      path: '/create-tender',
+      description: 'Créer un nouvel appel d\'offres'
+    },
+    {
+      icon: '📂',
+      label: 'Voir Appels',
+      path: '/tenders',
+      description: 'Consulter tous les appels'
+    },
+    {
+      icon: '📊',
+      label: 'Analytiques',
+      path: '/tender-analysis',
+      description: 'Consulter l\'analyse des offres'
+    },
+    {
+      icon: '👥',
+      label: 'Mon Équipe',
+      path: '/team-management',
+      description: 'Gérer les membres de l\'équipe'
+    }
+  ];
+
+  // Documents importants
+  const importantDocs = [
+    {
+      icon: '📄',
+      title: 'Factures en Attente',
+      meta: '3 factures',
+      priority: 'high',
+      details: '3 factures en attente de validation pour appels en cours',
+      action: { label: 'Consulter', path: '/invoices' }
+    },
+    {
+      icon: '✅',
+      title: 'Résultats Prêts',
+      meta: '2 appels',
+      priority: 'medium',
+      details: '2 résultats de ترسية prêts à être téléchargés',
+      action: { label: 'Télécharger', path: '/award-results' }
+    },
+    {
+      icon: '🔄',
+      title: 'Évaluations en Cours',
+      meta: '5 appels',
+      priority: 'normal',
+      details: 'Suivi des évaluations en cours pour 5 appels d\'offres'
+    }
+  ];
+
   return (
     <div className="buyer-dashboard">
       <h1>Tableau de Bord - Acheteur</h1>
 
-      {/* KPIs Grid */}
+      {/* Summary Cards */}
+      <DashboardCards cards={summaryCards} />
+
+      {/* Quick Actions */}
+      <QuickActions actions={quickActions} />
+
+      {/* Important Documents */}
+      <ImportantDocuments documents={importantDocs} title="Documents Importants" />
+
+      {/* KPIs Grid - Legacy */}
       <div className="kpis-grid">
         <div className="kpi-card">
           <div className="kpi-header">

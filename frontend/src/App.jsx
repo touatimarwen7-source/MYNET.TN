@@ -16,6 +16,7 @@ import CreateTenderImproved from './pages/CreateTenderImproved';
 import TenderChat from './pages/TenderChat';
 import TeamManagement from './pages/TeamManagement';
 import SupplierSearch from './pages/SupplierSearch';
+import SupplierDashboard from './pages/SupplierDashboard';
 import SubmitBid from './pages/SubmitBid';
 import NotificationCenter from './pages/NotificationCenter';
 import CreateOffer from './pages/CreateOffer';
