@@ -6,6 +6,9 @@ const searchRoutes = require('./routes/searchRoutes');
 const messagingRoutes = require('./routes/messagingRoutes');
 const stripeWebhookRoutes = require('./routes/webhooks/stripeRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const pdfRoutes = require('./routes/pdfRoutes');
+const featureFlagRoutes = require('./routes/featureFlagRoutes');
+const supplierFeatureRoutes = require('./routes/supplierFeatureRoutes');
 const { ipMiddleware } = require('./middleware/ipMiddleware');
 
 const app = express();
@@ -30,13 +33,15 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'Running',
         message: 'MyNet.tn Procurement & Tender Management System API',
-        version: '1.0.0',
+        version: '1.2.0',
         endpoints: {
             auth: '/api/auth',
             procurement: '/api/procurement',
             admin: '/api/admin',
             search: '/api/search',
-            messaging: '/api/messaging'
+            messaging: '/api/messaging',
+            documents: '/api/documents/pdf',
+            features: '/api/admin/features'
         }
     });
 });
@@ -45,8 +50,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/procurement', procurementRoutes);
 app.use('/api/procurement/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/features', featureFlagRoutes);
+app.use('/api/admin/supplier-features', supplierFeatureRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/messaging', messagingRoutes);
+app.use('/api/documents/pdf', pdfRoutes);
 app.use('/api/webhooks', stripeWebhookRoutes);
 
 const ErrorHandler = require('./middleware/errorHandler');
