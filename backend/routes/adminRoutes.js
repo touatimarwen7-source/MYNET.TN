@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const { verifyToken } = require('../security/AuthorizationGuard');
-const { checkRole } = require('../security/AuthorizationGuard');
+const authMiddleware = require('../middleware/authMiddleware');
 
 // جميع مسارات الإدارة محمية - admin فقط
-router.use(verifyToken);
-router.use(checkRole(['admin']));
+router.use(authMiddleware.verifyToken);
+router.use(authMiddleware.checkRole(['admin']));
 
 // لوحة معلومات الصحة
 router.get('/health', adminController.getHealthDashboard);
