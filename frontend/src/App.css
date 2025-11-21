@@ -1543,3 +1543,291 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Create Tender - Multi-Step Form */
+.create-tender-improved {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.progress-steps .step {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+  background: #f5f5f5;
+  border-radius: 4px;
+  margin: 0 0.5rem;
+  color: #999;
+  transition: all 0.3s;
+}
+
+.progress-steps .step.active {
+  background: #667eea;
+  color: white;
+  font-weight: 600;
+}
+
+.auto-save-status {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  animation: fadeIn 0.3s;
+}
+
+.auto-save-status.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.auto-save-status.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.step-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.step-content h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.item-card {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #667eea;
+}
+
+.item-card h3 {
+  margin-top: 0;
+  color: #667eea;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.step-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.step-buttons button {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.step-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.review-section {
+  background: #f5f5f5;
+  padding: 1.5rem;
+  border-radius: 4px;
+}
+
+.review-section h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.review-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.review-section ul li {
+  padding: 0.5rem;
+  background: white;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Tender Chat */
+.tender-chat {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  border-top: 1px solid #eee;
+  margin-top: 2rem;
+}
+
+.chat-messages {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.message {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  max-width: 70%;
+}
+
+.message.sent {
+  margin-right: auto;
+  background: #e3f2fd;
+  border-left: 4px solid #667eea;
+}
+
+.message.received {
+  margin-left: auto;
+  background: #f5f5f5;
+  border-left: 4px solid #999;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.timestamp {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.message-content {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.chat-form textarea {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.chat-form button {
+  padding: 0.75rem 1.5rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-form button:hover {
+  background: #5568d3;
+}
+
+/* Team Management */
+.team-management {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.add-member-btn {
+  margin-bottom: 2rem;
+}
+
+.member-form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.team-list {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.team-table th {
+  background: #f5f5f5;
+  padding: 1rem;
+  text-align: right;
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+}
+
+.team-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.team-table .btn-delete {
+  padding: 0.5rem 1rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.team-table .btn-delete:hover {
+  background: #c82333;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-steps {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .progress-steps .step {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .message {
+    max-width: 100%;
+  }
+}

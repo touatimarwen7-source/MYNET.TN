@@ -12,6 +12,9 @@ import PartialAward from './pages/PartialAward';
 import OfferAnalysis from './pages/OfferAnalysis';
 import BuyerDashboard from './pages/BuyerDashboard';
 import InvoiceManagement from './pages/InvoiceManagement';
+import CreateTenderImproved from './pages/CreateTenderImproved';
+import TenderChat from './pages/TenderChat';
+import TeamManagement from './pages/TeamManagement';
 import SupplierSearch from './pages/SupplierSearch';
 import SubmitBid from './pages/SubmitBid';
 import NotificationCenter from './pages/NotificationCenter';
@@ -110,7 +113,15 @@ function App() {
             />
             <Route 
               path="/create-tender" 
-              element={user?.role === 'buyer' ? <CreateTender /> : <Navigate to="/tenders" />} 
+              element={user?.role === 'buyer' ? <CreateTenderImproved /> : <Navigate to="/tenders" />} 
+            />
+            <Route 
+              path="/tender/:id/chat" 
+              element={user ? <TenderChat /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/team-management" 
+              element={user?.role === 'buyer' ? <TeamManagement /> : <Navigate to="/tenders" />} 
             />
             <Route 
               path="/invoices" 
