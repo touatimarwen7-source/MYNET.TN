@@ -13,10 +13,10 @@ export default function HeroSearch() {
   });
 
   const searchTabs = [
-    { id: 'markets', label: '🏪 Nouveaux Marchés', icon: '🏪' },
-    { id: 'tenders', label: '📋 Appels d\'Offres', icon: '📋' },
-    { id: 'awards', label: '🏆 Attributions', icon: '🏆' },
-    { id: 'data', label: '📊 Données Essentielles', icon: '📊' }
+    { id: 'markets', label: 'Nouveaux Marchés', icon: '🏪' },
+    { id: 'tenders', label: 'Appels d\'Offres', icon: '📋' },
+    { id: 'awards', label: 'Attributions', icon: '🏆' },
+    { id: 'data', label: 'Données Essentielles', icon: '📊' }
   ];
 
   const categories = [
@@ -54,17 +54,30 @@ export default function HeroSearch() {
     { value: 'zaghouan', label: 'Zaghouan' }
   ];
 
+  const getButtonText = () => {
+    switch(activeTab) {
+      case 'markets':
+        return 'Lancer la Recherche - Nouveaux Marchés';
+      case 'tenders':
+        return 'Lancer la Recherche - Appels d\'Offres';
+      case 'awards':
+        return 'Lancer la Recherche - Attributions';
+      case 'data':
+        return 'Lancer la Recherche - Données Essentielles';
+      default:
+        return 'Lancer la Recherche';
+    }
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     
-    // Construct query string
     const params = new URLSearchParams();
     if (searchData.keywords) params.append('q', searchData.keywords);
     if (searchData.category !== 'tous') params.append('category', searchData.category);
     if (searchData.region !== 'all') params.append('region', searchData.region);
     params.append('type', activeTab);
     
-    // Navigate to search page with filters
     const routeMap = {
       tenders: '/tenders',
       awards: '/awards',
@@ -178,7 +191,7 @@ export default function HeroSearch() {
         {/* Search Button */}
         <button type="submit" className="search-button">
           <span className="button-icon">🔎</span>
-          <span>Rechercher les Appels d'Offres</span>
+          <span>{getButtonText()}</span>
         </button>
       </form>
     </div>
