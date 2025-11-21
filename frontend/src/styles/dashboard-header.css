@@ -143,23 +143,27 @@ body.dark-mode .dashboard-section h2 {
   align-items: center;
   justify-content: center;
   padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(0, 168, 232, 0.06), rgba(0, 212, 255, 0.04));
-  border: 1.5px solid rgba(0, 168, 232, 0.12);
+  background: linear-gradient(135deg, #0099cc 0%, #00a8e8 100%);
+  border: 2px solid #006ba8;
   border-radius: 14px;
   text-decoration: none;
-  color: #0080b8;
-  font-weight: 700;
+  color: white;
+  font-weight: 800;
   font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
   transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 153, 204, 0.3);
 }
 
 body.dark-mode .action-link {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(100, 255, 218, 0.05));
-  border-color: rgba(0, 212, 255, 0.15);
-  color: #00d4ff;
+  background: linear-gradient(135deg, #0099cc 0%, #00d4ff 100%);
+  border-color: #00a8e8;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
 }
 
 .action-link::before {
@@ -181,18 +185,18 @@ body.dark-mode .action-link {
 }
 
 .action-link:hover {
-  background: linear-gradient(135deg, rgba(0, 168, 232, 0.12), rgba(0, 212, 255, 0.08));
-  border-color: rgba(0, 168, 232, 0.25);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 168, 232, 0.18);
-  color: #0070a0;
+  background: linear-gradient(135deg, #0077a8 0%, #0088bb 100%);
+  border-color: #004d7a;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 153, 204, 0.5);
+  color: #ffffff;
 }
 
 body.dark-mode .action-link:hover {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(100, 255, 218, 0.1));
-  border-color: rgba(0, 212, 255, 0.3);
-  box-shadow: 0 12px 28px rgba(0, 212, 255, 0.25);
-  color: #64ffda;
+  background: linear-gradient(135deg, #006ba8 0%, #00a8e8 100%);
+  border-color: #0080b8;
+  box-shadow: 0 12px 32px rgba(0, 168, 232, 0.6);
+  color: #ffffff;
 }
 
 /* Responsive Design */
