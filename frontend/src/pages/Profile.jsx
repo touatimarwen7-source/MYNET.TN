@@ -233,11 +233,11 @@ export default function Profile({ user }) {
 
             {/* Interests Section */}
             <div className="profile-section animate-slide-up">
-              <h3 className="section-title">🎯 Intérêts et Préférences</h3>
+              <h3 className="section-title">🎯 Domaines d'Intérêt</h3>
               <div className="interests-container">
                 <div className="interests-list">
                   {interests.length === 0 ? (
-                    <div className="empty-state">Aucun intérêt ajouté</div>
+                    <div className="empty-state">Aucun domaine défini</div>
                   ) : (
                     interests.map((interest, idx) => (
                       <div key={idx} className="interest-tag">
@@ -259,7 +259,7 @@ export default function Profile({ user }) {
                     value={newInterest}
                     onChange={(e) => setNewInterest(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && addInterest()}
-                    placeholder="Ajouter un intérêt..."
+                    placeholder="Ajouter un domaine..."
                     className="form-input"
                   />
                   <button 
