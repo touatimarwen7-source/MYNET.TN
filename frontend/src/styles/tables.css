@@ -26,7 +26,7 @@
   padding: 1rem 1.25rem;
   text-align: left;
   font-weight: 600;
-  color: #1f5a8f;
+  color: #00a8e8;
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
@@ -94,7 +94,7 @@
 /* Grouping */
 .group-header {
   background: linear-gradient(to right, #e3f2fd, #ffffff);
-  border-bottom: 2px solid #0288d1;
+  border-bottom: 2px solid #00a8e8;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -106,7 +106,7 @@
 .group-header td {
   padding: 1rem 1.25rem;
   font-weight: 600;
-  color: #1f5a8f;
+  color: #00a8e8;
 }
 
 .group-title {

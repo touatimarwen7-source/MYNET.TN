@@ -287,13 +287,13 @@
 
   .search-tab:hover {
     background-color: #333;
-    border-color: #5a9fd4;
-    color: #5a9fd4;
+    border-color: #00a8e8;
+    color: #00a8e8;
   }
 
   .search-tab.active {
     background-color: #00a8e8;
-    border-color: #5a9fd4;
+    border-color: #00a8e8;
     color: #fff;
   }
 
@@ -328,7 +328,7 @@
 
   .search-input:focus,
   .search-select:focus {
-    border-color: #5a9fd4;
+    border-color: #00a8e8;
     box-shadow: 0 0 0 3px rgba(90, 159, 212, 0.15);
   }
 }

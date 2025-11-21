@@ -8,14 +8,14 @@
   
   /* الأزرق الداكن - الهوية الأساسية */
   --color-primary-dark: #1a3a52;      /* أزرق داكن مهني */
-  --color-primary-main: #1f5a8f;      /* أزرق أساسي */
-  --color-primary-light: #2d7db8;     /* أزرق فاتح */
+  --color-primary-main: #00a8e8;      /* أزرق أساسي */
+  --color-primary-light: #00d4ff;     /* أزرق فاتح */
   --color-primary-lighter: #e3f2fd;   /* أزرق جداً فاتح للخلفيات */
   
   /* الأزرق السماوي - لون العمل (Action Color) */
-  --color-action: #0288d1;            /* أزرق سماوي مشرق */
-  --color-action-hover: #0277bd;      /* أزرق سماوي عند التمرير */
-  --color-action-light: #81d4fa;      /* أزرق سماوي فاتح */
+  --color-action: #00a8e8;            /* أزرق سماوي مشرق */
+  --color-action-hover: #0086b3;      /* أزرق سماوي عند التمرير */
+  --color-action-light: #00d4ff;      /* أزرق سماوي فاتح */
   
   /* الرمادي الدافئ - للنصوص والخلفيات */
   --color-grey-dark: #424242;         /* رمادي داكن للنصوص */
@@ -38,8 +38,8 @@
   --color-info-light: #bbdefb;        /* أزرق فاتح للخلفيات */
   
   /* ألوان التدرجات - للرسوم البيانية */
-  --gradient-primary: linear-gradient(135deg, #1f5a8f 0%, #2d7db8 100%);
-  --gradient-action: linear-gradient(135deg, #0288d1 0%, #0277bd 100%);
+  --gradient-primary: linear-gradient(135deg, #00a8e8 0%, #00d4ff 100%);
+  --gradient-action: linear-gradient(135deg, #00a8e8 0%, #0086b3 100%);
   --gradient-success: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
   --gradient-warning: linear-gradient(135deg, #f57c00 0%, #fbc02d 100%);
   

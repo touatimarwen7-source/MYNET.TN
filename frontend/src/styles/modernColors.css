@@ -6,14 +6,14 @@
 :root {
   /* Couleurs Primaires - Premium & Modern */
   --color-primary-dark: #0d2849;          /* Bleu très foncé (confiance) */
-  --color-primary-main: #1f5a8f;          /* Bleu principal (professionnel) */
-  --color-primary-light: #2d7db8;         /* Bleu clair (approche) */
+  --color-primary-main: #00a8e8;          /* Bleu principal (professionnel) */
+  --color-primary-light: #00d4ff;         /* Bleu clair (approche) */
   --color-primary-lighter: #e3f2fd;       /* Bleu très clair (fond) */
   
   /* Couleurs d'Action - Accent Moderne */
-  --color-action: #0288d1;                /* Cyan brillant (CTA) */
-  --color-action-hover: #0277bd;          /* Cyan foncé (survol) */
-  --color-action-light: #81d4fa;          /* Cyan très clair */
+  --color-action: #00a8e8;                /* Cyan brillant (CTA) */
+  --color-action-hover: #0086b3;          /* Cyan foncé (survol) */
+  --color-action-light: #00d4ff;          /* Cyan très clair */
   
   /* Teintes Vertes - Succès & Growth */
   --color-success: #00a854;               /* Vert premium */
@@ -45,8 +45,8 @@
   --color-white: #ffffff;                 /* Blanc pur */
   
   /* Gradients Premium */
-  --gradient-primary: linear-gradient(135deg, #0d2849 0%, #1f5a8f 50%, #0288d1 100%);
-  --gradient-action: linear-gradient(135deg, #0288d1 0%, #00bcd4 100%);
+  --gradient-primary: linear-gradient(135deg, #0d2849 0%, #00a8e8 50%, #00a8e8 100%);
+  --gradient-action: linear-gradient(135deg, #00a8e8 0%, #00bcd4 100%);
   --gradient-success: linear-gradient(135deg, #00a854 0%, #26c281 100%);
   --gradient-warning: linear-gradient(135deg, #f57c00 0%, #ffa726 100%);
   --gradient-error: linear-gradient(135deg, #d32f2f 0%, #ef5350 100%);

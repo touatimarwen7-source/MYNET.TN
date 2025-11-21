@@ -20,7 +20,7 @@
   --accent-rose: #ff6b9d;      /* Rose poudré */
   
   /* Dégradés Premium */
-  --gradient-luxury: linear-gradient(135deg, #0d2849 0%, #1f5a8f 50%, #2d7db8 100%);
+  --gradient-luxury: linear-gradient(135deg, #0d2849 0%, #00a8e8 50%, #00d4ff 100%);
   --gradient-warm: linear-gradient(135deg, #f5f3f0 0%, #ece7e1 100%);
   --gradient-accent: linear-gradient(135deg, #00d4ff 0%, #00a8cc 100%);
   --gradient-mint: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
@@ -88,7 +88,7 @@
 }
 
 .gradient-btn-primary {
-  background: linear-gradient(135deg, #0288d1 0%, #0277bd 50%, #1565c0 100%);
+  background: linear-gradient(135deg, #00a8e8 0%, #0086b3 50%, #1565c0 100%);
   color: white;
   border: none;
   box-shadow: var(--shadow-soft-md), var(--glow-cyan);
@@ -102,7 +102,7 @@
 .gradient-btn-secondary {
   background: linear-gradient(135deg, #f5f3f0 0%, #ece7e1 100%);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #1f5a8f;
+  color: #00a8e8;
 }
 
 .gradient-btn-secondary:hover {
@@ -180,7 +180,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #1f5a8f;
+  color: #00a8e8;
   font-size: 0.85rem;
 }
 
@@ -261,7 +261,7 @@
 
 .badge-warm {
   background: linear-gradient(135deg, #f5f3f0 0%, #ece7e1 100%);
-  color: #1f5a8f;
+  color: #00a8e8;
   box-shadow: var(--shadow-soft-sm);
 }
 
@@ -307,7 +307,7 @@
 .alert-info {
   border-color: #00d4ff;
   background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, transparent 100%);
-  color: #0277bd;
+  color: #0086b3;
 }
 
 /* ========== MODALES & DIALOGS LUXUEUSES ========== */
@@ -384,7 +384,7 @@
 }
 
 .text-luxury-subheading {
-  color: #1f5a8f;
+  color: #00a8e8;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
