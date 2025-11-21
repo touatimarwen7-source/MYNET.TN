@@ -1,18 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const AdminController = require('../controllers/admin/AdminController');
-const AuthorizationGuard = require('../security/AuthorizationGuard');
-const { Roles } = require('../config/Roles');
+const adminController = require('../controllers/adminController');
+const { verifyToken } = require('../security/AuthorizationGuard');
+const { checkRole } = require('../security/AuthorizationGuard');
 
-router.use(
-    AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
-    AuthorizationGuard.requireRole([Roles.ADMIN]).bind(AuthorizationGuard)
-);
+// جميع مسارات الإدارة محمية - admin فقط
+router.use(verifyToken);
+router.use(checkRole(['admin']));
 
-router.get('/users', AdminController.getAllUsers.bind(AdminController));
-router.get('/users/:id', AdminController.getUser.bind(AdminController));
-router.get('/statistics', AdminController.getStatistics.bind(AdminController));
-router.post('/users/:id/verify', AdminController.verifyUser.bind(AdminController));
-router.put('/users/:id/toggle-status', AdminController.toggleUserStatus.bind(AdminController));
+// لوحة معلومات الصحة
+router.get('/health', adminController.getHealthDashboard);
+
+// تصدير سجلات التدقيق
+router.get('/audit-logs/export', adminController.exportAuditLogs);
+
+// لوحة التحكم الرئيسية
+router.get('/dashboard', adminController.getDashboard);
 
 module.exports = router;

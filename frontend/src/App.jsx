@@ -121,3 +121,7 @@ function App() {
 }
 
 export default App;
+
+// Route for Admin Dashboard should be added:
+// import AdminDashboard from './pages/AdminDashboard';
+// <Route path="/admin" element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/tenders" />} />
