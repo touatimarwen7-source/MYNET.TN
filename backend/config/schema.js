@@ -323,6 +323,38 @@ const schemaQueries = [
         is_active BOOLEAN DEFAULT TRUE
     );`,
 
+    `CREATE TABLE IF NOT EXISTS feature_flags (
+        id SERIAL PRIMARY KEY,
+        feature_name VARCHAR(100) UNIQUE NOT NULL,
+        feature_key VARCHAR(100) UNIQUE NOT NULL,
+        description TEXT,
+        is_enabled BOOLEAN DEFAULT FALSE,
+        category VARCHAR(50),
+        requires_erp BOOLEAN DEFAULT FALSE,
+        requires_payment BOOLEAN DEFAULT FALSE,
+        requires_websocket BOOLEAN DEFAULT FALSE,
+        enabled_at TIMESTAMP WITH TIME ZONE,
+        disabled_at TIMESTAMP WITH TIME ZONE,
+        created_by INTEGER REFERENCES users(id),
+        updated_by INTEGER REFERENCES users(id),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS feature_flag_audits (
+        id SERIAL PRIMARY KEY,
+        feature_id INTEGER REFERENCES feature_flags(id),
+        admin_id INTEGER REFERENCES users(id),
+        action VARCHAR(50),
+        previous_status BOOLEAN,
+        new_status BOOLEAN,
+        reason TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );`,
+
+    `CREATE INDEX IF NOT EXISTS idx_feature_flags_enabled ON feature_flags(is_enabled);`,
+    `CREATE INDEX IF NOT EXISTS idx_feature_flags_category ON feature_flags(category);`,
+    `CREATE INDEX IF NOT EXISTS idx_feature_flag_audits_feature ON feature_flag_audits(feature_id);`,
     `CREATE INDEX IF NOT EXISTS idx_tenders_status ON tenders(status);`,
     `CREATE INDEX IF NOT EXISTS idx_tenders_buyer ON tenders(buyer_id);`,
     `CREATE INDEX IF NOT EXISTS idx_offers_tender ON offers(tender_id);`,
