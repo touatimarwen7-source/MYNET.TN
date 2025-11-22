@@ -1,21 +1,17 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import frCommon from './locales/fr/common.json';
-import arCommon from './locales/ar/common.json';
-import enCommon from './locales/en/common.json';
 
-// Configuration i18n - Langue officielle: FRANÇAIS
+// Configuration i18n - FRANÇAIS UNIQUEMENT - ZERO MULTILINGUE
 i18n
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { translation: frCommon },
-      ar: { translation: arCommon },
-      en: { translation: enCommon }
+      fr: { translation: frCommon }
     },
-    lng: 'fr', // Langue par défaut: Français
+    lng: 'fr', // Langue EXCLUSIVE: Français
     fallbackLng: 'fr', // Langue de secours: Français
-    supportedLngs: ['fr', 'ar', 'en'],
+    supportedLngs: ['fr'], // FRANÇAIS SEULEMENT
     ns: 'translation',
     defaultNS: 'translation',
     interpolation: {
@@ -25,14 +21,14 @@ i18n
       useSuspense: false
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
+      order: [],
+      caches: []
     }
   });
 
-// Initialiser la langue stockée en français si pas de préférence
-if (!localStorage.getItem('i18nextLng')) {
-  localStorage.setItem('i18nextLng', 'fr');
-}
+// Forcer la langue française
+localStorage.setItem('i18nextLng', 'fr');
+document.documentElement.lang = 'fr';
+document.documentElement.dir = 'ltr';
 
 export default i18n;
