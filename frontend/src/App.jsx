@@ -51,7 +51,6 @@ const DisputeManagement = lazy(() => import('./pages/DisputeManagement'));
 const InvoiceGeneration = lazy(() => import('./pages/InvoiceGeneration'));
 const MonitoringSubmissions = lazy(() => import('./pages/MonitoringSubmissions'));
 const TestingChecklist = lazy(() => import('./pages/TestingChecklist'));
-const CreateTenderImproved = lazy(() => import('./pages/CreateTenderImproved'));
 const TenderChat = lazy(() => import('./pages/TenderChat'));
 const TenderSecuritySettings = lazy(() => import('./pages/TenderSecuritySettings'));
 const TenderPreferencesSettings = lazy(() => import('./pages/TenderPreferencesSettings'));
@@ -211,7 +210,7 @@ function App() {
             />
               <Route 
               path="/create-tender" 
-              element={user?.role === 'buyer' ? <CreateTenderImproved /> : <Navigate to="/tenders" />} 
+              element={user?.role === 'buyer' ? <CreateTender /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/tender/:id/chat" 
