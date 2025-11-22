@@ -451,12 +451,14 @@ export default function Sidebar({ user, onLogout }) {
         sx={{
           width: DRAWER_WIDTH,
           display: { xs: 'none', md: 'block' },
+          flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: DRAWER_WIDTH,
             boxSizing: 'border-box',
             backgroundColor: '#ffffff',
             borderRight: '1px solid #e0e0e0',
             marginTop: '64px',
+            transition: 'all 0.3s ease-in-out',
           },
         }}
       >
@@ -475,6 +477,7 @@ export default function Sidebar({ user, onLogout }) {
             boxSizing: 'border-box',
             backgroundColor: '#ffffff',
             marginTop: '64px',
+            transition: 'transform 0.3s ease-in-out',
           },
         }}
       >
@@ -482,7 +485,7 @@ export default function Sidebar({ user, onLogout }) {
       </Drawer>
 
       {/* Page Content Spacer - Desktop Only */}
-      <Box sx={{ width: DRAWER_WIDTH, display: { xs: 'none', md: 'block' } }} />
+      <Box sx={{ width: DRAWER_WIDTH, display: { xs: 'none', md: 'block' }, transition: 'all 0.3s ease-in-out', flexShrink: 0 }} />
     </>
   );
 }

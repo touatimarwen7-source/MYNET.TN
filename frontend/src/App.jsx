@@ -180,7 +180,7 @@ function App() {
             {/* Sidebar Navigation - Only for authenticated users */}
             {user && <Sidebar user={user} onLogout={handleLogout} />}
 
-            <Box component="main" sx={{ flex: 1, overflowY: 'auto', paddingY: '20px', paddingX: { xs: '12px', sm: '20px' } }}>
+            <Box component="main" sx={{ flex: 1, overflowY: 'auto', paddingY: '20px', paddingX: { xs: '12px', sm: '20px' }, transition: 'all 0.3s ease-in-out' }}>
             <Suspense fallback={<LoadingFallback />}>
               <Routes>
               {/* Pages Publiques */}
