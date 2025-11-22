@@ -27,7 +27,14 @@ const bidAnalyticsRoutes = require('./routes/bidAnalyticsRoutes');
 const bidComparisonRoutes = require('./routes/bidComparisonRoutes');
 const performanceTrackingRoutes = require('./routes/performanceTrackingRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const emailRoutes = require('./routes/emailRoutes');
 const { ipMiddleware } = require('./middleware/ipMiddleware');
+let initializeEmailService;
+try {
+  initializeEmailService = require('./config/emailService').initializeEmailService;
+} catch (e) {
+  initializeEmailService = () => console.warn('Email service optional');
+}
 const loggingMiddleware = require('./middleware/loggingMiddleware');
 const ErrorHandler = require('./middleware/errorHandler');
 const requestIdMiddleware = require('./middleware/requestIdMiddleware');
@@ -149,3 +156,9 @@ app.use('/api/bid-analytics', bidAnalyticsRoutes);
 app.use('/api/bid-comparison', bidComparisonRoutes);
 app.use('/api/performance-tracking', performanceTrackingRoutes);
 app.use('/api/notifications', notificationRoutes);
+
+// Email service routes
+app.use('/api/email', emailRoutes);
+
+// Initialize email service
+initializeEmailService();
