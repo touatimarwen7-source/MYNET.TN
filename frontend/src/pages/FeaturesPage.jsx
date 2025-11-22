@@ -4,23 +4,23 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function FeaturesPage() {
   const features = [
-    { title: 'سهل الاستخدام', desc: 'واجهة سهلة وبديهية للجميع' },
-    { title: 'آمن وموثوق', desc: 'أعلى مستويات الأمان والحماية' },
-    { title: 'دعم عربي', desc: 'دعم كامل للغة العربية' },
-    { title: 'تقارير متقدمة', desc: 'تحليلات وتقارير شاملة' },
-    { title: 'تكامل تام', desc: 'تكامل سلس مع الأنظمة الأخرى' },
-    { title: 'دعم فني', desc: 'دعم فني متاح 24/7' }
+    { title: 'Facile à utiliser', desc: 'Interface simple et intuitive pour tous' },
+    { title: 'Sécurisé et fiable', desc: 'Niveaux de sécurité et de protection les plus élevés' },
+    { title: 'Support complet', desc: 'Support français complet pour la plateforme' },
+    { title: 'Rapports avancés', desc: 'Analyses et rapports complets' },
+    { title: 'Intégration complète', desc: 'Intégration transparente avec d\'autres systèmes' },
+    { title: 'Support technique', desc: 'Support technique disponible 24h/24, 7j/7' }
   ];
 
   useEffect(() => {
-    setPageTitle('الميزات');
+    setPageTitle('Fonctionnalités');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3, textAlign: 'center' }}>
-          ميزاتنا
+          Nos fonctionnalités
         </Typography>
         <Grid container spacing={3}>
           {features.map((f, idx) => (

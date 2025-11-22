@@ -4,17 +4,17 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function DisputeManagement() {
   const disputes = [
-    { id: 1, order: 'ORD-001', type: 'جودة المنتج', status: 'قيد المراجعة', date: '2024-11-20' },
-    { id: 2, order: 'ORD-002', type: 'تأخير التسليم', status: 'مستحل', date: '2024-11-18' },
-    { id: 3, order: 'ORD-003', type: 'عدم الاستقبال', status: 'قيد التحقيق', date: '2024-11-21' }
+    { id: 1, order: 'ORD-001', type: 'Qualité du produit', status: 'En examen', date: '2024-11-20' },
+    { id: 2, order: 'ORD-002', type: 'Retard de livraison', status: 'Résolu', date: '2024-11-18' },
+    { id: 3, order: 'ORD-003', type: 'Non-réception', status: 'En investigation', date: '2024-11-21' }
   ];
 
   useEffect(() => {
-    setPageTitle('إدارة النزاعات');
+    setPageTitle('Gestion des litiges');
   }, []);
 
   const getStatusColor = (status) => {
-    const colors = { 'مستحل': '#4caf50', 'قيد المراجعة': '#ff9800', 'قيد التحقيق': '#2196f3', 'معلق': '#f44336' };
+    const colors = { 'Résolu': '#4caf50', 'En examen': '#ff9800', 'En investigation': '#2196f3', 'En attente': '#f44336' };
     return colors[status] || '#757575';
   };
 
@@ -22,17 +22,17 @@ export default function DisputeManagement() {
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          إدارة النزاعات
+          Gestion des litiges
         </Typography>
         <Paper sx={{ border: '1px solid #E0E0E0', borderRadius: '8px', overflow: 'hidden' }}>
           <Table>
             <TableHead sx={{ backgroundColor: '#F5F5F5' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>الطلب</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>النوع</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>الحالة</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>التاريخ</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">الإجراء</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Commande</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Type</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Statut</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -45,7 +45,7 @@ export default function DisputeManagement() {
                   </TableCell>
                   <TableCell>{d.date}</TableCell>
                   <TableCell align="center">
-                    <Button size="small" sx={{ color: '#0056B3' }}>التفاصيل</Button>
+                    <Button size="small" sx={{ color: '#0056B3' }}>Détails</Button>
                   </TableCell>
                 </TableRow>
               ))}

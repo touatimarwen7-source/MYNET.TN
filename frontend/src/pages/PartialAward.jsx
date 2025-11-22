@@ -4,19 +4,19 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function PartialAward() {
   const offers = [
-    { id: 1, supplier: 'supplier1@test.tn', amount: 5000, qty: 10, unit: 'قطعة' },
-    { id: 2, supplier: 'supplier2@test.tn', amount: 4800, qty: 15, unit: 'قطعة' }
+    { id: 1, supplier: 'supplier1@test.tn', amount: 5000, qty: 10, unit: 'unité' },
+    { id: 2, supplier: 'supplier2@test.tn', amount: 4800, qty: 15, unit: 'unité' }
   ];
 
   useEffect(() => {
-    setPageTitle('التخصيص الجزئي');
+    setPageTitle('Attribution partielle');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          التخصيص الجزئي للطلب
+          Attribution partielle de l\'appel d\'offres
         </Typography>
         <Grid container spacing={3}>
           {offers.map((offer) => (
@@ -25,12 +25,12 @@ export default function PartialAward() {
                 <CardHeader title={offer.supplier} />
                 <CardContent>
                   <Box sx={{ mb: 2 }}>
-                    <Typography sx={{ color: '#616161', fontSize: '12px' }}>السعر:</Typography>
-                    <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#0056B3' }}>{offer.amount} دينار</Typography>
+                    <Typography sx={{ color: '#616161', fontSize: '12px' }}>Prix:</Typography>
+                    <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#0056B3' }}>{offer.amount} TND</Typography>
                   </Box>
-                  <TextField fullWidth label="الكمية المراد تخصيصها" type="number" defaultValue={offer.qty} size="small" />
+                  <TextField fullWidth label="Quantité à attribuer" type="number" defaultValue={offer.qty} size="small" />
                   <Button variant="contained" fullWidth sx={{ backgroundColor: '#0056B3', mt: 2 }}>
-                    تخصيص
+                    Attribuer
                   </Button>
                 </CardContent>
               </Card>

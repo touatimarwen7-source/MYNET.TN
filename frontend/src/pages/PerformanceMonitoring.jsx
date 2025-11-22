@@ -4,21 +4,21 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function PerformanceMonitoring() {
   const metrics = [
-    { name: 'معدل استجابة الخادم', value: 95, target: 99 },
-    { name: 'سرعة تحميل الصفحة', value: 87, target: 90 },
-    { name: 'توفر النظام', value: 99.9, target: 99.9 },
-    { name: 'استخدام الذاكرة', value: 62, target: 80 }
+    { name: 'Temps de réponse du serveur', value: 95, target: 99 },
+    { name: 'Vitesse de chargement des pages', value: 87, target: 90 },
+    { name: 'Disponibilité du système', value: 99.9, target: 99.9 },
+    { name: 'Utilisation mémoire', value: 62, target: 80 }
   ];
 
   useEffect(() => {
-    setPageTitle('مراقبة الأداء');
+    setPageTitle('Surveillance des performances');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          مراقبة الأداء
+          Surveillance des performances
         </Typography>
 
         <Grid container spacing={2}>
@@ -34,7 +34,7 @@ export default function PerformanceMonitoring() {
                   </Box>
                   <LinearProgress variant="determinate" value={metric.value} sx={{ height: '8px', borderRadius: '4px' }} />
                   <Typography variant="caption" sx={{ color: '#999', mt: 1, display: 'block' }}>
-                    الهدف: {metric.target}%
+                    Objectif: {metric.target}%
                   </Typography>
                 </CardContent>
               </Card>

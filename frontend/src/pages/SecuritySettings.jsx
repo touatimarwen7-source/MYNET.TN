@@ -5,30 +5,30 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function SecuritySettings() {
   const settings = [
-    { title: 'جدار الحماية', description: 'حماية متقدمة من الهجمات', status: 'مفعل' },
-    { title: 'التشفير', description: 'تشفير بروتوكول SSL/TLS', status: 'مفعل' },
-    { title: 'المصادقة الثنائية', description: 'أمان متقدم للحساب', status: 'مفعل' },
-    { title: 'تسجيل الأنشطة', description: 'تتبع جميع الأنشطة المريبة', status: 'مفعل' }
+    { title: 'Pare-feu', description: 'Protection avancée contre les attaques', status: 'Activé' },
+    { title: 'Chiffrement', description: 'Chiffrage du protocole SSL/TLS', status: 'Activé' },
+    { title: 'Authentification à deux facteurs', description: 'Sécurité avancée du compte', status: 'Activé' },
+    { title: 'Journalisation des activités', description: 'Suivi de toutes les activités suspectes', status: 'Activé' }
   ];
 
   useEffect(() => {
-    setPageTitle('إعدادات الأمان');
+    setPageTitle('Paramètres de sécurité');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="md">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          إعدادات الأمان
+          Paramètres de sécurité
         </Typography>
 
         <Alert severity="success" sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
           <SecurityIcon sx={{ mr: 1 }} />
-          حسابك محمي بمستويات أمان عالية
+          Votre compte est protégé par des niveaux de sécurité élevés
         </Alert>
 
         <Card sx={{ border: '1px solid #E0E0E0' }}>
-          <CardHeader title="خيارات الأمان" />
+          <CardHeader title="Options de sécurité" />
           <CardContent>
             <List>
               {settings.map((setting, idx) => (
@@ -50,12 +50,12 @@ export default function SecuritySettings() {
         </Card>
 
         <Card sx={{ border: '1px solid #E0E0E0', mt: 3 }}>
-          <CardHeader title="الجلسات النشطة" />
+          <CardHeader title="Sessions actives" />
           <CardContent>
             <List>
               <ListItem>
-                <ListItemText primary="المتصفح الحالي" secondary="آخر نشاط: الآن" />
-                <Button size="small" sx={{ color: '#0056B3' }}>محاكاة</Button>
+                <ListItemText primary="Navigateur actuel" secondary="Dernière activité: Maintenant" />
+                <Button size="small" sx={{ color: '#0056B3' }}>Déconnecter</Button>
               </ListItem>
             </List>
           </CardContent>

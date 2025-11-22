@@ -19,17 +19,17 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function InvoiceManagement() {
   const invoices = [
-    { id: 'INV-001', amount: 50000, status: 'مدفوع', date: '2024-11-15', dueDate: '2024-11-20' },
-    { id: 'INV-002', amount: 75000, status: 'معلق', date: '2024-11-18', dueDate: '2024-11-25' },
-    { id: 'INV-003', amount: 35000, status: 'منتهي الصلاحية', date: '2024-11-10', dueDate: '2024-11-17' }
+    { id: 'INV-001', amount: 50000, status: 'Payée', date: '2024-11-15', dueDate: '2024-11-20' },
+    { id: 'INV-002', amount: 75000, status: 'En attente', date: '2024-11-18', dueDate: '2024-11-25' },
+    { id: 'INV-003', amount: 35000, status: 'Expirée', date: '2024-11-10', dueDate: '2024-11-17' }
   ];
 
   useEffect(() => {
-    setPageTitle('إدارة الفواتير');
+    setPageTitle('Gestion des factures');
   }, []);
 
   const getStatusColor = (status) => {
-    const colors = { 'مدفوع': '#4caf50', 'معلق': '#ff9800', 'منتهي الصلاحية': '#f44336' };
+    const colors = { 'Payée': '#4caf50', 'En attente': '#ff9800', 'Expirée': '#f44336' };
     return colors[status] || '#757575';
   };
 
@@ -37,14 +37,14 @@ export default function InvoiceManagement() {
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          إدارة الفواتير
+          Gestion des factures
         </Typography>
 
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {[
-            { label: 'إجمالي الفواتير', value: '3' },
-            { label: 'مدفوع', value: '160,000 دينار' },
-            { label: 'معلق', value: '75,000 دينار' }
+            { label: 'Total des factures', value: '3' },
+            { label: 'Payées', value: '160 000 TND' },
+            { label: 'En attente', value: '75 000 TND' }
           ].map((stat, idx) => (
             <Grid item xs={12} sm={6} md={3} key={idx}>
               <Box sx={{ backgroundColor: '#FFF', p: 2, borderRadius: '8px', border: '1px solid #E0E0E0' }}>
@@ -59,27 +59,27 @@ export default function InvoiceManagement() {
           <Table>
             <TableHead sx={{ backgroundColor: '#F5F5F5' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>رقم الفاتورة</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>المبلغ</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>الحالة</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>التاريخ</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>تاريخ الاستحقاق</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">الإجراءات</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>N° de facture</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Montant</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Statut</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Date d'échéance</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {invoices.map((inv) => (
                 <TableRow key={inv.id} sx={{ '&:hover': { backgroundColor: '#F9F9F9' } }}>
                   <TableCell>{inv.id}</TableCell>
-                  <TableCell>{inv.amount.toLocaleString()} دينار</TableCell>
+                  <TableCell>{inv.amount.toLocaleString()} TND</TableCell>
                   <TableCell>
                     <Chip label={inv.status} size="small" sx={{ backgroundColor: getStatusColor(inv.status) + '30', color: getStatusColor(inv.status) }} />
                   </TableCell>
                   <TableCell>{inv.date}</TableCell>
                   <TableCell>{inv.dueDate}</TableCell>
                   <TableCell align="center">
-                    <Button size="small" startIcon={<VisibilityIcon />} sx={{ color: '#0056B3', mr: 1 }}>عرض</Button>
-                    <Button size="small" startIcon={<DownloadIcon />} sx={{ color: '#0056B3' }}>تحميل</Button>
+                    <Button size="small" startIcon={<VisibilityIcon />} sx={{ color: '#0056B3', mr: 1 }}>Afficher</Button>
+                    <Button size="small" startIcon={<DownloadIcon />} sx={{ color: '#0056B3' }}>Télécharger</Button>
                   </TableCell>
                 </TableRow>
               ))}

@@ -4,26 +4,26 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function FeatureControl() {
   const features = [
-    { name: 'الطلبات العامة', enabled: true },
-    { name: 'العروض المباشرة', enabled: true },
-    { name: 'نظام المزادات', enabled: false },
-    { name: 'التقارير المتقدمة', enabled: true },
-    { name: 'المنتدى', enabled: false },
-    { name: 'API الخارجي', enabled: false }
+    { name: 'Appels d\'offres généraux', enabled: true },
+    { name: 'Offres directes', enabled: true },
+    { name: 'Système d\'enchères', enabled: false },
+    { name: 'Rapports avancés', enabled: true },
+    { name: 'Forum', enabled: false },
+    { name: 'API externe', enabled: false }
   ];
 
   useEffect(() => {
-    setPageTitle('التحكم بالميزات');
+    setPageTitle('Contrôle des fonctionnalités');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="md">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          التحكم بالميزات
+          Contrôle des fonctionnalités
         </Typography>
         <Card sx={{ border: '1px solid #E0E0E0' }}>
-          <CardHeader title="الميزات المتاحة" />
+          <CardHeader title="Fonctionnalités disponibles" />
           <CardContent>
             <List>
               {features.map((f, idx) => (

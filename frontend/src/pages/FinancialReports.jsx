@@ -5,27 +5,27 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function FinancialReports() {
   const stats = [
-    { label: 'إجمالي الإيرادات', value: '500,000 دينار' },
-    { label: 'التكاليف الإدارية', value: '50,000 دينار' },
-    { label: 'الربح الصافي', value: '450,000 دينار' },
-    { label: 'المستحقات', value: '75,000 دينار' }
+    { label: 'Revenu total', value: '500 000 TND' },
+    { label: 'Frais administratifs', value: '50 000 TND' },
+    { label: 'Bénéfice net', value: '450 000 TND' },
+    { label: 'Créances', value: '75 000 TND' }
   ];
 
   const reports = [
-    { name: 'تقرير الإيرادات', date: '2024-11-01', format: 'PDF' },
-    { name: 'تقرير المصروفات', date: '2024-11-01', format: 'Excel' },
-    { name: 'الكشف البنكي', date: '2024-11-22', format: 'PDF' }
+    { name: 'Rapport des revenus', date: '2024-11-01', format: 'PDF' },
+    { name: 'Rapport des dépenses', date: '2024-11-01', format: 'Excel' },
+    { name: 'Relevé bancaire', date: '2024-11-22', format: 'PDF' }
   ];
 
   useEffect(() => {
-    setPageTitle('التقارير المالية');
+    setPageTitle('Rapports financiers');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          التقارير المالية
+          Rapports financiers
         </Typography>
 
         <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -40,16 +40,16 @@ export default function FinancialReports() {
         </Grid>
 
         <Card sx={{ border: '1px solid #E0E0E0' }}>
-          <CardHeader title="التقارير المتاحة" />
+          <CardHeader title="Rapports disponibles" />
           <CardContent>
             <Paper sx={{ border: '1px solid #E0E0E0', overflow: 'hidden' }}>
               <Table>
                 <TableHead sx={{ backgroundColor: '#F5F5F5' }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>اسم التقرير</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>التاريخ</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>الصيغة</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">تحميل</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Nom du rapport</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Date</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Format</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">Télécharger</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -59,7 +59,7 @@ export default function FinancialReports() {
                       <TableCell>{r.date}</TableCell>
                       <TableCell>{r.format}</TableCell>
                       <TableCell align="center">
-                        <Button size="small" startIcon={<DownloadIcon />} sx={{ color: '#0056B3' }}>تحميل</Button>
+                        <Button size="small" startIcon={<DownloadIcon />} sx={{ color: '#0056B3' }}>Télécharger</Button>
                       </TableCell>
                     </TableRow>
                   ))}

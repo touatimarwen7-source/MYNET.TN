@@ -5,20 +5,20 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function PricingPage() {
   const plans = [
-    { name: 'الأساسي', price: 'مجاني', features: ['حتى 5 طلبات', 'دعم الأساس', 'تقارير بسيطة'] },
-    { name: 'الاحترافي', price: '50 دينار', features: ['طلبات غير محدودة', 'دعم الأولوية', 'تقارير متقدمة'] },
-    { name: 'المؤسسي', price: 'عرض خاص', features: ['كل الميزات', 'فريق مخصص', 'API مخصص'] }
+    { name: 'Basique', price: 'Gratuit', features: ['Jusqu\'à 5 appels d\'offres', 'Support de base', 'Rapports simples'] },
+    { name: 'Professionnel', price: '50 TND', features: ['Appels d\'offres illimités', 'Support prioritaire', 'Rapports avancés'] },
+    { name: 'Entreprise', price: 'Sur devis', features: ['Toutes les fonctionnalités', 'Équipe dédiée', 'API personnalisée'] }
   ];
 
   useEffect(() => {
-    setPageTitle('الأسعار');
+    setPageTitle('Tarification');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3, textAlign: 'center' }}>
-          خطط الأسعار
+          Plans tarifaires
         </Typography>
         <Grid container spacing={3}>
           {plans.map((plan, idx) => (
@@ -36,7 +36,7 @@ export default function PricingPage() {
                     ))}
                   </List>
                   <Button variant="contained" fullWidth sx={{ backgroundColor: '#0056B3', mt: 2 }}>
-                    اختيار
+                    Choisir
                   </Button>
                 </CardContent>
               </Card>

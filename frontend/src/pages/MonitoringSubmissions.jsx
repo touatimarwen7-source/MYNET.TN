@@ -5,17 +5,17 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function MonitoringSubmissions() {
   const submissions = [
-    { id: 1, user: 'supplier1@test.tn', offer: 'عرض #1', status: 'مقبول', date: '2024-11-20' },
-    { id: 2, user: 'supplier2@test.tn', offer: 'عرض #2', status: 'قيد المراجعة', date: '2024-11-21' },
-    { id: 3, user: 'supplier3@test.tn', offer: 'عرض #3', status: 'مرفوض', date: '2024-11-19' }
+    { id: 1, user: 'supplier1@test.tn', offer: 'Offre #1', status: 'Acceptée', date: '2024-11-20' },
+    { id: 2, user: 'supplier2@test.tn', offer: 'Offre #2', status: 'En examen', date: '2024-11-21' },
+    { id: 3, user: 'supplier3@test.tn', offer: 'Offre #3', status: 'Rejetée', date: '2024-11-19' }
   ];
 
   useEffect(() => {
-    setPageTitle('مراقبة التقديمات');
+    setPageTitle('Surveillance des soumissions');
   }, []);
 
   const getStatusColor = (status) => {
-    const colors = { 'مقبول': '#4caf50', 'قيد المراجعة': '#2196f3', 'مرفوض': '#f44336' };
+    const colors = { 'Acceptée': '#4caf50', 'En examen': '#2196f3', 'Rejetée': '#f44336' };
     return colors[status] || '#999';
   };
 
@@ -23,17 +23,17 @@ export default function MonitoringSubmissions() {
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          مراقبة التقديمات
+          Surveillance des soumissions
         </Typography>
         <Paper sx={{ border: '1px solid #E0E0E0', overflow: 'hidden' }}>
           <Table>
             <TableHead sx={{ backgroundColor: '#F5F5F5' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>المستخدم</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>العرض</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>الحالة</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>التاريخ</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 600, color: '#0056B3' }}>الإجراء</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Utilisateur</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Offre</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Statut</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Date</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600, color: '#0056B3' }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -46,7 +46,7 @@ export default function MonitoringSubmissions() {
                   </TableCell>
                   <TableCell>{sub.date}</TableCell>
                   <TableCell align="center">
-                    <Button size="small" startIcon={<VisibilityIcon />} sx={{ color: '#0056B3' }}>عرض</Button>
+                    <Button size="small" startIcon={<VisibilityIcon />} sx={{ color: '#0056B3' }}>Afficher</Button>
                   </TableCell>
                 </TableRow>
               ))}

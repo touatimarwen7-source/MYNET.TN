@@ -4,21 +4,21 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function HealthMonitoring() {
   const systemStats = [
-    { name: 'استخدام خادم قاعدة البيانات', value: 45 },
-    { name: 'استخدام الذاكرة', value: 62 },
-    { name: 'استخدام CPU', value: 28 },
-    { name: 'سعة التخزين', value: 73 }
+    { name: 'Serveur de base de données', value: 45 },
+    { name: 'Utilisation mémoire', value: 62 },
+    { name: 'Utilisation CPU', value: 28 },
+    { name: 'Capacité de stockage', value: 73 }
   ];
 
   useEffect(() => {
-    setPageTitle('مراقبة الصحة');
+    setPageTitle('Surveillance de la santé');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          مراقبة صحة النظام
+          Surveillance de la santé du système
         </Typography>
 
         <Grid container spacing={2}>
@@ -38,12 +38,12 @@ export default function HealthMonitoring() {
         </Grid>
 
         <Card sx={{ border: '1px solid #E0E0E0', mt: 3 }}>
-          <CardHeader title="معلومات النظام" />
+          <CardHeader title="Informations système" />
           <CardContent>
             <Box>
-              <Typography sx={{ mb: 1 }}><strong>الإصدار:</strong> v1.2.0</Typography>
-              <Typography sx={{ mb: 1 }}><strong>حالة الخادم:</strong> <span style={{ color: '#4caf50', fontWeight: 600 }}>✓ متصل</span></Typography>
-              <Typography sx={{ mb: 1 }}><strong>قاعدة البيانات:</strong> <span style={{ color: '#4caf50', fontWeight: 600 }}>✓ نشطة</span></Typography>
+              <Typography sx={{ mb: 1 }}><strong>Version:</strong> v1.2.0</Typography>
+              <Typography sx={{ mb: 1 }}><strong>État du serveur:</strong> <span style={{ color: '#4caf50', fontWeight: 600 }}>✓ Connecté</span></Typography>
+              <Typography sx={{ mb: 1 }}><strong>Base de données:</strong> <span style={{ color: '#4caf50', fontWeight: 600 }}>✓ Active</span></Typography>
             </Box>
           </CardContent>
         </Card>

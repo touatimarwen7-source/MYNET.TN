@@ -20,20 +20,20 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function NotificationCenter() {
   const notifications = [
-    { id: 1, type: 'success', icon: <CheckCircleIcon sx={{ color: '#4caf50' }} />, title: 'عرض مقبول', message: 'تم قبول عرضك على الطلب #1', time: 'قبل ساعة' },
-    { id: 2, type: 'warning', icon: <WarningIcon sx={{ color: '#ff9800' }} />, title: 'انتظار الموافقة', message: 'عرضك قيد المراجعة', time: 'قبل ساعتين' },
-    { id: 3, type: 'info', icon: <InfoIcon sx={{ color: '#2196f3' }} />, title: 'طلب جديد', message: 'طلب عرض جديد متاح', time: 'قبل يوم' }
+    { id: 1, type: 'success', icon: <CheckCircleIcon sx={{ color: '#4caf50' }} />, title: 'Offre acceptée', message: 'Votre offre sur l\'appel d\'offres #1 a été acceptée', time: 'Il y a 1 heure' },
+    { id: 2, type: 'warning', icon: <WarningIcon sx={{ color: '#ff9800' }} />, title: 'En attente de validation', message: 'Votre offre est en cours d\'examen', time: 'Il y a 2 heures' },
+    { id: 3, type: 'info', icon: <InfoIcon sx={{ color: '#2196f3' }} />, title: 'Nouvel appel d\'offres', message: 'Un nouvel appel d\'offres est disponible', time: 'Il y a 1 jour' }
   ];
 
   useEffect(() => {
-    setPageTitle('مركز الإخطارات');
+    setPageTitle('Centre de notifications');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="md">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          مركز الإخطارات
+          Centre de notifications
         </Typography>
         <Card sx={{ border: '1px solid #E0E0E0' }}>
           <CardContent>
@@ -51,7 +51,7 @@ export default function NotificationCenter() {
                         </Box>
                       }
                     />
-                    <Button size="small" sx={{ color: '#0056B3' }}>حذف</Button>
+                    <Button size="small" sx={{ color: '#0056B3' }}>Supprimer</Button>
                   </ListItem>
                   {idx < notifications.length - 1 && <Divider />}
                 </Box>

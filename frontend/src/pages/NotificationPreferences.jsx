@@ -4,26 +4,26 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function NotificationPreferences() {
   const prefs = [
-    { name: 'إخطارات البريد الإلكتروني', enabled: true },
-    { name: 'إخطارات الرسائل النصية', enabled: false },
-    { name: 'إخطارات العروض الجديدة', enabled: true },
-    { name: 'إخطارات التحديثات النظام', enabled: true },
-    { name: 'إخطارات الإبلاغ عن الأخطاء', enabled: false },
-    { name: 'الملخص اليومي', enabled: true }
+    { name: 'Notifications par courrier électronique', enabled: true },
+    { name: 'Notifications par SMS', enabled: false },
+    { name: 'Notifications de nouvelles offres', enabled: true },
+    { name: 'Notifications de mise à jour du système', enabled: true },
+    { name: 'Notifications de signalement d\'erreurs', enabled: false },
+    { name: 'Résumé quotidien', enabled: true }
   ];
 
   useEffect(() => {
-    setPageTitle('تفضيلات الإخطارات');
+    setPageTitle('Préférences de notification');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="md">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          تفضيلات الإخطارات
+          Préférences de notification
         </Typography>
         <Card sx={{ border: '1px solid #E0E0E0' }}>
-          <CardHeader title="تحكم بالإخطارات" />
+          <CardHeader title="Gérer les notifications" />
           <CardContent>
             <List>
               {prefs.map((p, idx) => (

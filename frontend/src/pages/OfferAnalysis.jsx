@@ -6,21 +6,21 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function OfferAnalysis() {
   const analysis = [
-    { title: 'متوسط الأسعار', value: '15,000 دينار', trend: 'up' },
-    { title: 'أقل سعر', value: '5,000 دينار', trend: 'down' },
-    { title: 'أعلى سعر', value: '100,000 دينار', trend: 'up' },
-    { title: 'عدد العروض', value: '42', trend: 'up' }
+    { title: 'Prix moyen', value: '15 000 TND', trend: 'up' },
+    { title: 'Prix minimum', value: '5 000 TND', trend: 'down' },
+    { title: 'Prix maximum', value: '100 000 TND', trend: 'up' },
+    { title: 'Nombre d\'offres', value: '42', trend: 'up' }
   ];
 
   useEffect(() => {
-    setPageTitle('تحليل العروض');
+    setPageTitle('Analyse des offres');
   }, []);
 
   return (
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          تحليل العروض
+          Analyse des offres
         </Typography>
 
         <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -42,9 +42,9 @@ export default function OfferAnalysis() {
         </Grid>
 
         <Card sx={{ border: '1px solid #E0E0E0' }}>
-          <CardHeader title="مقارنة العروض" action={<Button size="small" sx={{ color: '#0056B3' }}>تصدير</Button>} />
+          <CardHeader title="Comparaison des offres" action={<Button size="small" sx={{ color: '#0056B3' }}>Exporter</Button>} />
           <CardContent>
-            <Typography sx={{ color: '#999' }}>جاري تحميل المخطط البياني...</Typography>
+            <Typography sx={{ color: '#999' }}>Chargement du graphique en cours...</Typography>
           </CardContent>
         </Card>
       </Container>

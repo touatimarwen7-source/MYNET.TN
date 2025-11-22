@@ -20,17 +20,17 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function MyOffers() {
   const [offers, setOffers] = useState([
-    { id: 1, tender: 'شراء مستلزمات مكتبية', price: 5000, status: 'مقبول', date: '2024-11-20' },
-    { id: 2, tender: 'معدات تقنية', price: 75000, status: 'معلق', date: '2024-11-21' }
+    { id: 1, tender: 'Fournitures de bureau', price: 5000, status: 'Acceptée', date: '2024-11-20' },
+    { id: 2, tender: 'Équipements informatiques', price: 75000, status: 'En attente', date: '2024-11-21' }
   ]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setPageTitle('عروضي');
+    setPageTitle('Mes offres');
   }, []);
 
   const getStatusColor = (status) => {
-    const colors = { 'مقبول': '#4caf50', 'مرفوض': '#f44336', 'معلق': '#ff9800' };
+    const colors = { 'Acceptée': '#4caf50', 'Rejetée': '#f44336', 'En attente': '#ff9800' };
     return colors[status] || '#757575';
   };
 
@@ -38,32 +38,32 @@ export default function MyOffers() {
     <Box sx={{ backgroundColor: '#F9F9F9', paddingY: '40px', minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 600, color: '#0056B3', mb: 3 }}>
-          عروضي
+          Mes offres
         </Typography>
         {loading ? <CircularProgress /> : (
           <Paper sx={{ border: '1px solid #E0E0E0', borderRadius: '8px', overflow: 'hidden' }}>
             <Table>
               <TableHead sx={{ backgroundColor: '#F5F5F5' }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>الطلب</TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>السعر</TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>الحالة</TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>التاريخ</TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">الإجراءات</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Appel d'offres</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Prix</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Statut</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {offers.map((offer) => (
                   <TableRow key={offer.id} sx={{ '&:hover': { backgroundColor: '#F9F9F9' } }}>
                     <TableCell>{offer.tender}</TableCell>
-                    <TableCell>{offer.price.toLocaleString()} دينار</TableCell>
+                    <TableCell>{offer.price.toLocaleString()} TND</TableCell>
                     <TableCell>
                       <Chip label={offer.status} size="small" sx={{ backgroundColor: getStatusColor(offer.status) + '30', color: getStatusColor(offer.status) }} />
                     </TableCell>
                     <TableCell>{offer.date}</TableCell>
                     <TableCell align="center">
-                      <Button size="small" startIcon={<EditIcon />} sx={{ color: '#0056B3', mr: 1 }}>تعديل</Button>
-                      <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#C62828' }}>حذف</Button>
+                      <Button size="small" startIcon={<EditIcon />} sx={{ color: '#0056B3', mr: 1 }}>Modifier</Button>
+                      <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#C62828' }}>Supprimer</Button>
                     </TableCell>
                   </TableRow>
                 ))}
