@@ -5,11 +5,13 @@
  * - Automatic token refresh
  * - CSRF protection headers
  * - Request caching (stale-while-revalidate)
+ * - Token expiration check
  * - Error handling
  */
 
 import axios from 'axios';
 import TokenManager from './tokenManager';
+import CSRFProtection from '../utils/csrfProtection';
 
 const API_BASE_URL = '/api';
 
@@ -71,23 +73,35 @@ const processQueue = (error, token = null) => {
 
 /**
  * Request Interceptor
+ * - Verify token is not expired
  * - Add authorization header
  * - Add CSRF token from meta tag
  * - Check if token needs refresh
  */
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Check if access token is expired - reject if so
+    if (!TokenManager.isTokenValid()) {
+      TokenManager.clearTokens();
+      window.location.href = '/login';
+      return Promise.reject(new Error('Token expired'));
+    }
+
     // Add access token
     const token = TokenManager.getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // Add CSRF token from meta tag
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    // Add CSRF token from meta tag (generated in main.jsx)
+    const csrfToken = CSRFProtection.getToken();
     if (csrfToken) {
       config.headers['X-CSRF-Token'] = csrfToken;
     }
+
+    // Add additional security headers
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
+    config.headers['X-Content-Type-Options'] = 'nosniff';
 
     // Check if token should be refreshed proactively
     if (TokenManager.shouldRefreshToken() && !isRefreshing) {

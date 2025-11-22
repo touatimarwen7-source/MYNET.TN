@@ -95,6 +95,14 @@ class TokenManager {
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_EXPIRY_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    
+    // Also clear CSRF token
+    try {
+      const CSRFProtection = require('../utils/csrfProtection').default;
+      CSRFProtection.clearToken();
+    } catch (err) {
+      // CSRFProtection may not be loaded yet
+    }
   }
 
   /**
