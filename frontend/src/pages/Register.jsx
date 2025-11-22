@@ -10,7 +10,6 @@ import {
   Typography,
   Link,
   Alert,
-  Stack,
   List,
   ListItem,
   ListItemIcon,
@@ -21,6 +20,9 @@ import {
   FormControl,
   InputLabel,
   Divider,
+  Stepper,
+  Step,
+  StepLabel,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { authAPI } from '../api';
@@ -35,6 +37,7 @@ export default function Register() {
     setPageTitle('Inscription');
   }, []);
 
+  const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -81,17 +84,17 @@ export default function Register() {
     'Autre': ['Autre']
   };
 
+  const steps = ['Informations Générales', 'Informations de l\'Entreprise', 'Informations de l\'Activité'];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedData = { ...formData, [name]: value };
     
-    // Reset product_range and subcategory when company_type changes
     if (name === 'company_type') {
       updatedData.product_range = '';
       updatedData.subcategory = '';
     }
     
-    // Reset subcategory when product_range changes
     if (name === 'product_range') {
       updatedData.subcategory = '';
     }
@@ -99,8 +102,84 @@ export default function Register() {
     setFormData(updatedData);
   };
 
+  const validateStep = () => {
+    setError('');
+    
+    if (currentStep === 0) {
+      if (!formData.username.trim()) {
+        setError('Le nom d\'utilisateur est requis');
+        return false;
+      }
+      if (!formData.email.trim()) {
+        setError('L\'e-mail est requis');
+        return false;
+      }
+      if (!formData.password.trim()) {
+        setError('Le mot de passe est requis');
+        return false;
+      }
+      if (!formData.full_name.trim()) {
+        setError('Le nom complet est requis');
+        return false;
+      }
+      if (!formData.phone.trim()) {
+        setError('Le téléphone est requis');
+        return false;
+      }
+    }
+    
+    if (currentStep === 1) {
+      if (!formData.company_name.trim()) {
+        setError('Le nom de l\'entreprise est requis');
+        return false;
+      }
+      if (!formData.company_registration.trim()) {
+        setError('Le numéro d\'enregistrement est requis');
+        return false;
+      }
+    }
+    
+    if (currentStep === 2) {
+      if (!formData.company_type) {
+        setError('Le type d\'entreprise est requis');
+        return false;
+      }
+      if (!formData.product_range) {
+        setError('Le secteur d\'activité est requis');
+        return false;
+      }
+      if (!formData.subcategory) {
+        setError('La sous-catégorie est requise');
+        return false;
+      }
+      if (!formData.year_founded) {
+        setError('L\'année de fondation est requise');
+        return false;
+      }
+      if (!formData.num_employees) {
+        setError('Le nombre d\'employés est requis');
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
+  const handleNext = () => {
+    if (validateStep()) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep(prev => prev - 1);
+    setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateStep()) return;
+    
     setError('');
     setLoading(true);
 
@@ -193,6 +272,17 @@ export default function Register() {
               </List>
             </Box>
 
+            {/* Stepper */}
+            <Box sx={{ marginBottom: '32px' }}>
+              <Stepper activeStep={currentStep}>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+
             {error && (
               <Alert severity="error" sx={{ marginBottom: '24px' }}>
                 {error}
@@ -201,190 +291,259 @@ export default function Register() {
 
             {/* Form */}
             <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <TextField
-                fullWidth
-                label="Nom d'utilisateur"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Entrez votre nom d'utilisateur"
-                required
-                disabled={loading}
-              />
-
-              <TextField
-                fullWidth
-                label="E-mail"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Entrez votre adresse e-mail"
-                required
-                disabled={loading}
-              />
-
-              <TextField
-                fullWidth
-                label="Mot de passe"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Entrez un mot de passe sécurisé"
-                required
-                disabled={loading}
-              />
-
-              <TextField
-                fullWidth
-                label="Nom complet"
-                name="full_name"
-                value={formData.full_name}
-                onChange={handleChange}
-                placeholder="Votre nom complet"
-                disabled={loading}
-              />
-
-              <TextField
-                fullWidth
-                label="Téléphone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Votre numéro de téléphone"
-                disabled={loading}
-              />
-
-              {/* Company Information Section */}
-              <Box sx={{ mt: 2, mb: 2 }}>
-                <Typography variant="h6" sx={{ fontSize: '14px', fontWeight: 600, color: '#212121', mb: 2 }}>
-                  Informations de l'Entreprise
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-
-                <TextField
-                  fullWidth
-                  label="Nom de l'entreprise"
-                  name="company_name"
-                  value={formData.company_name}
-                  onChange={handleChange}
-                  placeholder="Nom de votre entreprise"
-                  disabled={loading}
-                  sx={{ mb: 2 }}
-                />
-
-                <TextField
-                  fullWidth
-                  label="Numéro d'enregistrement"
-                  name="company_registration"
-                  value={formData.company_registration}
-                  onChange={handleChange}
-                  placeholder="Numéro d'enregistrement commercial"
-                  disabled={loading}
-                  sx={{ mb: 2 }}
-                />
-
-                <FormControl fullWidth sx={{ mb: 2 }}>
-                  <InputLabel>Type d'Entreprise</InputLabel>
-                  <Select
-                    name="company_type"
-                    value={formData.company_type}
-                    onChange={handleChange}
-                    label="Type d'Entreprise"
-                    disabled={loading}
-                  >
-                    <MenuItem value="">Sélectionner un type</MenuItem>
-                    {companyTypes.map(type => (
-                      <MenuItem key={type} value={type}>{type}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {formData.company_type && (
-                  <FormControl fullWidth sx={{ mb: 2 }}>
-                    <InputLabel>Secteur d'Activité</InputLabel>
-                    <Select
-                      name="product_range"
-                      value={formData.product_range}
-                      onChange={handleChange}
-                      label="Secteur d'Activité"
-                      disabled={loading}
-                    >
-                      <MenuItem value="">Sélectionner un secteur</MenuItem>
-                      {productRanges[formData.company_type]?.map(range => (
-                        <MenuItem key={range} value={range}>{range}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-
-                {formData.product_range && (
-                  <FormControl fullWidth sx={{ mb: 2 }}>
-                    <InputLabel>Sous-Catégorie</InputLabel>
-                    <Select
-                      name="subcategory"
-                      value={formData.subcategory}
-                      onChange={handleChange}
-                      label="Sous-Catégorie"
-                      disabled={loading}
-                    >
-                      <MenuItem value="">Sélectionner une sous-catégorie</MenuItem>
-                      {subcategories[formData.product_range]?.map(sub => (
-                        <MenuItem key={sub} value={sub}>{sub}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2 }}>
-                  <TextField
-                    label="Année de Fondation"
-                    type="number"
-                    name="year_founded"
-                    value={formData.year_founded}
-                    onChange={handleChange}
-                    disabled={loading}
-                    inputProps={{ min: 1900, max: new Date().getFullYear() }}
-                  />
-
-                  <TextField
-                    label="Nombre d'Employés"
-                    type="number"
-                    name="num_employees"
-                    value={formData.num_employees}
-                    onChange={handleChange}
-                    placeholder="Ex: 50"
-                    disabled={loading}
-                    inputProps={{ min: 1 }}
-                  />
-                </Box>
-              </Box>
-
-              <Button
-                fullWidth
-                variant="contained"
-                type="submit"
-                disabled={loading}
-                sx={{
-                  minHeight: '44px',
-                  backgroundColor: '#0056B3',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  fontSize: '16px',
-                  marginTop: '8px',
-                  '&:hover': { backgroundColor: '#0d47a1' },
-                }}
-              >
-                {loading ? (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CircularProgress size={20} sx={{ color: '#0056B3' }} />
-                    Inscription en cours...
+              
+              {/* Step 0: Informations Générales */}
+              {currentStep === 0 && (
+                <>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="h6" sx={{ fontSize: '14px', fontWeight: 600, color: '#212121', mb: 2 }}>
+                      Informations Générales
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
                   </Box>
+
+                  <TextField
+                    fullWidth
+                    label="Nom d'utilisateur"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="Entrez votre nom d'utilisateur"
+                    required
+                    disabled={loading}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="E-mail"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Entrez votre adresse e-mail"
+                    required
+                    disabled={loading}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Mot de passe"
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Entrez un mot de passe sécurisé"
+                    required
+                    disabled={loading}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Nom complet"
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleChange}
+                    placeholder="Votre nom complet"
+                    disabled={loading}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Téléphone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Votre numéro de téléphone"
+                    disabled={loading}
+                  />
+                </>
+              )}
+
+              {/* Step 1: Informations de l'Entreprise */}
+              {currentStep === 1 && (
+                <>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="h6" sx={{ fontSize: '14px', fontWeight: 600, color: '#212121', mb: 2 }}>
+                      Informations de l'Entreprise
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
+                  </Box>
+
+                  <TextField
+                    fullWidth
+                    label="Nom de l'entreprise"
+                    name="company_name"
+                    value={formData.company_name}
+                    onChange={handleChange}
+                    placeholder="Nom de votre entreprise"
+                    disabled={loading}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Numéro d'enregistrement"
+                    name="company_registration"
+                    value={formData.company_registration}
+                    onChange={handleChange}
+                    placeholder="Numéro d'enregistrement commercial"
+                    disabled={loading}
+                  />
+                </>
+              )}
+
+              {/* Step 2: Informations de l'Activité */}
+              {currentStep === 2 && (
+                <>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="h6" sx={{ fontSize: '14px', fontWeight: 600, color: '#212121', mb: 2 }}>
+                      Informations de l'Activité
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
+                  </Box>
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Type d'Entreprise</InputLabel>
+                    <Select
+                      name="company_type"
+                      value={formData.company_type}
+                      onChange={handleChange}
+                      label="Type d'Entreprise"
+                      disabled={loading}
+                    >
+                      <MenuItem value="">Sélectionner un type</MenuItem>
+                      {companyTypes.map(type => (
+                        <MenuItem key={type} value={type}>{type}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  {formData.company_type && (
+                    <FormControl fullWidth sx={{ mb: 2 }}>
+                      <InputLabel>Secteur d'Activité</InputLabel>
+                      <Select
+                        name="product_range"
+                        value={formData.product_range}
+                        onChange={handleChange}
+                        label="Secteur d'Activité"
+                        disabled={loading}
+                      >
+                        <MenuItem value="">Sélectionner un secteur</MenuItem>
+                        {productRanges[formData.company_type]?.map(range => (
+                          <MenuItem key={range} value={range}>{range}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+
+                  {formData.product_range && (
+                    <FormControl fullWidth sx={{ mb: 2 }}>
+                      <InputLabel>Sous-Catégorie</InputLabel>
+                      <Select
+                        name="subcategory"
+                        value={formData.subcategory}
+                        onChange={handleChange}
+                        label="Sous-Catégorie"
+                        disabled={loading}
+                      >
+                        <MenuItem value="">Sélectionner une sous-catégorie</MenuItem>
+                        {subcategories[formData.product_range]?.map(sub => (
+                          <MenuItem key={sub} value={sub}>{sub}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+
+                  <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2 }}>
+                    <TextField
+                      label="Année de Fondation"
+                      type="number"
+                      name="year_founded"
+                      value={formData.year_founded}
+                      onChange={handleChange}
+                      disabled={loading}
+                      inputProps={{ min: 1900, max: new Date().getFullYear() }}
+                    />
+
+                    <TextField
+                      label="Nombre d'Employés"
+                      type="number"
+                      name="num_employees"
+                      value={formData.num_employees}
+                      onChange={handleChange}
+                      placeholder="Ex: 50"
+                      disabled={loading}
+                      inputProps={{ min: 1 }}
+                    />
+                  </Box>
+                </>
+              )}
+
+              {/* Navigation Buttons */}
+              <Box sx={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  disabled={currentStep === 0 || loading}
+                  onClick={handleBack}
+                  sx={{
+                    minHeight: '44px',
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    fontSize: '16px',
+                    color: '#0056B3',
+                    borderColor: '#0056B3',
+                    '&:hover': { 
+                      backgroundColor: '#f0f7ff',
+                      borderColor: '#0056B3'
+                    },
+                  }}
+                >
+                  Précédent
+                </Button>
+
+                {currentStep < steps.length - 1 ? (
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleNext}
+                    disabled={loading}
+                    sx={{
+                      minHeight: '44px',
+                      backgroundColor: '#0056B3',
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      fontSize: '16px',
+                      '&:hover': { backgroundColor: '#0d47a1' },
+                    }}
+                  >
+                    Suivant
+                  </Button>
                 ) : (
-                  'S\'inscrire'
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    type="submit"
+                    disabled={loading}
+                    sx={{
+                      minHeight: '44px',
+                      backgroundColor: '#0056B3',
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      fontSize: '16px',
+                      '&:hover': { backgroundColor: '#0d47a1' },
+                    }}
+                  >
+                    {loading ? (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <CircularProgress size={20} sx={{ color: '#fff' }} />
+                        Inscription en cours...
+                      </Box>
+                    ) : (
+                      'S\'inscrire'
+                    )}
+                  </Button>
                 )}
-              </Button>
+              </Box>
             </Box>
 
             <Typography sx={{ marginTop: '24px', textAlign: 'center', color: '#616161' }}>

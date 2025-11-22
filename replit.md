@@ -7,15 +7,16 @@ MyNet.tn is a production-ready B2B procurement platform for the private sector, 
 I prefer simple language and clear explanations. I want iterative development with small, testable changes. Please ask before making any major architectural changes or introducing new dependencies. I prefer that the agent works in the `/frontend` directory and does not make changes in the `/backend` directory.
 
 ## Recent Changes (November 22, 2025)
-- **Enhanced Registration Form**: Added comprehensive company profile collection to Register.jsx including:
-  - Company type dropdown (Négociant, Fabricant, Distributeur, Prestataire, Autre)
-  - Product range/sector selection (dynamically populated based on company type)
-  - Subcategory selection (dynamically populated based on product range)
-  - Year of foundation field (1900-current year)
-  - Number of employees field
-  - All fields properly cascading with validation
+- **Multi-Step Registration Form**: Restructured registration into 3 phases on same page:
+  - **Step 1 - Informations Générales**: Username, email, password, full name, phone
+  - **Step 2 - Informations de l'Entreprise**: Company name, registration number
+  - **Step 3 - Informations de l'Activité**: Company type, product range, subcategory, year founded, employees
+  - Visual progress indicator using MUI Stepper component
+  - Next/Previous buttons for navigation between phases
+  - Step-by-step validation before advancing
+  - Clean, organized form flow with section titles and dividers
 - **100% French Compliance**: Platform verified to be 100% French with zero non-French text
-- **Form Validation**: Dropdowns reset appropriately when parent selections change
+- **Smart Cascading Validation**: Dropdowns reset appropriately when parent selections change
 
 ## System Architecture
 The platform utilizes a React frontend (Vite) and a Node.js backend with a PostgreSQL database.
@@ -26,6 +27,7 @@ The platform utilizes a React frontend (Vite) and a Node.js backend with a Postg
 - **Color Palette**: #0056B3 (primary), #F9F9F9 (background), #212121 (text).
 - **Styling**: 4px border radius, 8px spacing, Roboto font.
 - **Localization**: FRANÇAIS UNIQUEMENT.
+- **Registration Form**: Multi-step form with visual progress indicator (Stepper) for better UX during user onboarding.
 
 ### Technical Implementations
 - **Frontend**: React 18 + Vite 7.2.4 + Material-UI v7.3.5.
