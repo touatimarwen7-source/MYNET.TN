@@ -1,41 +1,57 @@
 import { useState, useEffect } from 'react';
 import { Container, Box, Tabs, Tab, Typography, Alert } from '@mui/material';
 import SecurityIcon from '@mui/icons-material/Security';
+import ArticleIcon from '@mui/icons-material/Article';
+import SettingsIcon from '@mui/icons-material/Settings';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import StorageIcon from '@mui/icons-material/Storage';
+import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import UserRoleManagement from '../components/Admin/UserRoleManagement';
+import ContentManager from '../components/Admin/ContentManager';
+import SystemConfig from '../components/Admin/SystemConfig';
 import AdminAnalytics from '../components/Admin/AdminAnalytics';
 import { setPageTitle } from '../utils/pageTitle';
 
 /**
- * Admin Dashboard - Limited Permissions
- * ✅ صلاحيات محدودة تفويضها Super Admin
+ * Super Admin Dashboard - Total Control Hub
+ * ✅ صلاحيات التحكم الشامل (Total Control Powers)
  * 
- * Admin يملك صلاحيات محدودة فقط:
- * - عرض المستخدمين (بدون تعديل الأدوار)
- * - عرض الإحصائيات
- * - لا يملك صلاحيات تعديل النظام أو حذف البيانات
+ * 1. 👥 إدارة المستخدمين والأمان
+ * 2. 📄 إدارة المحتوى الديناميكي
+ * 3. ⚙️ التحكم في إعدادات النظام
+ * 4. 📊 المراقبة والتحليلات
  */
-export default function AdminDashboard() {
+export default function SuperAdminDashboard() {
   const [currentTab, setCurrentTab] = useState(0);
 
   useEffect(() => {
-    setPageTitle('لوحة التحكم - Admin');
+    setPageTitle('Total Control Hub - Super Admin');
   }, []);
 
   const tabs = [
     { 
-      label: '👥 إدارة المستخدمين', 
+      label: '👥 إدارة المستخدمين والأمان', 
       icon: <SecurityIcon />, 
       component: <UserRoleManagement />,
-      description: 'عرض المستخدمين والمعلومات الأساسية (صلاحيات محدودة)',
-      superAdminOnly: false
+      description: 'الاطلاع على جميع المستخدمين، تعديل الأدوار، حظر/فتح الحسابات، إعادة تعيين كلمات المرور'
     },
     { 
-      label: '📊 الإحصائيات', 
+      label: '📄 إدارة المحتوى الديناميكي', 
+      icon: <ArticleIcon />, 
+      component: <ContentManager />,
+      description: 'تعديل الصفحات الثابتة، إدارة الملفات والصور والوثائق'
+    },
+    { 
+      label: '⚙️ إعدادات النظام', 
+      icon: <SettingsIcon />, 
+      component: <SystemConfig />,
+      description: 'وضع الصيانة، Feature Toggles، Rate Limits، إعدادات الكاش'
+    },
+    { 
+      label: '📊 المراقبة والتحليلات', 
       icon: <AnalyticsIcon />, 
       component: <AdminAnalytics />,
-      description: 'عرض الإحصائيات والتقارير الأساسية',
-      superAdminOnly: false
+      description: 'الإحصائيات الحية، سجلات الأنشطة، مراقبة الموارد'
     }
   ];
 
@@ -53,7 +69,7 @@ export default function AdminDashboard() {
               marginBottom: '8px',
             }}
           >
-            لوحة التحكم - Admin
+            Total Control Hub
           </Typography>
           <Typography
             sx={{
@@ -62,20 +78,20 @@ export default function AdminDashboard() {
               marginBottom: '16px',
             }}
           >
-            ✅ صلاحيات محدودة - Limited Admin Permissions
+            ✅ صلاحيات التحكم الشامل - Super Admin Only
           </Typography>
           
-          {/* Info Alert */}
+          {/* Critical Alert */}
           <Alert 
-            severity="info" 
+            severity="warning" 
             sx={{ 
               marginBottom: '24px',
-              backgroundColor: '#E3F2FD',
-              borderColor: '#90CAF9',
-              color: '#1565C0'
+              backgroundColor: '#FFF3E0',
+              borderColor: '#FFB74D',
+              color: '#E65100'
             }}
           >
-            ℹ️ لديك صلاحيات محدودة تفويضها Super Admin. للوصول إلى جميع أدوات التحكم، اتصل بـ Super Admin
+            ⚠️ أنت تستخدم حساب Super Admin - جميع التغييرات هنا تؤثر على المنصة بالكامل
           </Alert>
         </Box>
 
@@ -127,8 +143,9 @@ export default function AdminDashboard() {
         {/* Footer Info */}
         <Box sx={{ marginTop: '32px', padding: '16px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #E0E0E0' }}>
           <Typography sx={{ fontSize: '12px', color: '#999999', lineHeight: '1.6' }}>
-            <strong>ملاحظة:</strong> كـ Admin، لديك صلاحيات محدودة فقط. 
-            للوصول إلى صلاحيات التحكم الشاملة (Total Control Hub)، يجب أن تكون Super Admin.
+            <strong>ملاحظة هامة:</strong> Super Admin يملك صلاحيات شاملة لإدارة المنصة بالكامل. 
+            Super Admin لا يتدخل في دورة المناقصة (Tender Cycle) - وهي خاصة بـ Buyers و Suppliers فقط.
+            Admin هي حسابات يفويضها Super Admin بصلاحيات محدودة.
           </Typography>
         </Box>
       </Container>

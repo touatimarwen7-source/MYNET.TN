@@ -66,6 +66,7 @@ const SupplierCatalog = lazy(() => import('./pages/SupplierCatalog'));
 const SupplierProfile = lazy(() => import('./pages/SupplierProfile'));
 const SupplierInvoices = lazy(() => import('./pages/SupplierInvoices'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
 const MFASetup = lazy(() => import('./pages/MFASetup'));
 const AuditLogViewer = lazy(() => import('./pages/AuditLogViewer'));
 const HealthMonitoring = lazy(() => import('./pages/HealthMonitoring'));
@@ -336,33 +337,54 @@ function App() {
             />
 
               {/* Administration */}
+              {/* Super Admin - Total Control Hub */}
+              <Route 
+              path="/super-admin" 
+              element={user?.role === 'super_admin' ? <SuperAdminDashboard /> : <Navigate to="/tenders" />} 
+            />
+              {/* Admin - Limited Permissions */}
               <Route 
               path="/admin" 
-              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <AdminDashboard /> : <Navigate to="/tenders" />} 
+              element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/tenders" />} 
+            />
+              {/* Super Admin Only Routes */}
+              <Route 
+              path="/super-admin/audit-logs" 
+              element={user?.role === 'super_admin' ? <AuditLogViewer /> : <Navigate to="/tenders" />} 
             />
               <Route 
+              path="/super-admin/health" 
+              element={user?.role === 'super_admin' ? <HealthMonitoring /> : <Navigate to="/tenders" />} 
+            />
+              <Route 
+              path="/super-admin/archive" 
+              element={user?.role === 'super_admin' ? <ArchiveManagement /> : <Navigate to="/tenders" />} 
+            />
+              <Route 
+              path="/super-admin/tiers" 
+              element={user?.role === 'super_admin' ? <SubscriptionTiers /> : <Navigate to="/tenders" />} 
+            />
+              <Route 
+              path="/super-admin/features" 
+              element={user?.role === 'super_admin' ? <FeatureControl /> : <Navigate to="/tenders" />} 
+            />
+              <Route 
+              path="/super-admin/users" 
+              element={user?.role === 'super_admin' ? <UserManagement /> : <Navigate to="/tenders" />} 
+            />
+              
+              {/* Admin Only Routes */}
+              <Route 
               path="/admin/audit-logs" 
-              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <AuditLogViewer /> : <Navigate to="/tenders" />} 
+              element={user?.role === 'admin' ? <AuditLogViewer /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/health" 
-              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <HealthMonitoring /> : <Navigate to="/tenders" />} 
+              element={user?.role === 'admin' ? <HealthMonitoring /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/archive" 
-              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <ArchiveManagement /> : <Navigate to="/tenders" />} 
-            />
-              <Route 
-              path="/admin/tiers" 
-              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <SubscriptionTiers /> : <Navigate to="/tenders" />} 
-            />
-              <Route 
-              path="/admin/features" 
-              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <FeatureControl /> : <Navigate to="/tenders" />} 
-            />
-              <Route 
-              path="/admin/users" 
-              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <UserManagement /> : <Navigate to="/tenders" />} 
+              element={user?.role === 'admin' ? <ArchiveManagement /> : <Navigate to="/tenders" />} 
             />
 
               {/* Profil et Sécurité */}

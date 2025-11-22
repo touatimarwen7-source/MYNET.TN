@@ -188,6 +188,7 @@ export default function Sidebar({ user, onLogout }) {
     }
   ];
 
+  // 👥 Limited Admin Menu - صلاحيات محدودة
   const adminMenu = [
     {
       id: 'dashboard',
@@ -199,9 +200,8 @@ export default function Sidebar({ user, onLogout }) {
       id: 'users',
       label: 'Utilisateurs',
       subItems: [
-        { label: 'Gestion', path: '/admin/users' },
-        { label: 'Rôles', path: '/admin/roles' },
-        { label: 'Autorisations', path: '/admin/permissions' }
+        { label: 'Affichage', path: '/admin/users' },
+        { label: 'Statistiques', path: '/admin/health' }
       ]
     },
     {
@@ -209,26 +209,7 @@ export default function Sidebar({ user, onLogout }) {
       label: 'Appels d\'Offres',
       subItems: [
         { label: 'Tous', path: '/admin/tenders' },
-        { label: 'Modération', path: '/admin/tenders-moderation' },
-        { label: 'Archivage', path: '/admin/archive-management' }
-      ]
-    },
-    {
-      id: 'system',
-      label: 'Système',
-      subItems: [
-        { label: 'Santé', path: '/health-monitoring' },
-        { label: 'Audit', path: '/audit-log-viewer' },
-        { label: 'Configurations', path: '/admin/settings' }
-      ]
-    },
-    {
-      id: 'billing',
-      label: 'Facturation',
-      subItems: [
-        { label: 'Abonnements', path: '/subscription-tiers' },
-        { label: 'Factures', path: '/admin/invoices' },
-        { label: 'Contrôle des Fonctionnalités', path: '/feature-control' }
+        { label: 'Archivage', path: '/admin/archive' }
       ]
     },
     {
@@ -241,13 +222,68 @@ export default function Sidebar({ user, onLogout }) {
     }
   ];
 
+  // 👑 Super Admin Menu - صلاحيات التحكم الشامل (Total Control Hub)
+  const superAdminMenu = [
+    {
+      id: 'dashboard',
+      label: 'Total Control Hub',
+      path: '/super-admin',
+      subItems: []
+    },
+    {
+      id: 'users',
+      label: '👥 إدارة المستخدمين',
+      subItems: [
+        { label: 'إدارة الحسابات', path: '/super-admin/users' },
+        { label: 'الأدوار والأذونات', path: '/super-admin/permissions' },
+        { label: 'الحسابات المحظورة', path: '/super-admin/blocked-users' }
+      ]
+    },
+    {
+      id: 'content',
+      label: '📄 إدارة المحتوى',
+      subItems: [
+        { label: 'الصفحات الثابتة', path: '/super-admin/content' },
+        { label: 'الملفات والصور', path: '/super-admin/assets' },
+        { label: 'الوثائق', path: '/super-admin/documents' }
+      ]
+    },
+    {
+      id: 'system',
+      label: '⚙️ إعدادات النظام',
+      subItems: [
+        { label: 'وضع الصيانة', path: '/super-admin/maintenance' },
+        { label: 'Feature Toggles', path: '/super-admin/features' },
+        { label: 'Rate Limits', path: '/super-admin/rate-limits' },
+        { label: 'إعدادات الكاش', path: '/super-admin/cache' }
+      ]
+    },
+    {
+      id: 'monitoring',
+      label: '📊 المراقبة والتحليلات',
+      subItems: [
+        { label: 'الصحة', path: '/super-admin/health' },
+        { label: 'سجلات النشاط', path: '/super-admin/audit-logs' },
+        { label: 'الإحصائيات', path: '/super-admin/analytics' },
+        { label: 'النسخ الاحتياطية', path: '/super-admin/backup' }
+      ]
+    },
+    {
+      id: 'profile',
+      label: 'Profil Super Admin',
+      subItems: [
+        { label: 'Paramètres', path: '/profile' },
+        { label: 'Sécurité', path: '/security' }
+      ]
+    }
+  ];
+
   const getMenuForRole = () => {
     switch (user?.role) {
       case 'buyer': return buyerMenu;
       case 'supplier': return supplierMenu;
-      case 'admin':
-      case 'super_admin': // Support both 'admin' and 'super_admin' roles
-        return adminMenu;
+      case 'admin': return adminMenu;
+      case 'super_admin': return superAdminMenu;
       default: return [];
     }
   };
