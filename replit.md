@@ -45,6 +45,44 @@ The platform utilizes a React frontend (Vite) and a Node.js backend with a Postg
 - **Draft Storage**: Unique keys for localStorage drafts (e.g., `bidDraft_{tenderId}`).
 
 ## Recent Changes (November 22, 2025)
+### Direct Supply Request Feature - Buyers can send direct supply requests to suppliers
+- **New File**: `frontend/src/pages/DirectSupplyRequest.jsx` (400+ lines)
+  - 4-step wizard for creating supply requests
+  - Step 1: Select supplier from verified list
+  - Step 2: Product details (title, description, category, quantity, unit)
+  - Step 3: Budget and notes
+  - Step 4: Review and confirmation
+  - Real-time validation and error handling
+  - Automatic notification to supplier when request is sent
+
+- **Backend API**: `backend/routes/directSupplyRoutes.js`
+  - GET `/api/direct-supply/suppliers` - Get list of verified suppliers
+  - POST `/api/direct-supply/create-request` - Create direct supply request
+  - GET `/api/direct-supply/my-requests` - Get buyer's requests
+  - GET `/api/direct-supply/received-requests` - Get supplier's received requests
+  - PUT `/api/direct-supply/:requestId/status` - Update request status (pending/accepted/rejected/completed)
+  - Authorization: Only buyers can create requests, only assigned supplier can update status
+
+- **API Integration**: Added to `frontend/src/api.js`
+  - `procurementAPI.getSuppliers()` - Fetch verified suppliers
+  - `procurementAPI.createSupplyRequest(data)` - Submit supply request
+  - `directSupplyAPI` - Full CRUD operations for supply requests
+
+- **Routing**: Added `/direct-supply-request` route (buyer-only access)
+  - Automatic role-based access control
+  - Redirects non-buyers to tenders page
+
+### Features
+- ✅ Step-by-step form wizard for easy navigation
+- ✅ Real-time validation of required fields
+- ✅ Automatic supplier notification system
+- ✅ Role-based access (buyers only)
+- ✅ Budget and quantity tracking
+- ✅ Notes for special requirements
+- ✅ Status management (pending → accepted/rejected/completed)
+- ✅ Production-ready builds with zero errors
+
+## Previous Changes
 ### Dynamic Company Profile with Full API Integration - Now for Buyers & Suppliers
 - **New File**: `frontend/src/pages/CompanyProfile.jsx` (580+ lines)
   - Displays company information from real API endpoint

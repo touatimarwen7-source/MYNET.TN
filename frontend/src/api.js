@@ -26,6 +26,10 @@ export const procurementAPI = {
   closeTender: (id) => axiosInstance.post(`/procurement/tenders/${id}/close`),
   getMyTenders: (filters) => axiosInstance.get('/procurement/my-tenders', { params: filters }),
   
+  // Direct supply request helpers
+  getSuppliers: () => axiosInstance.get('/direct-supply/suppliers'),
+  createSupplyRequest: (data) => axiosInstance.post('/direct-supply/create-request', data),
+  
   getOffers: (tenderId) => axiosInstance.get(`/procurement/tenders/${tenderId}/offers`),
   getMyOffers: () => axiosInstance.get('/procurement/my-offers'),
   createOffer: (data) => axiosInstance.post('/procurement/offers', data),
@@ -57,6 +61,14 @@ export const companyProfileAPI = {
   getSupplierProfile: (supplierId) => axiosInstance.get(`/company-profile/supplier/${supplierId}`),
   updateSupplierProfile: (supplierId, data) => axiosInstance.put(`/company-profile/supplier/${supplierId}`, data),
   searchSuppliers: (filters) => axiosInstance.get('/company-profile/search', { params: filters })
+};
+
+export const directSupplyAPI = {
+  getSuppliers: () => axiosInstance.get('/direct-supply/suppliers'),
+  createRequest: (data) => axiosInstance.post('/direct-supply/create-request', data),
+  getMyRequests: () => axiosInstance.get('/direct-supply/my-requests'),
+  getReceivedRequests: () => axiosInstance.get('/direct-supply/received-requests'),
+  updateRequestStatus: (requestId, status) => axiosInstance.put(`/direct-supply/${requestId}/status`, { status })
 };
 
 export const adminAPI = {
