@@ -16,6 +16,11 @@ import {
   ListItemIcon,
   ListItemText,
   CircularProgress,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Divider,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { authAPI } from '../api';
@@ -38,14 +43,60 @@ export default function Register() {
     phone: '',
     role: roleFromUrl,
     company_name: '',
-    company_registration: ''
+    company_registration: '',
+    company_type: '',
+    product_range: '',
+    subcategory: '',
+    year_founded: new Date().getFullYear().toString(),
+    num_employees: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Company data
+  const companyTypes = ['Négociant', 'Fabricant', 'Distributeur', 'Prestataire', 'Autre'];
+  const productRanges = {
+    'Négociant': ['Électronique', 'Fournitures de Bureau', 'Matériaux de Construction', 'Alimentaire'],
+    'Fabricant': ['Électronique', 'Mécanique', 'Chimie', 'Textile', 'Agroalimentaire'],
+    'Distributeur': ['Électronique', 'Électroménager', 'Quincaillerie', 'Logistique'],
+    'Prestataire': ['Informatique', 'Consulting', 'Maintenance', 'Transport', 'Nettoyage'],
+    'Autre': ['Autre']
+  };
+  const subcategories = {
+    'Électronique': ['Composants', 'Équipements', 'Accessoires'],
+    'Fournitures de Bureau': ['Papeterie', 'Mobilier', 'Équipements'],
+    'Matériaux de Construction': ['Matériaux Bruts', 'Produits Finis', 'Outillage'],
+    'Alimentaire': ['Produits Frais', 'Produits Secs', 'Boissons'],
+    'Mécanique': ['Pièces', 'Assemblages', 'Usinage'],
+    'Chimie': ['Produits Chimiques', 'Produits Pharmaceutiques'],
+    'Textile': ['Tissus', 'Vêtements', 'Accessoires'],
+    'Agroalimentaire': ['Fruits', 'Légumes', 'Produits Transformés'],
+    'Électroménager': ['Petit Électroménager', 'Gros Électroménager'],
+    'Quincaillerie': ['Outils', 'Quincaillerie Fine', 'Accessoires'],
+    'Informatique': ['Développement', 'Infrastructure', 'Support'],
+    'Consulting': ['Conseil Stratégique', 'Audit', 'Formation'],
+    'Maintenance': ['Maintenance Préventive', 'Maintenance Corrective'],
+    'Transport': ['Transport Routier', 'Transport Maritime', 'Logistique'],
+    'Nettoyage': ['Nettoyage Général', 'Nettoyage Spécialisé'],
+    'Autre': ['Autre']
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const updatedData = { ...formData, [name]: value };
+    
+    // Reset product_range and subcategory when company_type changes
+    if (name === 'company_type') {
+      updatedData.product_range = '';
+      updatedData.subcategory = '';
+    }
+    
+    // Reset subcategory when product_range changes
+    if (name === 'product_range') {
+      updatedData.subcategory = '';
+    }
+    
+    setFormData(updatedData);
   };
 
   const handleSubmit = async (e) => {
@@ -205,28 +256,110 @@ export default function Register() {
                 disabled={loading}
               />
 
-              {formData.role === 'buyer' && (
-                <>
-                  <TextField
-                    fullWidth
-                    label="Nom de l'entreprise"
-                    name="company_name"
-                    value={formData.company_name}
+              {/* Company Information Section */}
+              <Box sx={{ mt: 2, mb: 2 }}>
+                <Typography variant="h6" sx={{ fontSize: '14px', fontWeight: 600, color: '#212121', mb: 2 }}>
+                  Informations de l'Entreprise
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+
+                <TextField
+                  fullWidth
+                  label="Nom de l'entreprise"
+                  name="company_name"
+                  value={formData.company_name}
+                  onChange={handleChange}
+                  placeholder="Nom de votre entreprise"
+                  disabled={loading}
+                  sx={{ mb: 2 }}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Numéro d'enregistrement"
+                  name="company_registration"
+                  value={formData.company_registration}
+                  onChange={handleChange}
+                  placeholder="Numéro d'enregistrement commercial"
+                  disabled={loading}
+                  sx={{ mb: 2 }}
+                />
+
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel>Type d'Entreprise</InputLabel>
+                  <Select
+                    name="company_type"
+                    value={formData.company_type}
                     onChange={handleChange}
-                    placeholder="Nom de votre entreprise"
+                    label="Type d'Entreprise"
                     disabled={loading}
-                  />
+                  >
+                    <MenuItem value="">Sélectionner un type</MenuItem>
+                    {companyTypes.map(type => (
+                      <MenuItem key={type} value={type}>{type}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                {formData.company_type && (
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Secteur d'Activité</InputLabel>
+                    <Select
+                      name="product_range"
+                      value={formData.product_range}
+                      onChange={handleChange}
+                      label="Secteur d'Activité"
+                      disabled={loading}
+                    >
+                      <MenuItem value="">Sélectionner un secteur</MenuItem>
+                      {productRanges[formData.company_type]?.map(range => (
+                        <MenuItem key={range} value={range}>{range}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+
+                {formData.product_range && (
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Sous-Catégorie</InputLabel>
+                    <Select
+                      name="subcategory"
+                      value={formData.subcategory}
+                      onChange={handleChange}
+                      label="Sous-Catégorie"
+                      disabled={loading}
+                    >
+                      <MenuItem value="">Sélectionner une sous-catégorie</MenuItem>
+                      {subcategories[formData.product_range]?.map(sub => (
+                        <MenuItem key={sub} value={sub}>{sub}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2 }}>
                   <TextField
-                    fullWidth
-                    label="Numéro d'enregistrement"
-                    name="company_registration"
-                    value={formData.company_registration}
+                    label="Année de Fondation"
+                    type="number"
+                    name="year_founded"
+                    value={formData.year_founded}
                     onChange={handleChange}
-                    placeholder="Numéro d'enregistrement"
                     disabled={loading}
+                    inputProps={{ min: 1900, max: new Date().getFullYear() }}
                   />
-                </>
-              )}
+
+                  <TextField
+                    label="Nombre d'Employés"
+                    type="number"
+                    name="num_employees"
+                    value={formData.num_employees}
+                    onChange={handleChange}
+                    placeholder="Ex: 50"
+                    disabled={loading}
+                    inputProps={{ min: 1 }}
+                  />
+                </Box>
+              </Box>
 
               <Button
                 fullWidth

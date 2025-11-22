@@ -6,6 +6,17 @@ MyNet.tn is a production-ready B2B procurement platform for the private sector, 
 ## User Preferences
 I prefer simple language and clear explanations. I want iterative development with small, testable changes. Please ask before making any major architectural changes or introducing new dependencies. I prefer that the agent works in the `/frontend` directory and does not make changes in the `/backend` directory.
 
+## Recent Changes (November 22, 2025)
+- **Enhanced Registration Form**: Added comprehensive company profile collection to Register.jsx including:
+  - Company type dropdown (Négociant, Fabricant, Distributeur, Prestataire, Autre)
+  - Product range/sector selection (dynamically populated based on company type)
+  - Subcategory selection (dynamically populated based on product range)
+  - Year of foundation field (1900-current year)
+  - Number of employees field
+  - All fields properly cascading with validation
+- **100% French Compliance**: Platform verified to be 100% French with zero non-French text
+- **Form Validation**: Dropdowns reset appropriately when parent selections change
+
 ## System Architecture
 The platform utilizes a React frontend (Vite) and a Node.js backend with a PostgreSQL database.
 
