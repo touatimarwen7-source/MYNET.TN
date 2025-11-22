@@ -11,6 +11,7 @@ import ToastContainer from './components/ToastContainer';
 import Sidebar from './components/Sidebar';
 import { ToastContext } from './contexts/ToastContext';
 import { DarkModeProvider } from './contexts/DarkModeContext';
+import TokenManager from './services/tokenManager';
 
 // Core pages (eager load)
 import HomePage from './pages/HomePage';
@@ -95,14 +96,14 @@ function App() {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('accessToken');
+      const token = TokenManager.getAccessToken();
       if (token) {
         try {
-          const tokenData = JSON.parse(atob(token.split('.')[1]));
-          setUser(tokenData);
+          const userData = TokenManager.getUserFromToken();
+          setUser(userData);
         } catch (error) {
           console.error('Erreur lors du décodage du jeton:', error);
-          localStorage.removeItem('accessToken');
+          TokenManager.clearTokens();
           setUser(null);
         }
       } else {
@@ -130,8 +131,7 @@ function App() {
   }, [user]);
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    TokenManager.clearTokens();
     setUser(null);
   };
 

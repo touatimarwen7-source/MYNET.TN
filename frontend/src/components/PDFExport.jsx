@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Box, CircularProgress, Alert, Stack } from '@mui/material';
-import axios from 'axios';
+import axiosInstance from '../services/axiosConfig';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import PrintIcon from '@mui/icons-material/Print';
 
@@ -33,9 +33,8 @@ const PDFExport = ({ documentType, documentId, supplierId = null, startDate = nu
       setLoading(true);
       setError(null);
       const endpoint = getEndpoint();
-      const response = await axios.get(endpoint, {
-        responseType: 'blob',
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      const response = await axiosInstance.get(endpoint, {
+        responseType: 'blob'
       });
 
       const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -60,9 +59,8 @@ const PDFExport = ({ documentType, documentId, supplierId = null, startDate = nu
       setLoading(true);
       setError(null);
       const endpoint = getEndpoint();
-      const response = await axios.get(endpoint, {
-        responseType: 'blob',
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      const response = await axiosInstance.get(endpoint, {
+        responseType: 'blob'
       });
 
       const blob = new Blob([response.data], { type: 'application/pdf' });

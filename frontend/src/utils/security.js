@@ -1,3 +1,5 @@
+import TokenManager from '../services/tokenManager';
+
 // أمان الـ XSS - تنقية المحتوى
 export function sanitizeHTML(input) {
   if (!input) return '';
@@ -38,7 +40,7 @@ export function setupInactivityTimer(timeout = 15 * 60 * 1000) {
     clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(() => {
       console.warn('انتهاء الجلسة بسبب الخمول');
-      localStorage.removeItem('accessToken');
+      TokenManager.clearTokens();
       window.location.href = '/login';
     }, timeout);
   };

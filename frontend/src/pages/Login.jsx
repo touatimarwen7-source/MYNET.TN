@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { useToastContext } from '../contexts/ToastContext';
 import { authAPI } from '../api';
+import TokenManager from '../services/tokenManager';
 import { setPageTitle } from '../utils/pageTitle';
 
 export default function Login() {
@@ -35,8 +36,12 @@ export default function Login() {
 
     try {
       const response = await authAPI.login({ email, password });
-      localStorage.setItem('accessToken', response.data.accessToken);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
+      
+      // Store tokens securely
+      TokenManager.setAccessToken(response.data.accessToken, response.data.expiresIn);
+      if (response.data.refreshTokenId) {
+        TokenManager.setRefreshTokenId(response.data.refreshTokenId);
+      }
       
       window.dispatchEvent(new Event('authChanged'));
       

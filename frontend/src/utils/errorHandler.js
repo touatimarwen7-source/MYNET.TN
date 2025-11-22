@@ -1,4 +1,5 @@
 // Error Handling Utilities
+import TokenManager from '../services/tokenManager';
 
 export const errorHandler = {
   // Get user-friendly error message
@@ -53,10 +54,7 @@ export const errorHandler = {
 
   // Handle auth error (logout user)
   handleAuthError: () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userName');
+    TokenManager.clearTokens();
     window.dispatchEvent(new Event('authChanged'));
     window.location.href = '/login';
   },

@@ -37,7 +37,7 @@ export const API_CONFIG = {
 };
 
 export const getAuthHeader = () => {
-  const token = localStorage.getItem('accessToken');
+  const token = TokenManager.getAccessToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 

@@ -20,6 +20,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
+import TokenManager from '../services/tokenManager';
 
 export default function UnifiedHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,12 +34,11 @@ export default function UnifiedHeader() {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('accessToken');
-      const role = localStorage.getItem('userRole');
-      const name = localStorage.getItem('userName') || 'Utilisateur';
+      const token = TokenManager.getAccessToken();
+      const userData = TokenManager.getUserFromToken();
       setIsAuthenticated(!!token);
-      setUserRole(role);
-      setUserName(name);
+      setUserRole(userData?.role || null);
+      setUserName(userData?.username || userData?.email || 'Utilisateur');
     };
 
     checkAuth();
@@ -71,10 +71,7 @@ export default function UnifiedHeader() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userName');
+    TokenManager.clearTokens();
     window.dispatchEvent(new Event('authChanged'));
     navigate('/login');
     setAnchorEl(null);

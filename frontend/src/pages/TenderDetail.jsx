@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { procurementAPI } from '../api';
+import TokenManager from '../services/tokenManager';
 
 export default function TenderDetail() {
   const { id } = useParams();
@@ -31,11 +32,11 @@ export default function TenderDetail() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = TokenManager.getAccessToken();
     if (token) {
       try {
-        const tokenData = JSON.parse(atob(token.split('.')[1]));
-        setUser(tokenData);
+        const userData = TokenManager.getUserFromToken();
+        setUser(userData);
       } catch (e) {
         console.error('Erreur lors du décodage du jeton:', e);
       }
@@ -75,220 +76,105 @@ export default function TenderDetail() {
 
   if (error) {
     return (
-      <Container maxWidth="lg" sx={{ paddingY: '40px' }}>
+      <Container maxWidth="md" sx={{ paddingY: '40px' }}>
         <Alert severity="error">{error}</Alert>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate('/tenders')}
+          sx={{ marginTop: '20px' }}
+        >
+          Retour aux appels d'offres
+        </Button>
       </Container>
     );
   }
 
   if (!tender) {
     return (
-      <Container maxWidth="lg" sx={{ paddingY: '40px' }}>
-        <Alert severity="error">La marchandise n'existe pas</Alert>
+      <Container maxWidth="md" sx={{ paddingY: '40px' }}>
+        <Alert severity="info">Appel d'offres non trouvé</Alert>
       </Container>
     );
   }
 
   return (
     <Box sx={{ backgroundColor: '#fafafa', paddingY: '40px' }}>
-      <Container maxWidth="lg">
-        {/* Back Button */}
+      <Container maxWidth="md">
         <Button
           startIcon={<ArrowBackIcon />}
-          onClick={() => window.history.back()}
+          onClick={() => navigate('/tenders')}
           sx={{
+            marginBottom: '24px',
             color: '#0056B3',
             textTransform: 'none',
             fontWeight: 500,
-            marginBottom: '24px',
-            '&:hover': { backgroundColor: '#f5f5f5' },
           }}
         >
           Retour
         </Button>
 
-        {/* Header */}
-        <Card sx={{ marginBottom: '32px', border: '1px solid #e0e0e0' }}>
+        <Card sx={{ marginBottom: '24px', borderRadius: '4px', boxShadow: 'none', border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ padding: '32px' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  variant="h2"
-                  sx={{
-                    fontSize: '28px',
-                    fontWeight: 500,
-                    color: '#212121',
-                    marginBottom: '16px',
-                  }}
-                >
+            <Stack spacing={3}>
+              <Box>
+                <Typography variant="h2" sx={{ fontSize: '28px', fontWeight: 600, color: '#212121', marginBottom: '8px' }}>
                   {tender.title}
                 </Typography>
-                <Typography sx={{ color: '#616161', marginBottom: '12px' }}>
+                <Typography sx={{ color: '#616161', fontSize: '14px' }}>
+                  ID: {tender.id}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <Chip
+                  label={tender.status}
+                  sx={{
+                    backgroundColor: tender.status === 'published' ? '#2e7d32' : '#0056B3',
+                    color: '#ffffff',
+                    fontWeight: 500,
+                  }}
+                />
+              </Box>
+
+              <Box sx={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
+                <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121', marginBottom: '8px' }}>
+                  Description
+                </Typography>
+                <Typography sx={{ color: '#616161', lineHeight: 1.6 }}>
                   {tender.description}
                 </Typography>
               </Box>
-              <Chip
-                label={tender.status === 'active' ? 'Actif' : 'Clôturé'}
-                sx={{
-                  backgroundColor: tender.status === 'active' ? '#e8f5e9' : '#ffebee',
-                  color: tender.status === 'active' ? '#1b5e20' : '#c62828',
-                  fontWeight: 600,
-                }}
-              />
-            </Box>
-          </CardContent>
-        </Card>
 
-        {/* Details */}
-        <Card sx={{ marginBottom: '32px', border: '1px solid #e0e0e0' }}>
-          <CardContent sx={{ padding: '32px' }}>
-            <Typography variant="h4" sx={{ fontSize: '18px', fontWeight: 600, color: '#212121', marginBottom: '24px' }}>
-              Détails de la marchandise
-            </Typography>
-            
-            <Stack spacing={2}>
-              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: '24px' }}>
-                <Box>
-                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
-                    Catégorie
+              {offers.length > 0 && (
+                <Box sx={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
+                  <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121', marginBottom: '16px' }}>
+                    Offres ({offers.length})
                   </Typography>
-                  <Typography sx={{ fontSize: '16px', color: '#212121', fontWeight: 500 }}>
-                    {tender.category || 'N/A'}
-                  </Typography>
+                  <Paper sx={{ overflow: 'auto', boxShadow: 'none', border: '1px solid #e0e0e0' }}>
+                    <Table>
+                      <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: 600, color: '#212121' }}>Fournisseur</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#212121' }}>Prix</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#212121' }}>Statut</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {offers.map((offer) => (
+                          <TableRow key={offer.id}>
+                            <TableCell>{offer.supplier_name}</TableCell>
+                            <TableCell>{offer.price} TND</TableCell>
+                            <TableCell>{offer.status}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Paper>
                 </Box>
-                <Box>
-                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
-                    Budget
-                  </Typography>
-                  <Typography sx={{ fontSize: '16px', color: '#0056B3', fontWeight: 600 }}>
-                    {tender.budget_min} - {tender.budget_max} {tender.currency}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
-                    Date limite
-                  </Typography>
-                  <Typography sx={{ fontSize: '16px', color: '#212121', fontWeight: 500 }}>
-                    {new Date(tender.deadline).toLocaleDateString('fr-FR')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
-                    Dernier mise à jour
-                  </Typography>
-                  <Typography sx={{ fontSize: '16px', color: '#212121', fontWeight: 500 }}>
-                    {new Date(tender.updated_at).toLocaleDateString('fr-FR')}
-                  </Typography>
-                </Box>
-              </Box>
+              )}
             </Stack>
           </CardContent>
         </Card>
-
-        {/* Requirements */}
-        {tender.requirements && tender.requirements.length > 0 && (
-          <Card sx={{ marginBottom: '32px', border: '1px solid #e0e0e0' }}>
-            <CardContent sx={{ padding: '32px' }}>
-              <Typography variant="h4" sx={{ fontSize: '18px', fontWeight: 600, color: '#212121', marginBottom: '16px' }}>
-                Exigences
-              </Typography>
-              <Stack spacing={1}>
-                {tender.requirements.map((req, idx) => (
-                  <Typography key={idx} sx={{ fontSize: '14px', color: '#212121', display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{ display: 'inline-block', width: '6px', height: '6px', backgroundColor: '#0056B3', borderRadius: '50%', marginRight: '8px' }} />
-                    {req}
-                  </Typography>
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Call to Action for Suppliers */}
-        {user?.role === 'supplier' && tender.status === 'active' && (
-          <Card sx={{ marginBottom: '32px', backgroundColor: '#e3f2fd', border: '1px solid #0056B3' }}>
-            <CardContent sx={{ padding: '32px', textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ fontSize: '20px', fontWeight: 600, color: '#0d47a1', marginBottom: '12px' }}>
-                Prêt à soumettre une offre?
-              </Typography>
-              <Typography sx={{ color: '#0056B3', marginBottom: '24px', fontSize: '14px' }}>
-                Cliquez sur le bouton ci-dessous pour soumettre votre offre en toute sécurité
-              </Typography>
-              <Button
-                variant="contained"
-                onClick={() => navigate(`/create-offer/${id}`)}
-                sx={{
-                  backgroundColor: '#0056B3',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  padding: '12px 32px',
-                  minHeight: '44px',
-                  '&:hover': { backgroundColor: '#0d47a1' },
-                }}
-              >
-                📝 Soumettre une Offre
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Offers List */}
-        {offers.length > 0 && (
-          <Card sx={{ border: '1px solid #e0e0e0' }}>
-            <CardContent sx={{ padding: 0 }}>
-              <Box sx={{ padding: '24px' }}>
-                <Typography variant="h4" sx={{ fontSize: '18px', fontWeight: 600, color: '#212121' }}>
-                  Offres Reçues ({offers.length})
-                </Typography>
-              </Box>
-              <Paper sx={{ border: '1px solid #e0e0e0', borderRadius: 0, overflow: 'hidden' }}>
-                <Table>
-                  <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableRow sx={{ height: '56px' }}>
-                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
-                        Fournisseur
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }} align="right">
-                        Montant
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
-                        Délai
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
-                        Statut
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {offers.map(offer => (
-                      <TableRow key={offer.id} sx={{ height: '56px', borderBottom: '1px solid #e0e0e0' }}>
-                        <TableCell sx={{ color: '#212121', fontSize: '14px', fontWeight: 500 }}>
-                          {offer.full_name}
-                        </TableCell>
-                        <TableCell sx={{ color: '#0056B3', fontSize: '14px', fontWeight: 600 }} align="right">
-                          {offer.total_amount} {offer.currency}
-                        </TableCell>
-                        <TableCell sx={{ color: '#616161', fontSize: '14px' }}>
-                          {offer.delivery_time}
-                        </TableCell>
-                        <TableCell>
-                          <Chip
-                            label={offer.status}
-                            size="small"
-                            sx={{
-                              backgroundColor: offer.status === 'submitted' ? '#e3f2fd' : '#f5f5f5',
-                              color: offer.status === 'submitted' ? '#0d47a1' : '#616161',
-                            }}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Paper>
-            </CardContent>
-          </Card>
-        )}
       </Container>
     </Box>
   );

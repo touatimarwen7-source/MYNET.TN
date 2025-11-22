@@ -17,7 +17,7 @@ import {
   Stack,
   Divider,
 } from '@mui/material';
-import axios from 'axios';
+import axiosInstance from '../services/axiosConfig';
 import SaveIcon from '@mui/icons-material/Save';
 import { setPageTitle } from '../utils/pageTitle';
 
@@ -39,8 +39,8 @@ export default function AccountSettings() {
 
   const fetchSettings = async () => {
     try {
-      const response = await axios.get('/api/user/settings', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      const response = await axiosInstance.get('/api/user/settings', {
+        
       });
       setSettings(response.data.settings || settings);
     } catch (error) {
@@ -54,9 +54,7 @@ export default function AccountSettings() {
     setSaving(true);
     setMessage('');
     try {
-      await axios.put('/api/user/settings', settings, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-      });
+      await axiosInstance.put('/api/user/settings', settings);
       setMessage({ type: 'success', text: 'Paramètres sauvegardés avec succès' });
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
