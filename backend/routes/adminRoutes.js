@@ -32,8 +32,22 @@ router.post('/content/files', adminController.uploadFile);
 router.delete('/content/files/:id', adminController.deleteFile);
 
 // ===== إعدادات النظام =====
+router.get('/config', adminController.getSystemConfig);
 router.get('/system/config', adminController.getSystemConfig);
+router.put('/config', adminController.updateSystemConfig);
 router.put('/system/config', adminController.updateSystemConfig);
+router.put('/config/maintenance', adminController.toggleMaintenance);
 router.post('/system/maintenance', adminController.toggleMaintenance);
+router.post('/config/cache/clear', adminController.clearCache);
+router.post('/config/system/restart', adminController.restartSystem);
+
+// ===== التحليلات والمراقبة =====
+router.get('/analytics/stats', adminController.getAnalyticsStats);
+router.get('/analytics/health', adminController.getHealthDashboard);
+router.get('/analytics/activities', adminController.getRecentActivities);
+router.get('/analytics/users', adminController.getUserStatistics);
+
+// ===== نسخة احتياطية من المسارات القديمة =====
+router.put('/users/:id/block', adminController.blockUser);
 
 module.exports = router;
