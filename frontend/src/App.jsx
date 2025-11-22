@@ -335,31 +335,31 @@ function App() {
               {/* Administration */}
               <Route 
               path="/admin" 
-              element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/tenders" />} 
+              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <AdminDashboard /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/audit-logs" 
-              element={user?.role === 'admin' ? <AuditLogViewer /> : <Navigate to="/tenders" />} 
+              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <AuditLogViewer /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/health" 
-              element={user?.role === 'admin' ? <HealthMonitoring /> : <Navigate to="/tenders" />} 
+              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <HealthMonitoring /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/archive" 
-              element={user?.role === 'admin' ? <ArchiveManagement /> : <Navigate to="/tenders" />} 
+              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <ArchiveManagement /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/tiers" 
-              element={user?.role === 'admin' ? <SubscriptionTiers /> : <Navigate to="/tenders" />} 
+              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <SubscriptionTiers /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/features" 
-              element={user?.role === 'admin' ? <FeatureControl /> : <Navigate to="/tenders" />} 
+              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <FeatureControl /> : <Navigate to="/tenders" />} 
             />
               <Route 
               path="/admin/users" 
-              element={user?.role === 'admin' ? <UserManagement /> : <Navigate to="/tenders" />} 
+              element={(user?.role === 'admin' || user?.role === 'super_admin') ? <UserManagement /> : <Navigate to="/tenders" />} 
             />
 
               {/* Profil et Sécurité */}
