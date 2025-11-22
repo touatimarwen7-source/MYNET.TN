@@ -117,7 +117,7 @@ export default function BuyerDashboard() {
           </Typography>
           <Button
             variant="contained"
-            startIcon={<AddIcon />}
+            startIcon={<AddIcon sx={{ fontSize: '20px', color: '#0056B3', marginRight: '8px' }} />}
             onClick={() => navigate('/create-tender')}
             sx={{
               backgroundColor: '#0056B3',
@@ -228,7 +228,7 @@ export default function BuyerDashboard() {
                         <TableCell align="center">
                           <Button
                             size="small"
-                            startIcon={<VisibilityIcon />}
+                            startIcon={<VisibilityIcon sx={{ fontSize: '20px', color: '#0056B3', marginRight: '8px' }} />}
                             onClick={() => navigate(`/tender/${tender.id}`)}
                             sx={{
                               color: '#0056B3',

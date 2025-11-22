@@ -58,7 +58,7 @@ export default function ContactPage() {
       {/* Hero Section */}
       <Box
         sx={{
-          backgroundColor: 'linear-gradient(135deg, #0056B3 0%, #0d47a1 100%)',
+          backgroundColor: '#0056B3',
           color: 'white',
           padding: '60px 20px',
           textAlign: 'center',
@@ -83,7 +83,7 @@ export default function ContactPage() {
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ padding: '24px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
-                    <LocationOnIcon sx={{ color: '#0056B3', marginTop: '2px' }} />
+                    <LocationOnIcon sx={{ color: '#0056B3', fontSize: '20px', marginTop: '2px' }} />
                     <Box>
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121' }}>
                         Siège Social
@@ -103,7 +103,7 @@ export default function ContactPage() {
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ padding: '24px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
-                    <PhoneIcon sx={{ color: '#0056B3', marginTop: '2px' }} />
+                    <PhoneIcon sx={{ color: '#0056B3', fontSize: '20px', marginTop: '2px' }} />
                     <Box>
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121' }}>
                         Téléphone
@@ -137,7 +137,7 @@ export default function ContactPage() {
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ padding: '24px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
-                    <EmailIcon sx={{ color: '#0056B3', marginTop: '2px' }} />
+                    <EmailIcon sx={{ color: '#0056B3', fontSize: '20px', marginTop: '2px' }} />
                     <Box>
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121' }}>
                         Email
