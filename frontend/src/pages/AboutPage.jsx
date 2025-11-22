@@ -52,7 +52,7 @@ export default function AboutPage() {
               margin: '0 auto',
             }}
           >
-            Transforming Public Procurement in Tunisia with Digital Innovation
+            Transformez Votre Approvisionnement avec une Plateforme B2B Moderne et Sécurisée
           </Typography>
         </Container>
       </Box>
@@ -106,10 +106,10 @@ export default function AboutPage() {
                     lineHeight: 1.6,
                   }}
                 >
-                  En Tunisie, les marchés publics étaient fragilisés par manque
-                  de transparence, absence de normes uniformes et risques élevés
-                  de collusion. Les processus manuels ralentissaient les
-                  décisions.
+                  En Tunisie, les processus d'approvisionnement B2B étaient
+                  freinés par manque de transparence, absence de normes uniformes
+                  et risques élevés de fraude. Les processus manuels ralentissaient
+                  les décisions et réduisaient l'efficacité.
                 </Typography>
               </CardContent>
             </Card>
@@ -184,9 +184,9 @@ export default function AboutPage() {
                     lineHeight: 1.6,
                   }}
                 >
-                  Être la plateforme de référence pour la gestion des appels
-                  d'offres en Afrique du Nord où chaque entreprise a accès aux
-                  mêmes opportunités et où la transparence prime.
+                  Être la plateforme de référence pour l'approvisionnement B2B en
+                  Afrique du Nord où chaque entreprise a accès aux mêmes
+                  opportunités commerciales et où la transparence prime.
                 </Typography>
               </CardContent>
             </Card>
@@ -310,12 +310,12 @@ export default function AboutPage() {
               {
                 name: 'Karim Mansouri',
                 role: 'Directeur Juridique',
-                bio: 'Spécialiste des marchés publics, droit commercial et conformité réglementaire',
+                bio: 'Spécialiste du droit commercial B2B, conformité réglementaire et contrats d\'approvisionnement',
               },
               {
                 name: 'Leila Saibi',
                 role: 'Directrice du Développement',
-                bio: 'Expert en partenariats publics-privés et développement d\'affaires stratégique',
+                bio: 'Experte en partenariats B2B, relations d\'affaires et développement stratégique commercial',
               },
             ].map((member, idx) => (
               <Box key={idx} sx={{ flex: 1 }}>

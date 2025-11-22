@@ -162,7 +162,7 @@ export default function HeroSearch() {
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
             {/* Keywords Input */}
             <TextField
-              label="Mots-clés ou Organisme Public"
+              label="Mots-clés ou Entreprise"
               placeholder="Exemple: Construction, Informatique, Services"
               value={searchData.keywords}
               onChange={handleKeywordsChange}
