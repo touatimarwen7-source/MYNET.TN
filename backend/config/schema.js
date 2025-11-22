@@ -398,6 +398,25 @@ const schemaQueries = [
     `CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id);`,
     `CREATE INDEX IF NOT EXISTS idx_messages_receiver ON messages(receiver_id);`,
     `CREATE INDEX IF NOT EXISTS idx_messages_entity ON messages(related_entity_type, related_entity_id);`,
+    
+    // Indexes for company profile search and performance
+    `CREATE INDEX IF NOT EXISTS idx_user_profiles_user ON user_profiles(user_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_user_profiles_city ON user_profiles(city);`,
+    `CREATE INDEX IF NOT EXISTS idx_user_profiles_country ON user_profiles(country);`,
+    `CREATE INDEX IF NOT EXISTS idx_user_profiles_rating ON user_profiles(rating DESC);`,
+    `CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);`,
+    `CREATE INDEX IF NOT EXISTS idx_users_average_rating ON users(average_rating DESC);`,
+    `CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active);`,
+    `CREATE INDEX IF NOT EXISTS idx_users_is_verified ON users(is_verified);`,
+    
+    // Full text search support for company profiles
+    `CREATE INDEX IF NOT EXISTS idx_users_company_name ON users USING GIN(to_tsvector('french', company_name));`,
+    `CREATE INDEX IF NOT EXISTS idx_user_profiles_bio ON user_profiles USING GIN(to_tsvector('french', bio));`,
+    
+    // JSONB indexes for categories and service locations
+    `CREATE INDEX IF NOT EXISTS idx_users_preferred_categories ON users USING GIN(preferred_categories);`,
+    `CREATE INDEX IF NOT EXISTS idx_users_service_locations ON users USING GIN(service_locations);`,
+    
     // Add is_archived column if it doesn't exist (for existing tables)
     `ALTER TABLE IF EXISTS tenders ADD COLUMN IF NOT EXISTS is_archived BOOLEAN DEFAULT FALSE;`,
     `ALTER TABLE IF EXISTS offers ADD COLUMN IF NOT EXISTS is_archived BOOLEAN DEFAULT FALSE;`,

@@ -91,8 +91,37 @@ The platform utilizes a React frontend (Vite) and a Node.js backend with a Postg
 - ✅ Theme compliance (Material-UI only, no custom CSS)
 - ✅ Production-ready builds (46.59s, zero errors)
 
+## Database Optimization (November 22, 2025)
+### Performance Indexes Added:
+- **User Profile Search Indexes:**
+  - `idx_user_profiles_city` - Geographic search by city
+  - `idx_user_profiles_country` - Geographic search by country  
+  - `idx_user_profiles_rating DESC` - Sort by rating
+  - `idx_user_profiles_user` - Quick lookup by user_id
+
+- **User Role & Status Indexes:**
+  - `idx_users_role` - Filter users by role (supplier/buyer/admin)
+  - `idx_users_is_active` - Filter active users
+  - `idx_users_is_verified` - Filter verified users
+  - `idx_users_average_rating DESC` - Sort by average rating
+
+- **Full Text Search (French):**
+  - `idx_users_company_name` - Search company names in French
+  - `idx_user_profiles_bio` - Search biographies in French
+  - GIN indexes for optimal full-text search performance
+
+- **JSONB Indexes:**
+  - `idx_users_preferred_categories` - Search by service categories
+  - `idx_users_service_locations` - Search by service locations
+
+### Data Storage:
+- **users table**: company_name, company_registration, phone, preferred_categories, service_locations, average_rating
+- **user_profiles table**: bio, profile_picture, address, city, country, postal_code, tax_id, rating, total_reviews
+- **supplier_verifications table**: verification_status, verification_document, verified_at
+- All data fully persisted with audit trails (created_at, updated_at, created_by, updated_by)
+
 ## External Dependencies
-- **Database**: PostgreSQL (Neon), with an optimized connection pool (max 20, idle 60s).
+- **Database**: PostgreSQL (Neon), with an optimized connection pool (max 20, idle 60s) and performance indexes.
 - **Frontend Libraries**: Material-UI (MUI) v7.3.5, React Router DOM, Axios, i18next.
 - **Backend Libraries**: Express, Node.js 20.
 
@@ -104,3 +133,5 @@ The platform utilizes a React frontend (Vite) and a Node.js backend with a Postg
 - All components use Material-UI components exclusively
 - French localization for all user-facing text
 - Theme color: #0056B3 (primary blue)
+- Database queries optimized with GIN indexes for fast searches
+- Full text search supported in French for company profiles
