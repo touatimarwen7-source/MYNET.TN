@@ -47,8 +47,8 @@ export default function Pagination({
     >
       <Typography sx={{ fontSize: '13px', color: '#616161' }}>
         {totalItems > 0 
-          ? `عرض ${startItem}-${endItem} من ${totalItems} عنصر`
-          : `الصفحة ${currentPage} من ${totalPages}`
+          ? `Affichage ${startItem}-${endItem} sur ${totalItems} éléments`
+          : `Page ${currentPage} sur ${totalPages}`
         }
       </Typography>
 
@@ -64,7 +64,7 @@ export default function Pagination({
             '&:disabled': { color: '#ccc' }
           }}
         >
-          السابق
+          Précédent
         </Button>
 
         <Box
@@ -119,7 +119,7 @@ export default function Pagination({
             '&:disabled': { color: '#ccc' }
           }}
         >
-          التالي
+          Suivant
         </Button>
       </Stack>
     </Box>

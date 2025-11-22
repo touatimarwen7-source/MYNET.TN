@@ -71,7 +71,7 @@ class ErrorBoundary extends React.Component {
                 marginBottom: '16px'
               }}
             >
-              عذراً، حدث خطأ ما
+              Désolé, une erreur s'est produite
             </Typography>
             
             <Typography
@@ -82,37 +82,10 @@ class ErrorBoundary extends React.Component {
                 maxWidth: '500px'
               }}
             >
-              حدثت مشكلة غير متوقعة. يرجى محاولة التحديث أو العودة إلى الصفحة الرئيسية.
+              Un problème inattendu s'est produit. Veuillez essayer de rafraîchir la page ou de retourner à l'accueil.
             </Typography>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
-              <Box
-                sx={{
-                  backgroundColor: '#f5f5f5',
-                  border: '1px solid #E0E0E0',
-                  borderRadius: '4px',
-                  padding: '16px',
-                  marginBottom: '24px',
-                  width: '100%',
-                  maxHeight: '200px',
-                  overflow: 'auto',
-                  textAlign: 'left'
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: '#c62828',
-                    fontFamily: 'monospace',
-                    fontSize: '12px'
-                  }}
-                >
-                  {this.state.error.toString()}
-                </Typography>
-              </Box>
-            )}
-
-            <Box sx={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <Button
                 variant="contained"
                 onClick={this.handleReset}
@@ -122,33 +95,32 @@ class ErrorBoundary extends React.Component {
                   textTransform: 'none',
                   fontSize: '14px',
                   fontWeight: 500,
-                  padding: '10px 24px',
-                  borderRadius: '4px',
+                  minHeight: '40px',
                   '&:hover': {
                     backgroundColor: '#003d7a'
                   }
                 }}
               >
-                حاول مرة أخرى
+                Réessayer
               </Button>
               
               <Button
                 variant="outlined"
                 onClick={this.handleReload}
                 sx={{
-                  borderColor: '#0056B3',
                   color: '#0056B3',
+                  borderColor: '#0056B3',
                   textTransform: 'none',
                   fontSize: '14px',
                   fontWeight: 500,
-                  padding: '10px 24px',
-                  borderRadius: '4px',
+                  minHeight: '40px',
                   '&:hover': {
-                    backgroundColor: '#F9F9F9'
+                    borderColor: '#003d7a',
+                    backgroundColor: '#f0f7ff'
                   }
                 }}
               >
-                الرجوع للصفحة الرئيسية
+                Aller à l'accueil
               </Button>
             </Box>
           </Box>

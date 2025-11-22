@@ -14,7 +14,7 @@ const PDFExport = ({ documentType, documentId, supplierId = null, startDate = nu
       case 'offer': return `/api/documents/pdf/offer/${documentId}`;
       case 'award': return `/api/documents/pdf/award-certificate/${documentId}/${supplierId}`;
       case 'transactions': return `/api/documents/pdf/transactions/${supplierId}?start_date=${startDate}&end_date=${endDate}`;
-      default: throw new Error('نوع المستند غير معروف');
+      default: throw new Error('Type de document inconnu');
     }
   };
 
@@ -47,7 +47,7 @@ const PDFExport = ({ documentType, documentId, supplierId = null, startDate = nu
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      setError('فشل تحميل المستند. حاول مرة أخرى.');
+      setError('Échec du chargement du document. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ const PDFExport = ({ documentType, documentId, supplierId = null, startDate = nu
       const newWindow = window.open(url, '_blank');
       newWindow.addEventListener('load', () => { newWindow.print(); });
     } catch (err) {
-      setError('فشل فتح المستند. حاول مرة أخرى.');
+      setError('Échec de l\'ouverture du document. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
@@ -78,16 +78,16 @@ const PDFExport = ({ documentType, documentId, supplierId = null, startDate = nu
       {loading && (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <CircularProgress size={24} sx={{ marginRight: '12px' }} />
-          <span>جاري تحضير المستند...</span>
+          <span>Préparation du document...</span>
         </Box>
       )}
       {error && <Alert severity="error">{error}</Alert>}
       <Stack direction="row" spacing={1}>
         <Button startIcon={<FileDownloadIcon />} onClick={handleExportPDF} disabled={loading} variant="contained">
-          تصدير PDF
+          Exporter PDF
         </Button>
         <Button startIcon={<PrintIcon />} onClick={handlePrint} disabled={loading} variant="outlined">
-          طباعة
+          Imprimer
         </Button>
       </Stack>
     </Stack>

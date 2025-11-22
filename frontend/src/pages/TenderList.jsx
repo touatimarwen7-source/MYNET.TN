@@ -70,7 +70,7 @@ export default function TenderList() {
   }, [filter]);
 
   if (loading) {
-    return <LoadingSpinner message="جاري تحميل الطلبات..." />;
+    return <LoadingSpinner message="Chargement des appels d'offres..." />;
   }
 
   return (

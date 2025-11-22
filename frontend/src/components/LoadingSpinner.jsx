@@ -4,7 +4,7 @@ import { Box, CircularProgress, Typography } from '@mui/material';
  * Loading Spinner Component
  * Displays centered loading animation with optional message
  */
-export default function LoadingSpinner({ message = 'جاري التحميل...' }) {
+export default function LoadingSpinner({ message = 'Chargement en cours...' }) {
   return (
     <Box
       sx={{

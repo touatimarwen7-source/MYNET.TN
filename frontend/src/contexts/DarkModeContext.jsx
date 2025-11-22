@@ -4,12 +4,12 @@ export const DarkModeContext = createContext();
 
 export const DarkModeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // تحقق من التخزين المحلي أولاً
+    // Vérifier d'abord le stockage local
     const saved = localStorage.getItem('darkMode');
     if (saved !== null) {
       return saved === 'true';
     }
-    // وإلا استخدم تفضيل النظام
+    // Sinon, utiliser la préférence du système
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 

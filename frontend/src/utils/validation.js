@@ -170,29 +170,29 @@ export const validation = {
 export const LoginSchema = z.object({
   email: z
     .string()
-    .email('البريد الإلكتروني غير صحيح')
-    .min(1, 'البريد الإلكتروني مطلوب'),
+    .email('Le format de l\'email est invalide')
+    .min(1, 'L\'email est obligatoire'),
   password: z
     .string()
-    .min(8, 'كلمة المرور يجب أن تكون على الأقل 8 أحرف')
-    .regex(/[A-Z]/, 'كلمة المرور يجب أن تحتوي على حرف كبير')
-    .regex(/[0-9]/, 'كلمة المرور يجب أن تحتوي على رقم')
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .regex(/[A-Z]/, 'Le mot de passe doit contenir une majuscule')
+    .regex(/[0-9]/, 'Le mot de passe doit contenir un chiffre')
 });
 
 export const RegisterSchema = z.object({
   email: z
     .string()
-    .email('البريد الإلكتروني غير صحيح'),
+    .email('Le format de l\'email est invalide'),
   password: z
     .string()
-    .min(8, 'كلمة المرور يجب أن تكون على الأقل 8 أحرف'),
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
   confirmPassword: z.string(),
   companyName: z
     .string()
-    .min(2, 'اسم الشركة مطلوب'),
+    .min(2, 'Le nom de la société est obligatoire'),
   role: z.enum(['buyer', 'supplier'])
 }).refine((data) => data.password === data.confirmPassword, {
-  message: 'كلمات المرور غير متطابقة',
+  message: 'Les mots de passe ne correspondent pas',
   path: ['confirmPassword']
 });
 

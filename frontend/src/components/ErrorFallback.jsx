@@ -31,7 +31,7 @@ const ErrorFallback = ({ error, resetError }) => {
           marginBottom: '8px'
         }}
       >
-        خطأ في تحميل المحتوى
+        Erreur de chargement du contenu
       </Typography>
 
       <Typography
@@ -41,7 +41,7 @@ const ErrorFallback = ({ error, resetError }) => {
           marginBottom: '16px'
         }}
       >
-        حدثت مشكلة عند تحميل هذا القسم. يرجى المحاولة مرة أخرى.
+        Un problème s'est produit lors du chargement de cette section. Veuillez réessayer.
       </Typography>
 
       {process.env.NODE_ENV === 'development' && error && (
@@ -69,7 +69,7 @@ const ErrorFallback = ({ error, resetError }) => {
           }
         }}
       >
-        حاول مرة أخرى
+        Réessayer
       </Button>
     </Box>
   );

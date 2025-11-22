@@ -1,15 +1,15 @@
-// HTTP-Only Cookies - حل أفضل للأمان
-// ملاحظة: يتطلب تحديث Backend لتعيين HTTP-Only Cookies
+// HTTP-Only Cookies - Meilleure solution de sécurité
+// Note: Nécessite une mise à jour du Backend pour définir les cookies HTTP-Only
 
 export const tokenStorage = {
-  // تخزين في Memory بدل localStorage
+  // Stockage en mémoire plutôt que localStorage
   accessToken: null,
   refreshToken: null,
 
   setTokens(accessToken, refreshToken) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
-    // إرسال إلى Backend لتعيين HTTP-Only Cookies
+    // Envoyer au Backend pour définir les cookies HTTP-Only
   },
 
   getAccessToken() {
@@ -23,26 +23,26 @@ export const tokenStorage = {
   clearTokens() {
     this.accessToken = null;
     this.refreshToken = null;
-    // تنظيف الـ Cookies
+    // Nettoyer les cookies
     document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
   }
 };
 
-// طلب من Backend: إضافة الكود التالي في authController.js
+// Demande au Backend: Ajouter le code suivant dans authController.js
 /*
-// في login endpoint:
+// Dans l'endpoint login:
 res.cookie('accessToken', accessToken, {
   httpOnly: true,
-  secure: true,  // فقط HTTPS
+  secure: true,  // HTTPS seulement
   sameSite: 'Strict',
-  maxAge: 3600000  // 1 hour
+  maxAge: 3600000  // 1 heure
 });
 
 res.cookie('refreshToken', refreshToken, {
   httpOnly: true,
   secure: true,
   sameSite: 'Strict',
-  maxAge: 604800000  // 7 days
+  maxAge: 604800000  // 7 jours
 });
 */

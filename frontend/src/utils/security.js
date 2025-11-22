@@ -1,6 +1,6 @@
 import TokenManager from '../services/tokenManager';
 
-// أمان الـ XSS - تنقية المحتوى
+// Sécurité XSS - Nettoyage du contenu
 export function sanitizeHTML(input) {
   if (!input) return '';
   const div = document.createElement('div');
@@ -8,7 +8,7 @@ export function sanitizeHTML(input) {
   return div.innerHTML;
 }
 
-// منع XSS في النصوص
+// Prévention XSS pour les textes
 export function escapeHtml(text) {
   const map = {
     '&': '&amp;',
@@ -20,7 +20,7 @@ export function escapeHtml(text) {
   return text.replace(/[&<>"']/g, m => map[m]);
 }
 
-// التحقق من صلاحيات المستخدم
+// Vérification des permissions de l'utilisateur
 export function hasPermission(userRole, requiredRole) {
   const permissions = {
     admin: ['admin', 'buyer', 'supplier', 'accountant', 'viewer'],
@@ -32,7 +32,7 @@ export function hasPermission(userRole, requiredRole) {
   return permissions[userRole]?.includes(requiredRole) || false;
 }
 
-// مراقبة الخمول
+// Surveillance de l'inactivité
 export function setupInactivityTimer(timeout = 15 * 60 * 1000) {
   let inactivityTimer;
   

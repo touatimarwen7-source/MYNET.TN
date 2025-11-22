@@ -8,7 +8,7 @@ export default function VerifiedBadge({ size = 'md', showText = true }) {
   };
 
   return (
-    <Tooltip title="تم التحقق من هذا المورد">
+    <Tooltip title="Cette ressource a été vérifiée">
       <Box
         sx={{
           display: 'inline-flex',
@@ -22,7 +22,7 @@ export default function VerifiedBadge({ size = 'md', showText = true }) {
         </Box>
         {showText && (
           <Typography variant="caption" sx={{ fontWeight: 600, color: '#2e7d32' }}>
-            موثق
+            Vérifiée
           </Typography>
         )}
       </Box>
