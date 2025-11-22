@@ -1,9 +1,10 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
+const { checkDuplicateReview } = require('./businessLogicEnhancements');
 
 const router = express.Router();
 
-// Add a review - ISSUE FIX #3: Add input validation
+// Add a review - ISSUE FIX #3: Add input validation + duplicate check
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { reviewed_user_id, tender_id, rating, comment } = req.body;
@@ -24,6 +25,12 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 
     const db = req.app.get('db');
+
+    // ENHANCEMENT: Check for duplicate review (same reviewer for same user)
+    const isDuplicate = await checkDuplicateReview(db, reviewer_id, reviewed_user_id);
+    if (isDuplicate) {
+      return res.status(409).json({ error: 'You have already reviewed this user' });
+    }
 
     // Insert review
     const result = await db.query(`

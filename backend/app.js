@@ -21,6 +21,9 @@ const supplierFeaturesRoutes = require('./routes/supplierFeaturesRoutes');
 const { ipMiddleware } = require('./middleware/ipMiddleware');
 const loggingMiddleware = require('./middleware/loggingMiddleware');
 const ErrorHandler = require('./middleware/errorHandler');
+const requestIdMiddleware = require('./middleware/requestIdMiddleware');
+const performanceMiddleware = require('./middleware/performanceMiddleware');
+const { versionMiddleware } = require('./config/apiVersion');
 
 const app = express();
 
@@ -62,6 +65,15 @@ app.use('/api/auth/login', loginLimiter);
 app.use('/api/auth/register', loginLimiter);
 
 app.use(ipMiddleware);
+
+// ENHANCEMENT: Add request ID tracking
+app.use(requestIdMiddleware);
+
+// ENHANCEMENT: Add performance monitoring
+app.use(performanceMiddleware);
+
+// ENHANCEMENT: Add API version headers
+app.use(versionMiddleware);
 
 // ISSUE FIX #9: Add logging middleware
 app.use(loggingMiddleware);
