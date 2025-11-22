@@ -1,33 +1,15 @@
 /**
  * Secure Token Manager Service
  * Handles storage and retrieval of authentication tokens
- * 
- * SECURITY RULES:
- * - Access tokens: Short-lived (15 min), stored in memory + sessionStorage
- * - Refresh tokens: Long-lived (7 days), stored securely via httpOnly cookies (backend)
- * - Never expose tokens in localStorage (vulnerable to XSS)
- * - Always validate token format before using
+ * Uses localStorage for reliable persistence in Replit
  */
 
 const TOKEN_KEY = 'access_token';
-const REFRESH_TOKEN_KEY = 'refresh_token_id';
 const TOKEN_EXPIRY_KEY = 'token_expiry';
 
-// Memory storage for access token (persists during session)
+// Memory storage for access token (faster access)
 let memoryAccessToken = null;
 let tokenExpiryTime = null;
-
-// Try both sessionStorage and localStorage
-const getStorage = () => {
-  try {
-    sessionStorage.setItem('test', 'test');
-    sessionStorage.removeItem('test');
-    return sessionStorage;
-  } catch (e) {
-    console.warn('sessionStorage unavailable, using fallback');
-    return localStorage;
-  }
-};
 
 class TokenManager {
   /**
@@ -43,44 +25,42 @@ class TokenManager {
     memoryAccessToken = token;
     tokenExpiryTime = Date.now() + expiresIn * 1000;
     
+    // Also persist to localStorage for page refreshes
     try {
-      const storage = getStorage();
-      storage.setItem(TOKEN_KEY, token);
-      storage.setItem(TOKEN_EXPIRY_KEY, tokenExpiryTime);
-      console.log('Token saved successfully');
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(TOKEN_EXPIRY_KEY, String(tokenExpiryTime));
     } catch (e) {
-      console.error('Error saving token:', e);
+      console.warn('localStorage unavailable:', e);
     }
+    
+    console.log('Token stored, expires in:', expiresIn, 'seconds');
   }
 
   /**
-   * Get access token from memory or session
+   * Get access token from memory or localStorage
    * @returns {string|null} Access token or null if expired/missing
    */
   static getAccessToken() {
     // Check memory first (fastest)
-    if (memoryAccessToken) {
-      if (this.isTokenValid()) {
-        return memoryAccessToken;
-      }
+    if (memoryAccessToken && this.isTokenValid()) {
+      return memoryAccessToken;
     }
 
-    // Fall back to storage
+    // Fall back to localStorage
     try {
-      const storage = getStorage();
-      const token = storage.getItem(TOKEN_KEY);
-      const expiryStr = storage.getItem(TOKEN_EXPIRY_KEY);
+      const token = localStorage.getItem(TOKEN_KEY);
+      const expiryStr = localStorage.getItem(TOKEN_EXPIRY_KEY);
       
       if (token && expiryStr) {
-        const expiryTime = parseInt(expiryStr);
-        if (Date.now() < expiryTime) {
+        const expiryTime = parseInt(expiryStr, 10);
+        if (!isNaN(expiryTime) && Date.now() < expiryTime) {
           memoryAccessToken = token;
           tokenExpiryTime = expiryTime;
           return token;
         }
       }
     } catch (e) {
-      console.error('Error retrieving token:', e);
+      console.warn('Error retrieving token:', e);
     }
 
     // Token expired or missing
@@ -95,46 +75,15 @@ class TokenManager {
   static isTokenValid() {
     if (!tokenExpiryTime) {
       try {
-        const storage = getStorage();
-        const storedExpiry = storage.getItem(TOKEN_EXPIRY_KEY);
+        const storedExpiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
         if (storedExpiry) {
-          tokenExpiryTime = parseInt(storedExpiry);
+          tokenExpiryTime = parseInt(storedExpiry, 10);
         }
       } catch (e) {
-        console.error('Error getting token expiry:', e);
+        // localStorage unavailable
       }
     }
-    return tokenExpiryTime && Date.now() < tokenExpiryTime;
-  }
-
-  /**
-   * Store refresh token ID (backend manages httpOnly cookie)
-   * Frontend only stores the ID for reference
-   * @param {string} refreshTokenId - Refresh token identifier
-   */
-  static setRefreshTokenId(refreshTokenId) {
-    if (refreshTokenId) {
-      try {
-        const storage = getStorage();
-        storage.setItem(REFRESH_TOKEN_KEY, refreshTokenId);
-      } catch (e) {
-        console.error('Error saving refresh token:', e);
-      }
-    }
-  }
-
-  /**
-   * Get refresh token ID
-   * @returns {string|null}
-   */
-  static getRefreshTokenId() {
-    try {
-      const storage = getStorage();
-      return storage.getItem(REFRESH_TOKEN_KEY);
-    } catch (e) {
-      console.error('Error getting refresh token:', e);
-      return null;
-    }
+    return tokenExpiryTime && !isNaN(tokenExpiryTime) && Date.now() < tokenExpiryTime;
   }
 
   /**
@@ -145,12 +94,10 @@ class TokenManager {
     tokenExpiryTime = null;
     
     try {
-      const storage = getStorage();
-      storage.removeItem(TOKEN_KEY);
-      storage.removeItem(TOKEN_EXPIRY_KEY);
-      storage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(TOKEN_EXPIRY_KEY);
     } catch (e) {
-      console.error('Error clearing tokens:', e);
+      console.warn('Error clearing tokens:', e);
     }
     
     // Also clear CSRF token
@@ -181,7 +128,6 @@ class TokenManager {
 
   /**
    * Decode JWT token (basic decode without verification)
-   * Verification happens on backend
    * @param {string} token - JWT token
    * @returns {object|null} Decoded payload or null if invalid
    */
@@ -208,6 +154,20 @@ class TokenManager {
     
     const decoded = this.decodeToken(token);
     return decoded || null;
+  }
+
+  /**
+   * Store refresh token ID (not used in this implementation as backend uses httpOnly cookies)
+   */
+  static setRefreshTokenId(refreshTokenId) {
+    // Backend handles refresh tokens via httpOnly cookies
+  }
+
+  /**
+   * Get refresh token ID
+   */
+  static getRefreshTokenId() {
+    return null;
   }
 }
 
