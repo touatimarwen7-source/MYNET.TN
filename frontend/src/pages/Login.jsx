@@ -67,8 +67,17 @@ export default function Login() {
       // Dispatch event with user data for immediate update
       window.dispatchEvent(new CustomEvent('authChanged', { detail: userData }));
       
-      // Navigate immediately - state will be updated by event listener
-      navigate('/tenders', { replace: true });
+      // Navigate to appropriate dashboard based on role
+      let redirectPath = '/tenders'; // Default
+      if (userData.role === 'admin' || userData.role === 'super_admin') {
+        redirectPath = '/admin';
+      } else if (userData.role === 'buyer') {
+        redirectPath = '/buyer-dashboard';
+      } else if (userData.role === 'supplier') {
+        redirectPath = '/supplier-search';
+      }
+      
+      navigate(redirectPath, { replace: true });
       
     } catch (err) {
       console.error('Login error details:', {
