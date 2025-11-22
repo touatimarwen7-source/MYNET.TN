@@ -26,6 +26,7 @@ const PricingPage = lazy(() => import('./pages/PricingPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const TenderList = lazy(() => import('./pages/TenderList'));
 const CreateTender = lazy(() => import('./pages/CreateTender'));
+const CreateBid = lazy(() => import('./pages/CreateBid'));
 const TenderDetail = lazy(() => import('./pages/TenderDetail'));
 const MyOffers = lazy(() => import('./pages/MyOffers'));
 const Profile = lazy(() => import('./pages/Profile'));
@@ -199,6 +200,10 @@ function App() {
               <Route path="/tender/:id/audit-log" element={<AuditLog />} />
               <Route path="/tender/:id/award" element={<PartialAward />} />
               <Route path="/tender/:id/analysis" element={<OfferAnalysis />} />
+              <Route 
+                path="/tender/:tenderId/bid" 
+                element={user?.role === 'supplier' ? <CreateBid /> : <Navigate to="/tenders" />} 
+              />
 
               {/* Interface Acheteur */}
               <Route 
