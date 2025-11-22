@@ -26,10 +26,10 @@ export default function AdminAnalytics() {
   ];
 
   const activities = [
-    { event: 'Nouvel utilisateur inscrit', timestamp: 'Il y a 2 heures', user: 'Société XYZ' },
-    { event: 'Appel d\'offres créé', timestamp: 'Il y a 5 heures', user: 'Admin' },
-    { event: 'Offre soumise', timestamp: 'Il y a 8 heures', user: 'Société ABC' },
-    { event: 'Système sauvegardé', timestamp: 'Aujourd'hui 02:30', user: 'Système' },
+    { event: 'Nouvel utilisateur inscrit', timestamp: 'Il y a 2 heures', user: 'Societe XYZ' },
+    { event: 'Appel d\'offres cree', timestamp: 'Il y a 5 heures', user: 'Admin' },
+    { event: 'Offre soumise', timestamp: 'Il y a 8 heures', user: 'Societe ABC' },
+    { event: 'Systeme sauvegrade', timestamp: 'Aujourd\'hui 02:30', user: 'Systeme' },
   ];
 
   return (
