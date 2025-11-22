@@ -53,6 +53,12 @@ export const searchAPI = {
   searchSuppliers: (params) => axiosInstance.get('/search/suppliers', { params })
 };
 
+export const companyProfileAPI = {
+  getSupplierProfile: (supplierId) => axiosInstance.get(`/company-profile/supplier/${supplierId}`),
+  updateSupplierProfile: (supplierId, data) => axiosInstance.put(`/company-profile/supplier/${supplierId}`, data),
+  searchSuppliers: (filters) => axiosInstance.get('/company-profile/search', { params: filters })
+};
+
 export const adminAPI = {
   getUsers: (filters) => axiosInstance.get('/admin/users', { params: filters }),
   getStatistics: () => axiosInstance.get('/admin/statistics'),

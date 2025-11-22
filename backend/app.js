@@ -9,6 +9,7 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const pdfRoutes = require('./routes/pdfRoutes');
 const featureFlagRoutes = require('./routes/featureFlagRoutes');
 const supplierFeatureRoutes = require('./routes/supplierFeatureRoutes');
+const companyProfileRoutes = require('./routes/companyProfileRoutes');
 const { ipMiddleware } = require('./middleware/ipMiddleware');
 
 const app = express();
@@ -52,6 +53,7 @@ app.use('/api/procurement/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/features', featureFlagRoutes);
 app.use('/api/admin/supplier-features', supplierFeatureRoutes);
+app.use('/api/company-profile', companyProfileRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/messaging', messagingRoutes);
 app.use('/api/documents/pdf', pdfRoutes);

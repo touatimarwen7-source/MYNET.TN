@@ -16,143 +16,140 @@ import {
   Paper,
   Alert,
   CircularProgress,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import CallIcon from '@mui/icons-material/Call';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import SearchIcon from '@mui/icons-material/Search';
 import { setPageTitle } from '../utils/pageTitle';
+import { companyProfileAPI } from '../api';
 
 export default function CompanyProfile() {
   const [activeSection, setActiveSection] = useState('presentation');
-  const [loading, setLoading] = useState(false);
-
-  // Données dynamiques de la compagnie (simulées - à remplacer par API)
-  const companyData = {
-    // ===== I. HEADER & SHARE =====
-    header: {
-      name: 'SÉCURITÉ VIGILANT',
-      city: 'Ariana',
-      sectors: ['Sécurité', 'Gardiennage', 'Surveillance'],
-      logo: 'https://via.placeholder.com/120?text=SV',
-    },
-    // ===== II. KEY STATS =====
-    stats: {
-      foundationDate: '2005',
-      employees: '150+',
-      services: '8',
-      clients: '45+',
-      certifications: ['ISO 9001', 'ISO 45001'],
-    },
-    // ===== III. PRESENTATION =====
-    presentation: {
-      description: `Sécurité Vigilant est une entreprise leader dans le domaine de la sécurité et du gardiennage en Tunisie.
-Avec plus de 15 ans d'expérience, nous offrons des solutions de sécurité complètes et innovantes pour protéger vos biens et vos personnes.
-
-Notre expertise couvre:
-• Gardiennage statique et dynamique
-• Surveillance vidéo 24/7
-• Services d'escorte et de transport de fonds
-• Sécurité événementielle
-• Prévention incendie
-
-Nous opérons dans toute la région du Grand Tunis avec une équipe de professionnels certifiés et expérimentés.`,
-      specialization: 'Sécurité, Gardiennage, Surveillance',
-      coverage: 'Grand Tunis, Ariana, Ben Arous, Mannouba',
-      certifications: ['ISO 9001:2015 (Management Qualité)', 'ISO 45001:2018 (Santé & Sécurité)'],
-      experience: '15+ ans',
-    },
-    // ===== IV. PRODUCTS & SERVICES =====
-    services: [
-      {
-        id: 1,
-        name: 'SÉCURITÉ INCENDIE',
-        description: 'Systèmes de détection et de lutte contre les incendies',
-      },
-      {
-        id: 2,
-        name: 'GARDIENNAGE STATIQUE',
-        description: 'Surveillance et protection des locaux commerciaux',
-      },
-      {
-        id: 3,
-        name: 'SURVEILLANCE VIDÉO',
-        description: 'Monitoring et enregistrement vidéo HD 24/7',
-      },
-      {
-        id: 4,
-        name: 'ESCORTE ET TRANSPORT',
-        description: 'Services d\'escorte personnelle et transport de fonds',
-      },
-      {
-        id: 5,
-        name: 'SÉCURITÉ ÉVÉNEMENTIELLE',
-        description: 'Protection lors de manifestations et événements',
-      },
-      {
-        id: 6,
-        name: 'AUDIT DE SÉCURITÉ',
-        description: 'Évaluation et recommandations de sécurité',
-      },
-      {
-        id: 7,
-        name: 'GARDIENNAGE DYNAMIQUE',
-        description: 'Patrouilles et interventions d\'urgence',
-      },
-      {
-        id: 8,
-        name: 'FORMATION SÉCURITÉ',
-        description: 'Formation du personnel aux protocoles de sécurité',
-      },
-    ],
-    // ===== V. SIMILAR COMPANIES =====
-    similarCompanies: [
-      { id: 1, name: 'GROUPE SÉCURITÉ PLUS', sector: 'Sécurité' },
-      { id: 2, name: 'GARDIENNAGE TUNISIA', sector: 'Gardiennage' },
-      { id: 3, name: 'PROTECTION VIGILANT', sector: 'Sécurité' },
-      { id: 4, name: 'SAFE TUNISIA', sector: 'Surveillance' },
-    ],
-    // ===== VI. EVENTS & EXHIBITIONS =====
-    events: [
-      {
-        id: 1,
-        name: 'SECURITY EXPO TUNISIA 2025',
-        date: '15-17 Mars 2025',
-        location: 'Palais des Congrès - Tunis',
-      },
-      {
-        id: 2,
-        name: 'SALON DE LA SÉCURITÉ',
-        date: '10-12 Mai 2025',
-        location: 'Centre d\'Affaires - Ariana',
-      },
-      {
-        id: 3,
-        name: 'TECH SECURITY FORUM',
-        date: '5-7 Juin 2025',
-        location: 'Cité de l\'Innovation - Sousse',
-      },
-    ],
-    // ===== CONTACT =====
-    contact: {
-      phone: '+216 71 123 456',
-      email: 'info@securite-vigilant.tn',
-      address: 'Rue de la Sécurité, Ariana 2037',
-    },
-  };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [companyData, setCompanyData] = useState(null);
+  
+  // Search & Filtering
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [minRating, setMinRating] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearch, setShowSearch] = useState(false);
+  
+  // Service categories
+  const categories = ['Sécurité', 'Gardiennage', 'Surveillance', 'Transport', 'Événementiel', 'Audit'];
 
   useEffect(() => {
     setPageTitle('Profil d\'Entreprise');
+    fetchCompanyProfile();
   }, []);
 
-  // ===== NAVIGATION MENU =====
+  const fetchCompanyProfile = async () => {
+    try {
+      setLoading(true);
+      // Get supplier ID from URL or context
+      const supplierId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('currentSupplierId') || 1;
+      
+      const data = await companyProfileAPI.getSupplierProfile(supplierId);
+      
+      // Transform API response to match component structure
+      const transformed = {
+        header: {
+          name: data.company_name || 'Entreprise',
+          city: data.city || 'Tunis',
+          sectors: data.preferred_categories || ['Services'],
+          logo: data.profile_picture || 'https://via.placeholder.com/120?text=Logo',
+        },
+        stats: {
+          foundationDate: '2005',
+          employees: '150+',
+          services: '8',
+          clients: '45+',
+          certifications: ['ISO 9001', 'ISO 45001'],
+        },
+        presentation: {
+          description: data.bio || 'Description de l\'entreprise...',
+          specialization: data.preferred_categories?.join(', ') || 'Services généraux',
+          coverage: data.city || 'Grand Tunis',
+          certifications: ['ISO 9001:2015 (Management Qualité)', 'ISO 45001:2018 (Santé & Sécurité)'],
+          experience: '15+ ans',
+        },
+        services: generateServices(data.preferred_categories),
+        similarCompanies: [],
+        events: [],
+        contact: {
+          phone: data.phone || '+216 71 123 456',
+          email: data.email || 'info@entreprise.tn',
+          address: data.address || 'Rue de la Sécurité, Tunis',
+        },
+        rating: data.average_rating || 0,
+      };
+      
+      setCompanyData(transformed);
+      setError('');
+    } catch (err) {
+      console.error('Error fetching company profile:', err);
+      setError('Erreur lors du chargement du profil');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateServices = (categories = []) => {
+    const services = [
+      { id: 1, name: 'SÉCURITÉ INCENDIE', category: 'Sécurité', description: 'Systèmes de détection et lutte contre les incendies' },
+      { id: 2, name: 'GARDIENNAGE STATIQUE', category: 'Gardiennage', description: 'Surveillance et protection des locaux' },
+      { id: 3, name: 'SURVEILLANCE VIDÉO', category: 'Surveillance', description: 'Monitoring et enregistrement vidéo 24/7' },
+      { id: 4, name: 'ESCORTE ET TRANSPORT', category: 'Transport', description: 'Services d\'escorte et transport de fonds' },
+      { id: 5, name: 'SÉCURITÉ ÉVÉNEMENTIELLE', category: 'Événementiel', description: 'Protection lors de manifestations' },
+      { id: 6, name: 'AUDIT DE SÉCURITÉ', category: 'Audit', description: 'Évaluation et recommandations' },
+      { id: 7, name: 'GARDIENNAGE DYNAMIQUE', category: 'Gardiennage', description: 'Patrouilles et interventions d\'urgence' },
+      { id: 8, name: 'FORMATION SÉCURITÉ', category: 'Sécurité', description: 'Formation aux protocoles de sécurité' },
+    ];
+    
+    if (categories.length === 0) return services;
+    return services.filter(s => categories.includes(s.category));
+  };
+
+  const handleSearch = async () => {
+    try {
+      if (!searchQuery && !selectedCategory && !minRating && !selectedLocation) {
+        setSearchResults([]);
+        return;
+      }
+      
+      setLoading(true);
+      const filters = {};
+      if (searchQuery) filters.query = searchQuery;
+      if (selectedCategory) filters.category = selectedCategory;
+      if (minRating) filters.minRating = minRating;
+      if (selectedLocation) filters.location = selectedLocation;
+      
+      const results = await companyProfileAPI.searchSuppliers(filters);
+      setSearchResults(results);
+      setShowSearch(true);
+    } catch (err) {
+      console.error('Search error:', err);
+      setError('Erreur lors de la recherche');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const navigationItems = [
     { id: 'presentation', label: 'PRÉSENTATION', icon: '📋' },
     { id: 'services', label: 'PRODUITS ET SERVICES', icon: '🛒' },
     { id: 'statistics', label: 'CHIFFRES CLÉS', icon: '📊' },
-    { id: 'similar', label: 'ENTREPRISES SIMILAIRES', icon: '🏢' },
-    { id: 'events', label: 'ÉVÉNEMENTS ET EXPOSITIONS', icon: '📅' },
+    { id: 'search', label: 'RECHERCHE AVANCÉE', icon: '🔍' },
     { id: 'contact', label: 'CONTACTER L\'ENTREPRISE', icon: '📞' },
   ];
 
@@ -164,7 +161,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
       </Typography>
       <Paper sx={{ padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '4px', marginBottom: '20px' }}>
         <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.8, color: '#212121' }}>
-          {companyData.presentation.description}
+          {companyData?.presentation.description}
         </Typography>
       </Paper>
 
@@ -176,7 +173,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
                 SPÉCIALISATION
               </Typography>
               <Typography variant="body2" sx={{ color: '#212121' }}>
-                {companyData.presentation.specialization}
+                {companyData?.presentation.specialization}
               </Typography>
             </CardContent>
           </Card>
@@ -188,7 +185,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
                 ZONE DE COUVERTURE
               </Typography>
               <Typography variant="body2" sx={{ color: '#212121' }}>
-                {companyData.presentation.coverage}
+                {companyData?.presentation.coverage}
               </Typography>
             </CardContent>
           </Card>
@@ -201,13 +198,10 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
             CERTIFICATIONS
           </Typography>
           <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: '8px' }}>
-            {companyData.presentation.certifications.map((cert, idx) => (
+            {companyData?.presentation.certifications.map((cert, idx) => (
               <Chip key={idx} label={cert} sx={{ backgroundColor: '#0056B3', color: '#ffffff' }} />
             ))}
           </Stack>
-          <Typography variant="body2" sx={{ marginTop: '12px', color: '#666666' }}>
-            <strong>Expérience:</strong> {companyData.presentation.experience}
-          </Typography>
         </CardContent>
       </Card>
     </Box>
@@ -219,41 +213,24 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
         PRODUITS ET SERVICES
       </Typography>
       <Grid container spacing={2}>
-        {companyData.services.map((service) => (
+        {companyData?.services.map((service) => (
           <Grid item xs={12} sm={6} md={4} key={service.id}>
             <Card sx={{ border: '1px solid #e0e0e0', height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
                   {service.name}
                 </Typography>
+                <Chip label={service.category} size="small" sx={{ marginBottom: '8px', backgroundColor: '#e3f2fd', color: '#0056B3' }} />
                 <Typography variant="body2" sx={{ color: '#666666', marginBottom: '16px' }}>
                   {service.description}
                 </Typography>
               </CardContent>
               <Divider />
               <Box sx={{ padding: '12px', display: 'flex', gap: '8px' }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    flex: 1,
-                    borderColor: '#0056B3',
-                    color: '#0056B3',
-                    '&:hover': { backgroundColor: '#f5f5f5' },
-                  }}
-                >
+                <Button variant="outlined" size="small" sx={{ flex: 1, borderColor: '#0056B3', color: '#0056B3' }}>
                   Consulter
                 </Button>
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{
-                    flex: 1,
-                    backgroundColor: '#0056B3',
-                    color: '#ffffff',
-                    '&:hover': { backgroundColor: '#003d7a' },
-                  }}
-                >
+                <Button variant="contained" size="small" sx={{ flex: 1, backgroundColor: '#0056B3' }}>
                   Devis
                 </Button>
               </Box>
@@ -270,116 +247,140 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
         CHIFFRES CLÉS
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
-            <CardContent>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
-                {companyData.stats.foundationDate}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
-                Année de Fondation
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
-            <CardContent>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
-                {companyData.stats.employees}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
-                Effectifs
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
-            <CardContent>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
-                {companyData.stats.services}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
-                Services
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
-            <CardContent>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
-                {companyData.stats.clients}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
-                Clients
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
-  );
-
-  const renderSimilarCompanies = () => (
-    <Box>
-      <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: '20px', color: '#0056B3' }}>
-        AUTRES ENTREPRISES DANS LE MÊME SECTEUR
-      </Typography>
-      <Grid container spacing={2}>
-        {companyData.similarCompanies.map((company) => (
-          <Grid item xs={12} sm={6} key={company.id}>
-            <Card sx={{ border: '1px solid #e0e0e0' }}>
-              <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#212121' }}>
-                    {company.name}
-                  </Typography>
-                  <Chip label={company.sector} size="small" sx={{ marginTop: '8px', backgroundColor: '#e3f2fd', color: '#0056B3' }} />
-                </Box>
-                <Button variant="text" sx={{ color: '#0056B3' }}>
-                  Voir
-                </Button>
+        {companyData?.stats && Object.entries(companyData.stats).slice(0, 4).map(([key, value], idx) => (
+          <Grid item xs={12} sm={6} md={3} key={idx}>
+            <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
+              <CardContent>
+                <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
+                  {value}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666666' }}>
+                  {key.replace(/_/g, ' ').toUpperCase()}
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
+      {companyData?.rating && (
+        <Card sx={{ border: '1px solid #e0e0e0', marginTop: '20px', textAlign: 'center' }}>
+          <CardContent>
+            <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
+              ⭐ {companyData.rating}/5
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#666666' }}>
+              NOTE MOYENNE
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
     </Box>
   );
 
-  const renderEvents = () => (
+  const renderSearch = () => (
     <Box>
       <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: '20px', color: '#0056B3' }}>
-        ÉVÉNEMENTS ET EXPOSITIONS
+        RECHERCHE AVANCÉE
       </Typography>
-      <List sx={{ backgroundColor: '#ffffff' }}>
-        {companyData.events.map((event, idx) => (
-          <Box key={event.id}>
-            <ListItem sx={{ paddingY: '16px' }}>
-              <ListItemText
-                primary={
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#212121' }}>
-                    {event.name}
-                  </Typography>
-                }
-                secondary={
-                  <Box sx={{ marginTop: '8px' }}>
-                    <Typography variant="body2" sx={{ color: '#666666', marginBottom: '4px' }}>
-                      <strong>Date:</strong> {event.date}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#666666' }}>
-                      <strong>Lieu:</strong> {event.location}
-                    </Typography>
-                  </Box>
-                }
-              />
-            </ListItem>
-            {idx < companyData.events.length - 1 && <Divider />}
-          </Box>
-        ))}
-      </List>
+      
+      <Paper sx={{ padding: '20px', marginBottom: '20px', backgroundColor: '#f9f9f9' }}>
+        <Grid container spacing={2} alignItems="flex-end">
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              placeholder="Rechercher un fournisseur..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              sx={{ backgroundColor: '#ffffff' }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <FormControl fullWidth sx={{ backgroundColor: '#ffffff' }}>
+              <InputLabel>Catégorie</InputLabel>
+              <Select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                label="Catégorie"
+              >
+                <MenuItem value="">Toutes les catégories</MenuItem>
+                {categories.map((cat) => (
+                  <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              fullWidth
+              type="number"
+              placeholder="Note min (0-5)"
+              value={minRating}
+              onChange={(e) => setMinRating(e.target.value)}
+              sx={{ backgroundColor: '#ffffff' }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              fullWidth
+              placeholder="Localité"
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              sx={{ backgroundColor: '#ffffff' }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} md={3}>
+            <Button
+              fullWidth
+              variant="contained"
+              startIcon={<SearchIcon />}
+              onClick={handleSearch}
+              sx={{ backgroundColor: '#0056B3', padding: '12px' }}
+            >
+              Rechercher
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      {showSearch && (
+        <Box>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, marginBottom: '16px', color: '#212121' }}>
+            Résultats ({searchResults.length})
+          </Typography>
+          {searchResults.length === 0 ? (
+            <Alert severity="info">Aucun fournisseur trouvé avec ces critères</Alert>
+          ) : (
+            <Grid container spacing={2}>
+              {searchResults.map((result) => (
+                <Grid item xs={12} key={result.id}>
+                  <Card sx={{ border: '1px solid #e0e0e0' }}>
+                    <CardContent>
+                      <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid item xs={12} sm="auto">
+                          <Typography variant="h6" sx={{ fontWeight: 600, color: '#0056B3' }}>
+                            {result.company_name}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: '#666666', marginTop: '4px' }}>
+                            ⭐ {result.average_rating}/5 • {result.city}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#999999' }}>
+                            {result.bio}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm="auto">
+                          <Button variant="contained" sx={{ backgroundColor: '#0056B3' }}>
+                            Voir Profil
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
+      )}
     </Box>
   );
 
@@ -398,7 +399,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
                   <Box>
                     <Typography variant="caption" sx={{ color: '#666666' }}>Téléphone</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 500, color: '#212121' }}>
-                      {companyData.contact.phone}
+                      {companyData?.contact.phone}
                     </Typography>
                   </Box>
                 </Box>
@@ -407,7 +408,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
                   <Box>
                     <Typography variant="caption" sx={{ color: '#666666' }}>Email</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 500, color: '#212121' }}>
-                      {companyData.contact.email}
+                      {companyData?.contact.email}
                     </Typography>
                   </Box>
                 </Box>
@@ -416,7 +417,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
                   <Box>
                     <Typography variant="caption" sx={{ color: '#666666' }}>Adresse</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 500, color: '#212121' }}>
-                      {companyData.contact.address}
+                      {companyData?.contact.address}
                     </Typography>
                   </Box>
                 </Box>
@@ -430,34 +431,17 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
               <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '12px' }}>
                 SUIVEZ-NOUS
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <Button
-                  variant="outlined"
-                  startIcon={<LinkedInIcon />}
-                  sx={{ borderColor: '#0056B3', color: '#0056B3', flex: 1 }}
-                >
+              <Stack spacing={2}>
+                <Button variant="outlined" fullWidth startIcon={<LinkedInIcon />} sx={{ borderColor: '#0056B3', color: '#0056B3' }}>
                   LinkedIn
                 </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<FacebookIcon />}
-                  sx={{ borderColor: '#0056B3', color: '#0056B3', flex: 1 }}
-                >
+                <Button variant="outlined" fullWidth startIcon={<FacebookIcon />} sx={{ borderColor: '#0056B3', color: '#0056B3' }}>
                   Facebook
                 </Button>
+                <Button fullWidth variant="contained" sx={{ backgroundColor: '#0056B3', marginTop: '12px' }}>
+                  Demander un Devis
+                </Button>
               </Stack>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{
-                  marginTop: '12px',
-                  backgroundColor: '#0056B3',
-                  color: '#ffffff',
-                  '&:hover': { backgroundColor: '#003d7a' },
-                }}
-              >
-                Demander un Devis
-              </Button>
             </CardContent>
           </Card>
         </Grid>
@@ -465,24 +449,32 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
     </Box>
   );
 
+  if (loading && !companyData) {
+    return (
+      <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress sx={{ color: '#0056B3' }} />
+      </Container>
+    );
+  }
+
+  if (error && !companyData) {
+    return (
+      <Container maxWidth="lg" sx={{ paddingY: '40px' }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+  }
+
+  if (!companyData) return null;
+
   return (
     <Box sx={{ backgroundColor: '#f9f9f9', paddingY: '40px' }}>
       <Container maxWidth="lg">
-        {/* ===== I. HEADER =====  */}
+        {/* HEADER */}
         <Box sx={{ backgroundColor: '#ffffff', padding: '30px', borderRadius: '4px', marginBottom: '30px', border: '1px solid #e0e0e0' }}>
           <Grid container spacing={3} alignItems="center">
             <Grid item xs={12} sm="auto">
-              <Box
-                sx={{
-                  width: '120px',
-                  height: '120px',
-                  borderRadius: '4px',
-                  backgroundColor: '#e0e0e0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+              <Box sx={{ width: '120px', height: '120px', borderRadius: '4px', backgroundColor: '#e0e0e0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <img src={companyData.header.logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </Box>
             </Grid>
@@ -502,18 +494,10 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
                 ))}
               </Stack>
               <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<LinkedInIcon />}
-                  sx={{ borderColor: '#0056B3', color: '#0056B3' }}
-                >
+                <Button variant="outlined" startIcon={<LinkedInIcon />} sx={{ borderColor: '#0056B3', color: '#0056B3' }}>
                   LinkedIn
                 </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<FacebookIcon />}
-                  sx={{ borderColor: '#0056B3', color: '#0056B3' }}
-                >
+                <Button variant="outlined" startIcon={<FacebookIcon />} sx={{ borderColor: '#0056B3', color: '#0056B3' }}>
                   Facebook
                 </Button>
               </Box>
@@ -521,7 +505,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
           </Grid>
         </Box>
 
-        {/* ===== II. NAVIGATION MENU ===== */}
+        {/* NAVIGATION */}
         <Box sx={{ marginBottom: '30px', overflowX: 'auto' }}>
           <Stack direction="row" spacing={1} sx={{ paddingY: '8px', flexWrap: { xs: 'wrap', md: 'nowrap' } }}>
             {navigationItems.map((item) => (
@@ -536,9 +520,7 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
                   border: '1px solid #0056B3',
                   fontWeight: 500,
                   whiteSpace: 'nowrap',
-                  '&:hover': {
-                    backgroundColor: activeSection === item.id ? '#003d7a' : '#f5f5f5',
-                  },
+                  '&:hover': { backgroundColor: activeSection === item.id ? '#003d7a' : '#f5f5f5' },
                 }}
               >
                 {item.label}
@@ -547,15 +529,13 @@ Nous opérons dans toute la région du Grand Tunis avec une équipe de professio
           </Stack>
         </Box>
 
-        {/* ===== CONTENT SECTIONS ===== */}
+        {/* CONTENT */}
         <Box sx={{ backgroundColor: '#ffffff', padding: '30px', borderRadius: '4px', border: '1px solid #e0e0e0' }}>
           {loading && <CircularProgress />}
-
           {!loading && activeSection === 'presentation' && renderPresentation()}
           {!loading && activeSection === 'services' && renderServices()}
           {!loading && activeSection === 'statistics' && renderStatistics()}
-          {!loading && activeSection === 'similar' && renderSimilarCompanies()}
-          {!loading && activeSection === 'events' && renderEvents()}
+          {!loading && activeSection === 'search' && renderSearch()}
           {!loading && activeSection === 'contact' && renderContact()}
         </Box>
       </Container>
