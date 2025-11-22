@@ -58,7 +58,7 @@ export default function ContactPage() {
       {/* Hero Section */}
       <Box
         sx={{
-          backgroundColor: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
+          backgroundColor: 'linear-gradient(135deg, #0056B3 0%, #0d47a1 100%)',
           color: 'white',
           padding: '60px 20px',
           textAlign: 'center',
@@ -83,7 +83,7 @@ export default function ContactPage() {
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ padding: '24px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
-                    <LocationOnIcon sx={{ color: '#1565c0', marginTop: '2px' }} />
+                    <LocationOnIcon sx={{ color: '#0056B3', marginTop: '2px' }} />
                     <Box>
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121' }}>
                         Siège Social
@@ -103,7 +103,7 @@ export default function ContactPage() {
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ padding: '24px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
-                    <PhoneIcon sx={{ color: '#1565c0', marginTop: '2px' }} />
+                    <PhoneIcon sx={{ color: '#0056B3', marginTop: '2px' }} />
                     <Box>
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121' }}>
                         Téléphone
@@ -113,19 +113,19 @@ export default function ContactPage() {
                   <Stack spacing={1}>
                     <Box>
                       <Typography sx={{ fontSize: '12px', color: '#616161', fontWeight: 600 }}>Support Technique</Typography>
-                      <Link href="tel:+21671123456" sx={{ color: '#1565c0', textDecoration: 'none', fontSize: '14px' }}>
+                      <Link href="tel:+21671123456" sx={{ color: '#0056B3', textDecoration: 'none', fontSize: '14px' }}>
                         +216 71 123 456
                       </Link>
                     </Box>
                     <Box>
                       <Typography sx={{ fontSize: '12px', color: '#616161', fontWeight: 600 }}>Support Commercial</Typography>
-                      <Link href="tel:+21671123457" sx={{ color: '#1565c0', textDecoration: 'none', fontSize: '14px' }}>
+                      <Link href="tel:+21671123457" sx={{ color: '#0056B3', textDecoration: 'none', fontSize: '14px' }}>
                         +216 71 123 457
                       </Link>
                     </Box>
                     <Box>
                       <Typography sx={{ fontSize: '12px', color: '#616161', fontWeight: 600 }}>Support Légal</Typography>
-                      <Link href="tel:+21671123458" sx={{ color: '#1565c0', textDecoration: 'none', fontSize: '14px' }}>
+                      <Link href="tel:+21671123458" sx={{ color: '#0056B3', textDecoration: 'none', fontSize: '14px' }}>
                         +216 71 123 458
                       </Link>
                     </Box>
@@ -137,7 +137,7 @@ export default function ContactPage() {
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent sx={{ padding: '24px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
-                    <EmailIcon sx={{ color: '#1565c0', marginTop: '2px' }} />
+                    <EmailIcon sx={{ color: '#0056B3', marginTop: '2px' }} />
                     <Box>
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121' }}>
                         Email
@@ -147,13 +147,13 @@ export default function ContactPage() {
                   <Stack spacing={1}>
                     <Box>
                       <Typography sx={{ fontSize: '12px', color: '#616161', fontWeight: 600 }}>Support Général</Typography>
-                      <Link href="mailto:support@mynet.tn" sx={{ color: '#1565c0', textDecoration: 'none', fontSize: '14px' }}>
+                      <Link href="mailto:support@mynet.tn" sx={{ color: '#0056B3', textDecoration: 'none', fontSize: '14px' }}>
                         support@mynet.tn
                       </Link>
                     </Box>
                     <Box>
                       <Typography sx={{ fontSize: '12px', color: '#616161', fontWeight: 600 }}>Technique</Typography>
-                      <Link href="mailto:tech@mynet.tn" sx={{ color: '#1565c0', textDecoration: 'none', fontSize: '14px' }}>
+                      <Link href="mailto:tech@mynet.tn" sx={{ color: '#0056B3', textDecoration: 'none', fontSize: '14px' }}>
                         tech@mynet.tn
                       </Link>
                     </Box>
@@ -271,7 +271,7 @@ export default function ContactPage() {
                     disabled={submitting}
                     startIcon={submitting ? <CircularProgress size={20} /> : <SendIcon />}
                     sx={{
-                      backgroundColor: '#1565c0',
+                      backgroundColor: '#0056B3',
                       textTransform: 'none',
                       fontWeight: 600,
                       minHeight: '44px',

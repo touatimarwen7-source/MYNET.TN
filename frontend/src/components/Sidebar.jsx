@@ -241,7 +241,7 @@ export default function Sidebar({ user, onLogout }) {
       {/* Header */}
       <Box sx={{ padding: '24px 16px', borderBottom: '1px solid #e0e0e0' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-          <Avatar sx={{ width: 36, height: 36, backgroundColor: '#1565c0', fontSize: '16px', fontWeight: 600 }}>
+          <Avatar sx={{ width: 36, height: 36, backgroundColor: '#0056B3', fontSize: '16px', fontWeight: 600 }}>
             {user?.email?.[0]?.toUpperCase() || 'U'}
           </Avatar>
           <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -295,12 +295,12 @@ export default function Sidebar({ user, onLogout }) {
                           marginBottom: '2px',
                           borderRadius: '4px',
                           backgroundColor: isMenuItemActive(subItem.path) ? '#e3f2fd' : 'transparent',
-                          borderLeft: isMenuItemActive(subItem.path) ? '4px solid #1565c0' : 'none',
+                          borderLeft: isMenuItemActive(subItem.path) ? '4px solid #0056B3' : 'none',
                           paddingLeft: isMenuItemActive(subItem.path) ? '44px' : '48px',
-                          color: isMenuItemActive(subItem.path) ? '#1565c0' : '#616161',
+                          color: isMenuItemActive(subItem.path) ? '#0056B3' : '#616161',
                           '&:hover': {
                             backgroundColor: '#f5f5f5',
-                            color: '#1565c0',
+                            color: '#0056B3',
                           },
                         }}
                       >
@@ -321,12 +321,12 @@ export default function Sidebar({ user, onLogout }) {
                   margin: '4px 8px',
                   borderRadius: '4px',
                   backgroundColor: isMenuItemActive(item.path) ? '#e3f2fd' : 'transparent',
-                  borderLeft: isMenuItemActive(item.path) ? '4px solid #1565c0' : 'none',
+                  borderLeft: isMenuItemActive(item.path) ? '4px solid #0056B3' : 'none',
                   paddingLeft: isMenuItemActive(item.path) ? '12px' : '16px',
-                  color: isMenuItemActive(item.path) ? '#1565c0' : '#212121',
+                  color: isMenuItemActive(item.path) ? '#0056B3' : '#212121',
                   '&:hover': {
                     backgroundColor: '#f5f5f5',
-                    color: '#1565c0',
+                    color: '#0056B3',
                   },
                 }}
               >
@@ -374,7 +374,7 @@ export default function Sidebar({ user, onLogout }) {
           left: '12px',
           top: '76px',
           zIndex: 100,
-          backgroundColor: '#1565c0',
+          backgroundColor: '#0056B3',
           color: '#ffffff',
           '&:hover': { backgroundColor: '#0d47a1' },
         }}

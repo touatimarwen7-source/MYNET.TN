@@ -21,7 +21,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <Box
         sx={{
-          backgroundColor: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
+          backgroundColor: 'linear-gradient(135deg, #0056B3 0%, #0d47a1 100%)',
           color: 'white',
           padding: '60px 20px',
           textAlign: 'center',
@@ -140,7 +140,7 @@ export default function AboutPage() {
                         width: '80px',
                         height: '80px',
                         borderRadius: '50%',
-                        backgroundColor: '#1565c0',
+                        backgroundColor: '#0056B3',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -155,7 +155,7 @@ export default function AboutPage() {
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#212121' }}>
                         {member.name}
                       </Typography>
-                      <Typography sx={{ fontSize: '12px', color: '#1565c0', fontWeight: 600, marginBottom: '8px' }}>
+                      <Typography sx={{ fontSize: '12px', color: '#0056B3', fontWeight: 600, marginBottom: '8px' }}>
                         {member.role}
                       </Typography>
                       <Typography sx={{ fontSize: '14px', color: '#616161', lineHeight: 1.6 }}>

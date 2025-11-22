@@ -58,7 +58,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress sx={{ color: '#1565c0' }} />
+        <CircularProgress sx={{ color: '#0056B3' }} />
       </Box>
     );
   }
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
       <CardContent sx={{ padding: '24px' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
           <Box sx={{ fontSize: '40px' }}>{icon}</Box>
-          <Typography sx={{ fontSize: '28px', fontWeight: 600, color: status === 'warning' ? '#f57c00' : '#1565c0' }}>
+          <Typography sx={{ fontSize: '28px', fontWeight: 600, color: status === 'warning' ? '#f57c00' : '#0056B3' }}>
             {value}
           </Typography>
         </Box>
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
         <Grid container spacing={2} sx={{ marginBottom: '32px' }}>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
-              icon={<PeopleIcon sx={{ fontSize: 40, color: '#1565c0' }} />}
+              icon={<PeopleIcon sx={{ fontSize: 40, color: '#0056B3' }} />}
               label="Utilisateurs Totaux"
               value={stats.totalUsers}
               subtitle="Enregistrés"
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
-              icon={<StorageIcon sx={{ fontSize: 40, color: '#1565c0' }} />}
+              icon={<StorageIcon sx={{ fontSize: 40, color: '#0056B3' }} />}
               label="Sessions Actives"
               value={stats.activeSessions}
               subtitle="Connectés maintenant"
@@ -162,8 +162,8 @@ export default function AdminDashboard() {
                   variant="outlined"
                   href="/admin/users"
                   sx={{
-                    color: '#1565c0',
-                    borderColor: '#1565c0',
+                    color: '#0056B3',
+                    borderColor: '#0056B3',
                     textTransform: 'none',
                     fontWeight: 600,
                     minHeight: '44px',
@@ -178,8 +178,8 @@ export default function AdminDashboard() {
                   variant="outlined"
                   href="/admin/audit-logs"
                   sx={{
-                    color: '#1565c0',
-                    borderColor: '#1565c0',
+                    color: '#0056B3',
+                    borderColor: '#0056B3',
                     textTransform: 'none',
                     fontWeight: 600,
                     minHeight: '44px',
@@ -194,8 +194,8 @@ export default function AdminDashboard() {
                   variant="outlined"
                   href="/admin/tenders"
                   sx={{
-                    color: '#1565c0',
-                    borderColor: '#1565c0',
+                    color: '#0056B3',
+                    borderColor: '#0056B3',
                     textTransform: 'none',
                     fontWeight: 600,
                     minHeight: '44px',
@@ -210,8 +210,8 @@ export default function AdminDashboard() {
                   variant="outlined"
                   href="/admin/settings"
                   sx={{
-                    color: '#1565c0',
-                    borderColor: '#1565c0',
+                    color: '#0056B3',
+                    borderColor: '#0056B3',
                     textTransform: 'none',
                     fontWeight: 600,
                     minHeight: '44px',
@@ -236,16 +236,16 @@ export default function AdminDashboard() {
               <Table>
                 <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                   <TableRow sx={{ height: '56px' }}>
-                    <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
                       Utilisateur
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
                       Action
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
                       Date
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                    <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
                       Statut
                     </TableCell>
                   </TableRow>

@@ -37,7 +37,7 @@ export default function DashboardCards({ cards }) {
                 {card.label}
               </Typography>
               
-              <Typography variant="h4" sx={{ fontWeight: 600, color: '#1565c0' }}>
+              <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3' }}>
                 {card.value}
               </Typography>
               
@@ -63,7 +63,7 @@ export default function DashboardCards({ cards }) {
                     <Typography variant="caption" sx={{ fontWeight: 500 }}>
                       Progress
                     </Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#1565c0' }}>
+                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#0056B3' }}>
                       {card.progress}%
                     </Typography>
                   </Stack>

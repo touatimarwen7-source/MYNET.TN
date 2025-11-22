@@ -68,7 +68,7 @@ export default function TenderDetail() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress sx={{ color: '#1565c0' }} />
+        <CircularProgress sx={{ color: '#0056B3' }} />
       </Box>
     );
   }
@@ -97,7 +97,7 @@ export default function TenderDetail() {
           startIcon={<ArrowBackIcon />}
           onClick={() => window.history.back()}
           sx={{
-            color: '#1565c0',
+            color: '#0056B3',
             textTransform: 'none',
             fontWeight: 500,
             marginBottom: '24px',
@@ -160,7 +160,7 @@ export default function TenderDetail() {
                   <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161', textTransform: 'uppercase', marginBottom: '8px' }}>
                     Budget
                   </Typography>
-                  <Typography sx={{ fontSize: '16px', color: '#1565c0', fontWeight: 600 }}>
+                  <Typography sx={{ fontSize: '16px', color: '#0056B3', fontWeight: 600 }}>
                     {tender.budget_min} - {tender.budget_max} {tender.currency}
                   </Typography>
                 </Box>
@@ -195,7 +195,7 @@ export default function TenderDetail() {
               <Stack spacing={1}>
                 {tender.requirements.map((req, idx) => (
                   <Typography key={idx} sx={{ fontSize: '14px', color: '#212121', display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{ display: 'inline-block', width: '6px', height: '6px', backgroundColor: '#1565c0', borderRadius: '50%', marginRight: '8px' }} />
+                    <Box sx={{ display: 'inline-block', width: '6px', height: '6px', backgroundColor: '#0056B3', borderRadius: '50%', marginRight: '8px' }} />
                     {req}
                   </Typography>
                 ))}
@@ -206,19 +206,19 @@ export default function TenderDetail() {
 
         {/* Call to Action for Suppliers */}
         {user?.role === 'supplier' && tender.status === 'active' && (
-          <Card sx={{ marginBottom: '32px', backgroundColor: '#e3f2fd', border: '1px solid #1565c0' }}>
+          <Card sx={{ marginBottom: '32px', backgroundColor: '#e3f2fd', border: '1px solid #0056B3' }}>
             <CardContent sx={{ padding: '32px', textAlign: 'center' }}>
               <Typography variant="h4" sx={{ fontSize: '20px', fontWeight: 600, color: '#0d47a1', marginBottom: '12px' }}>
                 Prêt à soumettre une offre?
               </Typography>
-              <Typography sx={{ color: '#1565c0', marginBottom: '24px', fontSize: '14px' }}>
+              <Typography sx={{ color: '#0056B3', marginBottom: '24px', fontSize: '14px' }}>
                 Cliquez sur le bouton ci-dessous pour soumettre votre offre en toute sécurité
               </Typography>
               <Button
                 variant="contained"
                 onClick={() => navigate(`/create-offer/${id}`)}
                 sx={{
-                  backgroundColor: '#1565c0',
+                  backgroundColor: '#0056B3',
                   textTransform: 'none',
                   fontWeight: 600,
                   padding: '12px 32px',
@@ -245,16 +245,16 @@ export default function TenderDetail() {
                 <Table>
                   <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                     <TableRow sx={{ height: '56px' }}>
-                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
                         Fournisseur
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }} align="right">
+                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }} align="right">
                         Montant
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
                         Délai
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#1565c0', textTransform: 'uppercase', fontSize: '12px' }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#0056B3', textTransform: 'uppercase', fontSize: '12px' }}>
                         Statut
                       </TableCell>
                     </TableRow>
@@ -265,7 +265,7 @@ export default function TenderDetail() {
                         <TableCell sx={{ color: '#212121', fontSize: '14px', fontWeight: 500 }}>
                           {offer.full_name}
                         </TableCell>
-                        <TableCell sx={{ color: '#1565c0', fontSize: '14px', fontWeight: 600 }} align="right">
+                        <TableCell sx={{ color: '#0056B3', fontSize: '14px', fontWeight: 600 }} align="right">
                           {offer.total_amount} {offer.currency}
                         </TableCell>
                         <TableCell sx={{ color: '#616161', fontSize: '14px' }}>

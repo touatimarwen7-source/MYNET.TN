@@ -219,7 +219,7 @@ export default function CreateOffer() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress sx={{ color: '#1565c0' }} />
+        <CircularProgress sx={{ color: '#0056B3' }} />
       </Box>
     );
   }
@@ -235,7 +235,7 @@ export default function CreateOffer() {
   return (
     <Box sx={{ backgroundColor: '#fafafa', paddingY: '40px' }}>
       <Container maxWidth="lg">
-        <Button startIcon={<ArrowBackIcon />} onClick={() => window.history.back()} sx={{ marginBottom: '24px', color: '#1565c0' }}>
+        <Button startIcon={<ArrowBackIcon />} onClick={() => window.history.back()} sx={{ marginBottom: '24px', color: '#0056B3' }}>
           Retour
         </Button>
 
@@ -350,11 +350,11 @@ export default function CreateOffer() {
                     <Table>
                       <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 600, color: '#1565c0' }}>Description</TableCell>
-                          <TableCell sx={{ fontWeight: 600, color: '#1565c0' }} align="right">Qty</TableCell>
-                          <TableCell sx={{ fontWeight: 600, color: '#1565c0' }} align="right">Prix Unitaire</TableCell>
-                          <TableCell sx={{ fontWeight: 600, color: '#1565c0' }} align="right">Total</TableCell>
-                          <TableCell sx={{ fontWeight: 600, color: '#1565c0' }} align="center">Actions</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#0056B3' }}>Description</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="right">Qty</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="right">Prix Unitaire</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="right">Total</TableCell>
+                          <TableCell sx={{ fontWeight: 600, color: '#0056B3' }} align="center">Actions</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -372,7 +372,7 @@ export default function CreateOffer() {
                                 sx={{ width: '100px' }}
                               />
                             </TableCell>
-                            <TableCell align="right" sx={{ color: '#1565c0', fontWeight: 600 }}>
+                            <TableCell align="right" sx={{ color: '#0056B3', fontWeight: 600 }}>
                               {item.total_price.toFixed(2)} TND
                             </TableCell>
                             <TableCell align="center">
@@ -380,7 +380,7 @@ export default function CreateOffer() {
                                 size="small"
                                 onClick={() => handleOpenCatalog(idx)}
                                 disabled={submitting || isDeadlinePassed}
-                                sx={{ color: '#1565c0', textTransform: 'none' }}
+                                sx={{ color: '#0056B3', textTransform: 'none' }}
                               >
                                 Catalogue
                               </Button>
@@ -391,7 +391,7 @@ export default function CreateOffer() {
                     </Table>
                   </Paper>
                   <Box sx={{ padding: '16px', backgroundColor: '#f5f5f5', marginTop: '16px', borderRadius: '4px' }}>
-                    <Typography sx={{ fontSize: '16px', fontWeight: 600, color: '#1565c0' }}>
+                    <Typography sx={{ fontSize: '16px', fontWeight: 600, color: '#0056B3' }}>
                       Total: {getTotalBidAmount()} TND
                     </Typography>
                   </Box>
@@ -400,7 +400,7 @@ export default function CreateOffer() {
 
               {step === 2 && (
                 <Box>
-                  <Card sx={{ backgroundColor: '#e3f2fd', border: '1px solid #1565c0', marginBottom: '16px' }}>
+                  <Card sx={{ backgroundColor: '#e3f2fd', border: '1px solid #0056B3', marginBottom: '16px' }}>
                     <CardContent>
                       <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: '#0d47a1', marginBottom: '8px' }}>
                         Résumé de Votre Offre
@@ -432,7 +432,7 @@ export default function CreateOffer() {
                   variant="outlined"
                   onClick={() => setStep(Math.max(0, step - 1))}
                   disabled={step === 0 || submitting || isDeadlinePassed}
-                  sx={{ color: '#1565c0', borderColor: '#1565c0' }}
+                  sx={{ color: '#0056B3', borderColor: '#0056B3' }}
                 >
                   Précédent
                 </Button>
@@ -441,7 +441,7 @@ export default function CreateOffer() {
                     variant="contained"
                     onClick={() => setStep(step + 1)}
                     disabled={submitting || isDeadlinePassed}
-                    sx={{ backgroundColor: '#1565c0', '&:hover': { backgroundColor: '#0d47a1' } }}
+                    sx={{ backgroundColor: '#0056B3', '&:hover': { backgroundColor: '#0d47a1' } }}
                   >
                     Suivant
                   </Button>

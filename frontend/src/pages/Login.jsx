@@ -63,7 +63,7 @@ export default function Login() {
               sx={{
                 fontSize: '28px',
                 fontWeight: 500,
-                color: '#1565c0',
+                color: '#0056B3',
                 marginBottom: '8px',
                 textAlign: 'center',
               }}
@@ -120,7 +120,7 @@ export default function Login() {
                 disabled={loading}
                 sx={{
                   minHeight: '44px',
-                  backgroundColor: '#1565c0',
+                  backgroundColor: '#0056B3',
                   textTransform: 'none',
                   fontWeight: 500,
                   fontSize: '16px',
@@ -130,7 +130,7 @@ export default function Login() {
               >
                 {loading ? (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CircularProgress size={20} sx={{ color: '#1565c0' }} />
+                    <CircularProgress size={20} sx={{ color: '#0056B3' }} />
                     Connexion en cours...
                   </Box>
                 ) : (
@@ -144,7 +144,7 @@ export default function Login() {
               <Link
                 href="/register"
                 sx={{
-                  color: '#1565c0',
+                  color: '#0056B3',
                   textDecoration: 'none',
                   fontWeight: 500,
                   '&:hover': { textDecoration: 'underline' },

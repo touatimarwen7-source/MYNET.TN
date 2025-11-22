@@ -99,15 +99,15 @@ export default function UnifiedHeader() {
         key={link.href}
         onClick={() => handleNavigate(link.href)}
         sx={{
-          color: location.pathname === link.href ? '#1565c0' : '#212121',
+          color: location.pathname === link.href ? '#0056B3' : '#212121',
           fontWeight: location.pathname === link.href ? 600 : 500,
           textTransform: 'none',
           fontSize: '14px',
           '&:hover': {
-            color: '#1565c0',
+            color: '#0056B3',
             backgroundColor: 'transparent',
           },
-          borderBottom: location.pathname === link.href ? '2px solid #1565c0' : 'none',
+          borderBottom: location.pathname === link.href ? '2px solid #0056B3' : 'none',
           paddingBottom: '6px',
         }}
       >
@@ -123,7 +123,7 @@ export default function UnifiedHeader() {
         backgroundColor: '#ffffff',
         color: '#212121',
         borderBottom: '1px solid #e0e0e0',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+        boxShadow: 'none',
       }}
     >
       <Toolbar
@@ -146,7 +146,7 @@ export default function UnifiedHeader() {
             minWidth: '150px',
             fontSize: '24px',
             fontWeight: 600,
-            color: '#1565c0',
+            color: '#0056B3',
             '&:hover': { color: '#0d47a1' },
           }}
         >
@@ -202,7 +202,7 @@ export default function UnifiedHeader() {
                   sx={{
                     width: 36,
                     height: 36,
-                    backgroundColor: '#1565c0',
+                    backgroundColor: '#0056B3',
                     fontSize: '14px',
                     fontWeight: 600,
                   }}
@@ -225,7 +225,7 @@ export default function UnifiedHeader() {
                 onClose={handleProfileMenuClose}
                 PaperProps={{
                   sx: {
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.12)',
+                    boxShadow: 'none',
                     border: '1px solid #e0e0e0',
                   },
                 }}
@@ -253,8 +253,8 @@ export default function UnifiedHeader() {
                   textTransform: 'none',
                   fontWeight: 500,
                   '&:hover': {
-                    borderColor: '#1565c0',
-                    color: '#1565c0',
+                    borderColor: '#0056B3',
+                    color: '#0056B3',
                     backgroundColor: '#f5f5f5',
                   },
                 }}
@@ -265,7 +265,7 @@ export default function UnifiedHeader() {
                 variant="contained"
                 onClick={() => navigate('/register')}
                 sx={{
-                  backgroundColor: '#1565c0',
+                  backgroundColor: '#0056B3',
                   textTransform: 'none',
                   fontWeight: 500,
                   '&:hover': {
@@ -304,8 +304,8 @@ export default function UnifiedHeader() {
                 onClick={() => handleNavigate(link.href)}
                 sx={{
                   backgroundColor: location.pathname === link.href ? '#e3f2fd' : 'transparent',
-                  color: location.pathname === link.href ? '#1565c0' : '#212121',
-                  borderLeft: location.pathname === link.href ? '4px solid #1565c0' : 'none',
+                  color: location.pathname === link.href ? '#0056B3' : '#212121',
+                  borderLeft: location.pathname === link.href ? '4px solid #0056B3' : 'none',
                 }}
               >
                 <ListItemText primary={link.label} />
@@ -318,8 +318,8 @@ export default function UnifiedHeader() {
                 onClick={() => handleNavigate(link.href)}
                 sx={{
                   backgroundColor: location.pathname === link.href ? '#e3f2fd' : 'transparent',
-                  color: location.pathname === link.href ? '#1565c0' : '#212121',
-                  borderLeft: location.pathname === link.href ? '4px solid #1565c0' : 'none',
+                  color: location.pathname === link.href ? '#0056B3' : '#212121',
+                  borderLeft: location.pathname === link.href ? '4px solid #0056B3' : 'none',
                 }}
               >
                 <ListItemText primary={link.label} />

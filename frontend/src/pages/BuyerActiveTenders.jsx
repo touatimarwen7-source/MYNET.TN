@@ -79,7 +79,7 @@ export default function BuyerActiveTenders() {
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress sx={{ color: '#1565c0' }} />
+        <CircularProgress sx={{ color: '#0056B3' }} />
       </Box>
     );
   }
@@ -101,7 +101,7 @@ export default function BuyerActiveTenders() {
             startIcon={<AddIcon />}
             onClick={() => navigate('/create-tender')}
             sx={{
-              backgroundColor: '#1565c0',
+              backgroundColor: '#0056B3',
               textTransform: 'none',
               fontWeight: 600,
               '&:hover': { backgroundColor: '#0d47a1' },
@@ -138,7 +138,7 @@ export default function BuyerActiveTenders() {
         </Card>
 
         {sortedTenders.length === 0 ? (
-          <Alert severity="info" sx={{ backgroundColor: '#e3f2fd', color: '#0d47a1', border: '1px solid #1565c0' }}>
+          <Alert severity="info" sx={{ backgroundColor: '#e3f2fd', color: '#0d47a1', border: '1px solid #0056B3' }}>
             Aucun appel d'offres actif. Créez votre premier appel maintenant!
           </Alert>
         ) : (
@@ -165,7 +165,7 @@ export default function BuyerActiveTenders() {
                       </Box>
                       <Box>
                         <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161' }}>Budget</Typography>
-                        <Typography sx={{ color: '#1565c0', fontWeight: 600 }}>
+                        <Typography sx={{ color: '#0056B3', fontWeight: 600 }}>
                           {tender.budget_max?.toLocaleString()} {tender.currency}
                         </Typography>
                       </Box>
@@ -176,7 +176,7 @@ export default function BuyerActiveTenders() {
                       {tender.offers_count && (
                         <Box>
                           <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#616161' }}>Offres reçues</Typography>
-                          <Typography sx={{ color: '#1565c0', fontWeight: 600 }}>📊 {tender.offers_count}</Typography>
+                          <Typography sx={{ color: '#0056B3', fontWeight: 600 }}>📊 {tender.offers_count}</Typography>
                         </Box>
                       )}
                     </Stack>
@@ -190,7 +190,7 @@ export default function BuyerActiveTenders() {
                       onClick={() => navigate(`/tender/${tender.id}`)}
                       sx={{
                         flex: 1,
-                        backgroundColor: '#1565c0',
+                        backgroundColor: '#0056B3',
                         textTransform: 'none',
                         '&:hover': { backgroundColor: '#0d47a1' },
                       }}
@@ -202,7 +202,7 @@ export default function BuyerActiveTenders() {
                       variant="outlined"
                       startIcon={<EditIcon />}
                       onClick={() => navigate(`/tender/${tender.id}/edit`)}
-                      sx={{ flex: 1, color: '#1565c0', borderColor: '#1565c0', textTransform: 'none' }}
+                      sx={{ flex: 1, color: '#0056B3', borderColor: '#0056B3', textTransform: 'none' }}
                     >
                       Modifier
                     </Button>

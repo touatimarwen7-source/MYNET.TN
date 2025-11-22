@@ -65,32 +65,32 @@ export default function HomePage() {
   // Features Data
   const features = [
     {
-      icon: <SecurityIcon sx={{ fontSize: 32, color: '#1565c0' }} />,
+      icon: <SecurityIcon sx={{ fontSize: 32, color: '#0056B3' }} />,
       title: 'Sécurité Entreprise',
       description: 'Chiffrement AES-256, authentification 2FA, et audit complet',
     },
     {
-      icon: <ThunderStormIcon sx={{ fontSize: 32, color: '#1565c0' }} />,
+      icon: <ThunderStormIcon sx={{ fontSize: 32, color: '#0056B3' }} />,
       title: 'Performant',
       description: 'Infrastructure cloud scalable avec 99.9% d\'uptime',
     },
     {
-      icon: <PeopleIcon sx={{ fontSize: 32, color: '#1565c0' }} />,
+      icon: <PeopleIcon sx={{ fontSize: 32, color: '#0056B3' }} />,
       title: 'Support Premium',
       description: 'Équipe d\'experts disponible 24/7',
     },
     {
-      icon: <TrendingUpIcon sx={{ fontSize: 32, color: '#1565c0' }} />,
+      icon: <TrendingUpIcon sx={{ fontSize: 32, color: '#0056B3' }} />,
       title: 'Analytics Avancées',
       description: 'Tableaux de bord détaillés et rapports en temps réel',
     },
     {
-      icon: <LanguageIcon sx={{ fontSize: 32, color: '#1565c0' }} />,
+      icon: <LanguageIcon sx={{ fontSize: 32, color: '#0056B3' }} />,
       title: 'Multi-Devises',
       description: 'Support dinars, euros et autres devises',
     },
     {
-      icon: <PhoneAndroidIcon sx={{ fontSize: 32, color: '#1565c0' }} />,
+      icon: <PhoneAndroidIcon sx={{ fontSize: 32, color: '#0056B3' }} />,
       title: 'Mobile Ready',
       description: 'Interface responsive pour tous les appareils',
     },
@@ -167,14 +167,14 @@ export default function HomePage() {
               <Card
                 sx={{
                   height: '100%',
-                  border: selectedRole === role.id ? '2px solid #1565c0' : '1px solid #e0e0e0',
+                  border: selectedRole === role.id ? '2px solid #0056B3' : '1px solid #e0e0e0',
                   borderRadius: '8px',
                   boxShadow: selectedRole === role.id ? '0 8px 16px rgba(21, 101, 192, 0.15)' : '0 1px 3px rgba(0, 0, 0, 0.08)',
                   transition: 'all 300ms ease-in-out',
                   cursor: 'pointer',
                   '&:hover': {
-                    borderColor: '#1565c0',
-                    boxShadow: '0 8px 16px rgba(21, 101, 192, 0.15)',
+                    borderColor: '#0056B3',
+                    boxShadow: 'none',
                   },
                 }}
                 onClick={() => setSelectedRole(role.id)}
@@ -185,7 +185,7 @@ export default function HomePage() {
                     sx={{
                       fontSize: '24px',
                       fontWeight: 500,
-                      color: '#1565c0',
+                      color: '#0056B3',
                       marginBottom: '16px',
                     }}
                   >
@@ -228,7 +228,7 @@ export default function HomePage() {
                     variant="contained"
                     onClick={() => handleStartTrial(role.id)}
                     sx={{
-                      backgroundColor: '#1565c0',
+                      backgroundColor: '#0056B3',
                       textTransform: 'none',
                       fontWeight: 500,
                       padding: '12px 24px',
@@ -280,7 +280,7 @@ export default function HomePage() {
                     sx={{
                       fontSize: '32px',
                       fontWeight: 600,
-                      color: '#1565c0',
+                      color: '#0056B3',
                       marginBottom: '8px',
                     }}
                   >
@@ -391,7 +391,7 @@ export default function HomePage() {
                   textAlign: 'center',
                   transition: 'all 200ms ease-in-out',
                   '&:hover': {
-                    borderColor: '#1565c0',
+                    borderColor: '#0056B3',
                     boxShadow: '0 8px 16px rgba(21, 101, 192, 0.1)',
                     transform: 'translateY(-4px)',
                   },
@@ -439,10 +439,10 @@ export default function HomePage() {
       {/* Final CTA Section */}
       <Box
         sx={{
-          backgroundColor: '#1565c0',
+          backgroundColor: '#0056B3',
           color: '#ffffff',
           paddingY: '80px',
-          backgroundImage: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
+          backgroundImage: 'linear-gradient(135deg, #0056B3 0%, #0d47a1 100%)',
         }}
       >
         <Container maxWidth="lg">
@@ -474,7 +474,7 @@ export default function HomePage() {
                 onClick={() => navigate('/register')}
                 sx={{
                   backgroundColor: '#ffffff',
-                  color: '#1565c0',
+                  color: '#0056B3',
                   textTransform: 'none',
                   fontWeight: 600,
                   padding: '14px 32px',

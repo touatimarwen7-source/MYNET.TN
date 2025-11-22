@@ -164,7 +164,7 @@ export default function CreateTender() {
                   startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
                   sx={{
                     flex: 1,
-                    backgroundColor: '#1565c0',
+                    backgroundColor: '#0056B3',
                     textTransform: 'none',
                     fontWeight: 600,
                     minHeight: '44px',
@@ -181,8 +181,8 @@ export default function CreateTender() {
                   startIcon={<CancelIcon />}
                   sx={{
                     flex: 1,
-                    color: '#1565c0',
-                    borderColor: '#1565c0',
+                    color: '#0056B3',
+                    borderColor: '#0056B3',
                     textTransform: 'none',
                     fontWeight: 600,
                     minHeight: '44px',
