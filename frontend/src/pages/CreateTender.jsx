@@ -1355,12 +1355,12 @@ export default function CreateTender() {
       </Container>
 
       {/* Preview Dialog */}
-      <Dialog open={showPreview} onClose={() => setShowPreview(false)} maxWidth="sm" fullWidth>
+      <Dialog open={showPreview} onClose={() => setShowPreview(false)} maxWidth="md" fullWidth>
         <DialogTitle sx={{ backgroundColor: theme.palette.primary.main, color: '#fff' }}>
           📋 Aperçu de votre Appel d'Offres
         </DialogTitle>
-        <DialogContent sx={{ paddingY: '24px' }}>
-          <StepSix formData={formData} handleChange={() => {}} loading={loading} />
+        <DialogContent sx={{ paddingY: '24px', maxHeight: '60vh', overflowY: 'auto' }}>
+          <StepSeven formData={formData} handleChange={handleChange} loading={loading} />
         </DialogContent>
         <DialogActions sx={{ padding: '16px', borderTop: '1px solid #E0E0E0' }}>
           <Button onClick={() => setShowPreview(false)} sx={{ color: '#666' }}>
