@@ -21,24 +21,30 @@ class TenderService {
 
             const result = await pool.query(
                 `INSERT INTO tenders (tender_number, title, description, category, budget_min, budget_max,
-                 currency, status, publish_date, deadline, opening_date, requirements, attachments,
+                 currency, status, publish_date, deadline, opening_date, requirements, attachments, lots,
+                 participation_eligibility, mandatory_documents, disqualification_criteria,
+                 submission_method, sealed_envelope_requirements, contact_person, contact_email, contact_phone,
+                 technical_specifications, queries_start_date, queries_end_date, offer_validity_days, alert_type,
                  buyer_id, is_public, evaluation_criteria, created_by)
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32)
                  RETURNING *`,
                 [tenderNumber, tender.title, tender.description, tender.category, tender.budget_min,
                  tender.budget_max, tender.currency, tender.status, tender.publish_date, tender.deadline,
                  tender.opening_date, JSON.stringify(tender.requirements), JSON.stringify(tender.attachments),
+                 JSON.stringify(tender.lots), tender.participation_eligibility, JSON.stringify(tender.mandatory_documents),
+                 tender.disqualification_criteria, tender.submission_method, tender.sealed_envelope_requirements,
+                 tender.contact_person, tender.contact_email, tender.contact_phone, tender.technical_specifications,
+                 tender.queries_start_date, tender.queries_end_date, tender.offer_validity_days, tender.alert_type,
                  userId, tender.is_public, JSON.stringify(tender.evaluation_criteria), userId]
             );
 
             // Log the audit trail for tender creation
             await AuditLogService.log(userId, 'tender', result.rows[0].id, 'create', 'Tender created successfully');
 
-
             // Log to audit
             await QueueService.logTenderHistory({
                 tender_id: result.rows[0].id,
-                user_id: tenderData.buyer_id,
+                user_id: userId,
                 action: 'created',
                 previous_state: null,
                 new_state: 'draft',

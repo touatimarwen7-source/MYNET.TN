@@ -1291,7 +1291,7 @@ export default function CreateTender() {
                       />
                     ))}
                   </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: '8px', marginTop: '12px', display: { xs: 'none', md: 'flex' } }}>
+                  <Box sx={{ justifyContent: 'space-between', gap: '8px', marginTop: '12px', display: { xs: 'none', md: 'flex' } }}>
                     {STAGES.map((stage, index) => (
                       <Typography
                         key={index}
