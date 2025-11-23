@@ -53,6 +53,8 @@ const { attachValidators } = require('./middleware/endpointValidators');
 const distributedCacheMiddleware = require('./middleware/distributedCacheMiddleware');
 const { getCacheManager } = require('./utils/redisCache');
 const { errorTracker } = require('./services/ErrorTrackingService');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 const app = express();
 
@@ -177,6 +179,26 @@ app.get('/', (req, res) => {
             features: '/api/admin/features'
         }
     });
+});
+
+// 📚 SWAGGER/OPENAPI DOCUMENTATION
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(swaggerSpec, {
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayOperationId: true,
+    filter: true,
+    showExtensions: true,
+    tryItOutEnabled: true
+  },
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'MyNet.tn API Documentation'
+}));
+
+// API specification endpoint
+app.get('/api-spec.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
 });
 
 app.use('/api/auth', authRoutes);

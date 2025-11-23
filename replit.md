@@ -173,3 +173,65 @@ Throughput:           1000 → 10000+ req/s (10x higher)
 ✅ Zero breaking changes
 ✅ Production ready
 
+
+## API Documentation (Swagger) - November 23, 2025
+
+### 🎯 Implementation Complete
+
+✅ **Swagger UI Integration**
+- Interactive OpenAPI 3.0 documentation
+- Try-it-out functionality for all endpoints
+- JWT bearer token authentication support
+- Live API testing directly from browser
+
+✅ **OpenAPI 3.0 Specification**
+- Complete API schema with 95+ endpoints
+- Security schemes (JWT + HTTP-only cookies)
+- Comprehensive data model definitions
+- Request/response examples and schemas
+
+✅ **Endpoints Documented**
+- Authentication (6 endpoints)
+- Procurement (25+ endpoints)
+- Admin Operations (15+ endpoints)
+- Analytics (8+ endpoints)
+- Messaging (10+ endpoints)
+- Reviews & Ratings (5+ endpoints)
+- Company Profiles (5+ endpoints)
+- Advanced Search (8+ endpoints)
+- Exports - CSV/JSON/PDF (6+ endpoints)
+- Backup Management (4+ endpoints)
+- Performance Tracking (2+ endpoints)
+
+### 📊 Access Points
+
+**Interactive Swagger UI:**
+```
+http://localhost:3000/api-docs
+```
+
+**OpenAPI JSON Specification:**
+```
+http://localhost:3000/api-spec.json
+```
+
+### 🔑 Features
+
+✅ Complete endpoint documentation
+✅ Request/response schemas
+✅ Authentication examples
+✅ Error handling documentation
+✅ Try-it-out API testing
+✅ Copy curl command functionality
+✅ Bearer token authentication
+✅ Example data for all endpoints
+✅ Parameter documentation
+✅ Response code reference
+
+### 📁 Files
+
+- `config/swagger.js` - OpenAPI configuration
+- `routes/apiDocsRoutes.js` - Documentation routes
+- `API-DOCUMENTATION.md` - Comprehensive API guide
+- `app.js` - Swagger UI integration
+
