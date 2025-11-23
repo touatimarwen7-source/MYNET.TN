@@ -40,7 +40,7 @@ export function setupInactivityTimer(timeout = 15 * 60 * 1000) {
     clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(() => {
       TokenManager.clearTokens();
-      window.location.href = '/login';
+      window.location.replace('/login');
     }, timeout);
   };
 

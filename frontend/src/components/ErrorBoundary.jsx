@@ -37,7 +37,7 @@ class ErrorBoundary extends React.Component {
   };
 
   handleReload = () => {
-    window.location.href = '/';
+    window.location.reload();
   };
 
   render() {

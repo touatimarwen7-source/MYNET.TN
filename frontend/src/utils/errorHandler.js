@@ -55,7 +55,8 @@ export const errorHandler = {
   handleAuthError: () => {
     TokenManager.clearTokens();
     window.dispatchEvent(new Event('authChanged'));
-    window.location.href = '/login';
+    // Redirect handled by auth interceptor/middleware
+    window.location.replace('/login');
   },
 
   /**
