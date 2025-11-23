@@ -43,7 +43,6 @@ import { UNIT_OPTIONS } from '../utils/unitOptions';
 // ============ Configuration ============
 const STAGES = [
   { name: 'Informations', description: 'Détails généraux' },
-  { name: 'Budget', description: 'Limites budgétaires' },
   { name: 'Lots', description: 'Division en lots' },
   { name: 'Exigences', description: 'Critères obligatoires' },
   { name: 'Évaluation', description: 'Critères d\'évaluation' },
@@ -77,9 +76,6 @@ const getInitialFormData = () => ({
   title: '',
   description: '',
   category: 'technology',
-  budget_min: '',
-  budget_max: '',
-  currency: 'TND',
   quantity_required: '',
   unit: '',
   deadline: '',
@@ -207,67 +203,6 @@ const StepOne = ({ formData, handleChange, loading }) => {
 const StepTwo = ({ formData, handleChange, loading }) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Min Budget */}
-      <Box>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '8px' }}>
-          Budget Minimum *
-        </Typography>
-        <TextField
-          fullWidth
-          type="number"
-          name="budget_min"
-          value={formData.budget_min}
-          onChange={handleChange}
-          disabled={loading}
-          inputProps={{ min: 0, step: 0.01 }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '4px',
-              backgroundColor: '#FAFAFA',
-            },
-          }}
-        />
-      </Box>
-
-      {/* Max Budget */}
-      <Box>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '8px' }}>
-          Budget Maximum *
-        </Typography>
-        <TextField
-          fullWidth
-          type="number"
-          name="budget_max"
-          value={formData.budget_max}
-          onChange={handleChange}
-          disabled={loading}
-          inputProps={{ min: 0, step: 0.01 }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '4px',
-              backgroundColor: '#FAFAFA',
-            },
-          }}
-        />
-      </Box>
-
-      {/* Currency */}
-      <FormControl>
-        <InputLabel sx={{ fontSize: '13px' }}>Devise</InputLabel>
-        <Select
-          name="currency"
-          value={formData.currency}
-          onChange={handleChange}
-          disabled={loading}
-          label="Devise"
-          sx={{ borderRadius: '4px' }}
-        >
-          <MenuItem value="TND">Dinar Tunisien (TND)</MenuItem>
-          <MenuItem value="EUR">Euro (EUR)</MenuItem>
-          <MenuItem value="USD">Dollar US (USD)</MenuItem>
-        </Select>
-      </FormControl>
-
       {/* Deadline */}
       <Box>
         <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '8px' }}>
@@ -1360,17 +1295,7 @@ export default function CreateTender() {
     }
 
     if (currentStep === 1) {
-      // Use unified validation
-      const budgetCheck = validateBudget(formData.budget_min, formData.budget_max);
-      if (!budgetCheck.valid) {
-        setError(budgetCheck.error);
-        return false;
-      }
-      // Deadline validation will be done at submission only
-    }
-
-    if (currentStep === 2) {
-      // Use unified validation
+      // Use unified validation for Lots
       const lotsCheck = validateLots(formData.lots, formData.awardLevel);
       if (!lotsCheck.valid) {
         setError(lotsCheck.error);
@@ -1409,12 +1334,6 @@ export default function CreateTender() {
     const lotsCheck = validateLots(formData.lots, formData.awardLevel);
     if (!lotsCheck.valid) {
       setError(lotsCheck.error);
-      return;
-    }
-
-    const budgetCheck = validateBudget(formData.budget_min, formData.budget_max);
-    if (!budgetCheck.valid) {
-      setError(budgetCheck.error);
       return;
     }
 
