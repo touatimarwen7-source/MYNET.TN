@@ -124,7 +124,7 @@ export default function AdminDashboard() {
         <Box sx={{ marginTop: '32px', padding: '16px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #E0E0E0' }}>
           <Typography sx={{ fontSize: '12px', color: '#999999', lineHeight: '1.6' }}>
             <strong>Note:</strong> En tant qu'Admin, vous avez des permissions limitées uniquement. 
-            Pour accéder au contrôle complet (Total Control Hub), vous devez être Super Admin.
+            Pour accéder au contrôle complet (Centre de Contrôle Total), vous devez être Super Admin.
           </Typography>
         </Box>
       </Container>

@@ -192,77 +192,77 @@ export default function Sidebar({ user, onLogout }) {
   const adminMenu = [
     {
       id: 'dashboard',
-      label: 'لوحة التحكم',
+      label: 'Tableau de Bord',
       path: '/admin',
       subItems: []
     },
     {
       id: 'users',
-      label: '👥 المستخدمين والأمان',
+      label: '👥 Gestion des Utilisateurs et Sécurité',
       subItems: [
-        { label: 'إدارة المستخدمين', path: '/admin/users' }
+        { label: 'Gestion des Utilisateurs', path: '/admin/users' }
       ]
     },
     {
       id: 'analytics',
-      label: '📊 الإحصائيات',
+      label: '📊 Statistiques',
       subItems: [
-        { label: 'عرض الإحصائيات', path: '/admin/health' }
+        { label: 'Afficher les Statistiques', path: '/admin/health' }
       ]
     },
     {
       id: 'profile',
-      label: 'الملف الشخصي',
+      label: 'Profil',
       subItems: [
-        { label: 'الإعدادات', path: '/profile' },
-        { label: 'الأمان', path: '/security' }
+        { label: 'Paramètres', path: '/profile' },
+        { label: 'Sécurité', path: '/security' }
       ]
     }
   ];
 
-  // 👑 Super Admin Menu - صلاحيات التحكم الشامل (Total Control Hub)
+  // 👑 Super Admin Menu - Permissions de Contrôle Total (Centre de Contrôle Total)
   // تتطابق مع الـ 4 tabs في SuperAdminDashboard
   const superAdminMenu = [
     {
       id: 'dashboard',
-      label: 'Total Control Hub',
+      label: 'Centre de Contrôle Total',
       path: '/super-admin',
       subItems: []
     },
     {
       id: 'users',
-      label: '👥 إدارة المستخدمين والأمان',
+      label: '👥 Gestion des Utilisateurs et Sécurité',
       subItems: [
-        { label: 'عرض Dashboard', path: '/super-admin' }
+        { label: 'Afficher le Tableau de Bord', path: '/super-admin' }
       ]
     },
     {
       id: 'content',
-      label: '📄 إدارة المحتوى الديناميكي',
+      label: '📄 Gestion du Contenu Dynamique',
       subItems: [
-        { label: 'عرض Dashboard', path: '/super-admin' }
+        { label: 'Afficher le Tableau de Bord', path: '/super-admin' }
       ]
     },
     {
       id: 'system',
-      label: '⚙️ إعدادات النظام',
+      label: '⚙️ Paramètres Système',
       subItems: [
-        { label: 'عرض Dashboard', path: '/super-admin' }
+        { label: 'Afficher le Tableau de Bord', path: '/super-admin' }
       ]
     },
     {
       id: 'monitoring',
-      label: '📊 المراقبة والتحليلات',
+      label: '📊 Surveillance et Analyse',
       subItems: [
-        { label: 'عرض Dashboard', path: '/super-admin' }
+        { label: 'Afficher le Tableau de Bord', path: '/super-admin' }
       ]
     },
     {
       id: 'profile',
-      label: 'الملف الشخصي',
+      label: 'Profil',
       subItems: [
-        { label: 'الإعدادات', path: '/profile' },
-        { label: 'الأمان', path: '/security' }
+        { label: 'Paramètres', path: '/profile' },
+        { label: 'Sécurité', path: '/security' }
       ]
     }
   ];

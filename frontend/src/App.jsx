@@ -362,7 +362,7 @@ function App() {
             />
 
               {/* Administration */}
-              {/* Super Admin - Total Control Hub */}
+              {/* Super Admin - Centre de Contrôle Total */}
               <Route 
               path="/super-admin" 
               element={user?.role === 'super_admin' ? <SuperAdminDashboard /> : <Navigate to="/tenders" />} 

@@ -14,7 +14,7 @@ import AdminAnalytics from '../components/Admin/AdminAnalytics';
 import { setPageTitle } from '../utils/pageTitle';
 
 /**
- * Super Admin Dashboard - Total Control Hub
+ * Centre de Contrôle Total - Super Admin Dashboard
  * Full Control Powers
  * 
  * 1. User & Security Management
@@ -26,7 +26,7 @@ export default function SuperAdminDashboard() {
   const [currentTab, setCurrentTab] = useState(0);
 
   useEffect(() => {
-    setPageTitle('Total Control Hub - Super Admin');
+    setPageTitle('Centre de Contrôle Total - Super Admin');
   }, []);
 
   const tabs = [
@@ -76,7 +76,7 @@ export default function SuperAdminDashboard() {
               marginBottom: '8px',
             }}
           >
-            Total Control Hub
+            Centre de Contrôle Total
           </Typography>
           <Typography
             sx={{

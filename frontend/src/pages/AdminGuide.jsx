@@ -4,7 +4,7 @@ import { setPageTitle } from '../utils/pageTitle';
 
 export default function AdminGuide() {
   useEffect(() => {
-    setPageTitle('Page');
+    setPageTitle('Guide de l\'Administrateur');
   }, []);
 
   return (
@@ -13,7 +13,7 @@ export default function AdminGuide() {
         <Card sx={{ border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ padding: '40px', textAlign: 'center' }}>
             <Typography variant="h2" sx={{ fontSize: '32px', fontWeight: 500, color: '#212121', marginBottom: '16px' }}>
-              AdminGuide
+              Guide de l'Administrateur
             </Typography>
             <Alert severity="success" sx={{ backgroundColor: '#e8f5e9', color: '#1b5e20', border: '1px solid #2e7d32' }}>
             </Alert>
