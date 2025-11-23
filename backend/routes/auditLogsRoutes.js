@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
+const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
 
@@ -18,8 +19,8 @@ const logAction = async (db, userId, action, entityType, entityId, details = {})
 // Get audit logs (admin only)
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const { entity_type, user_id, page = 1, limit = 20 } = req.query;
-    const offset = (page - 1) * limit;
+    const { entity_type, user_id } = req.query;
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
     const db = req.app.get('db');
 
     // Check if admin
@@ -41,7 +42,7 @@ router.get('/', authMiddleware, async (req, res) => {
       params.push(user_id);
     }
 
-    query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    query += ` ORDER BY created_at DESC ${sql}`;
     params.push(limit, offset);
 
     const result = await db.query(query, params);
@@ -55,15 +56,14 @@ router.get('/', authMiddleware, async (req, res) => {
 router.get('/user/:userId', authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
-    const { page = 1, limit = 20 } = req.query;
-    const offset = (page - 1) * limit;
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
     const db = req.app.get('db');
 
     const result = await db.query(`
       SELECT * FROM audit_logs 
       WHERE user_id = $1
       ORDER BY created_at DESC
-      LIMIT $2 OFFSET $3
+      ${sql}
     `, [userId, limit, offset]);
 
     res.json(result.rows);

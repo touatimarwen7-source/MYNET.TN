@@ -5,14 +5,16 @@
 
 const socketIO = require('socket.io');
 const WebSocketEventsManager = require('../services/WebSocketEventsManager');
+const { KeyManagementHelper } = require('../utils/keyManagementHelper');
 
 let io;
 let eventsManager;
 
 const initializeWebSocket = (server) => {
+  const frontendUrl = KeyManagementHelper.getOptionalEnv('FRONTEND_URL', 'http://localhost:5000');
   io = socketIO(server, {
     cors: {
-      origin: process.env.FRONTEND_URL || 'http://localhost:5000',
+      origin: frontendUrl,
       credentials: true
     },
     transports: ['websocket', 'polling']

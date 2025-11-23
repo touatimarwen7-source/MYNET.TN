@@ -1,6 +1,7 @@
 // Email Notifications & Real-time Updates - TURN 3 ENHANCEMENT
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
+const { buildPaginationQuery } = require('../utils/paginationHelper');
 const router = express.Router();
 
 // Create notification
@@ -32,20 +33,17 @@ router.post('/', authMiddleware, async (req, res) => {
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const db = req.app.get('db');
-    const { page = 1, limit = 20, unread_only = false } = req.query;
-    
-    const offset = (page - 1) * limit;
-    const finalLimit = Math.min(limit, 100);
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
 
     let query = 'SELECT * FROM notifications WHERE recipient_id = $1';
     const params = [req.user.id];
 
-    if (unread_only === 'true') {
+    if (req.query.unread_only === 'true') {
       query += ' AND is_read = false';
     }
 
-    query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(finalLimit, offset);
+    query += ` ORDER BY created_at DESC ${sql}`;
+    params.push(limit, offset);
 
     const result = await db.query(query, params);
     res.json(result.rows);

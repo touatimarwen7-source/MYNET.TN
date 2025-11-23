@@ -1,6 +1,7 @@
 // Advanced Search Routes - TURN 3 ENHANCEMENT
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
+const { buildPaginationQuery } = require('../utils/paginationHelper');
 const router = express.Router();
 
 // Advanced search tenders with filters
@@ -13,13 +14,10 @@ router.get('/tenders/advanced', authMiddleware, async (req, res) => {
       category, 
       location, 
       minRating, 
-      status,
-      page = 1, 
-      limit = 20 
+      status
     } = req.query;
     
-    const offset = (page - 1) * limit;
-    const finalLimit = Math.min(limit, 100);
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
     const db = req.app.get('db');
 
     let query = `
@@ -65,8 +63,8 @@ router.get('/tenders/advanced', authMiddleware, async (req, res) => {
       params.push(status);
     }
 
-    query += ` ORDER BY t.created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(finalLimit, offset);
+    query += ` ORDER BY t.created_at DESC ${sql}`;
+    params.push(limit, offset);
 
     const result = await db.query(query, params);
     res.json(result.rows);
@@ -84,13 +82,10 @@ router.get('/suppliers/advanced', authMiddleware, async (req, res) => {
       maxRating,
       category,
       location,
-      verified,
-      page = 1,
-      limit = 20
+      verified
     } = req.query;
     
-    const offset = (page - 1) * limit;
-    const finalLimit = Math.min(limit, 100);
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
     const db = req.app.get('db');
 
     let query = `
@@ -133,8 +128,8 @@ router.get('/suppliers/advanced', authMiddleware, async (req, res) => {
       params.push(verified === 'true');
     }
 
-    query += ` ORDER BY average_rating DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(finalLimit, offset);
+    query += ` ORDER BY average_rating DESC ${sql}`;
+    params.push(limit, offset);
 
     const result = await db.query(query, params);
     res.json(result.rows);

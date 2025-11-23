@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
+const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
 
@@ -131,7 +132,9 @@ router.get('/search', authMiddleware, async (req, res) => {
       paramIndex++;
     }
     
-    sql += ` ORDER BY u.average_rating DESC LIMIT 50`;
+    const { limit, offset, sql: paginationSql } = buildPaginationQuery(50, 0);
+    sql += ` ORDER BY u.average_rating DESC ${paginationSql}`;
+    params.push(limit, offset);
     
     const result = await db.query(sql, params);
     res.json(result.rows);

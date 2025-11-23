@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
+const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
 
@@ -57,8 +58,8 @@ router.post('/', authMiddleware, async (req, res) => {
 // Get my POs (buyer or supplier)
 router.get('/my-orders', authMiddleware, async (req, res) => {
   try {
-    const { status, page = 1, limit = 20 } = req.query;
-    const offset = (page - 1) * limit;
+    const { status } = req.query;
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
     const db = req.app.get('db');
 
     // ISSUE FIX #8: Exclude deleted POs
@@ -73,7 +74,7 @@ router.get('/my-orders', authMiddleware, async (req, res) => {
       params.push(status);
     }
 
-    query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    query += ` ORDER BY created_at DESC ${sql}`;
     params.push(limit, offset);
 
     const result = await db.query(query, params);

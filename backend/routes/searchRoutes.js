@@ -7,14 +7,15 @@ const { buildPaginationQuery } = require('../utils/paginationHelper');
 // ISSUE FIX #1: Add authentication
 router.get('/tenders', authMiddleware, async (req, res) => {
     try {
-        const searchParams = {
+        const { limit, offset } = buildPaginationQuery(req.query.limit, req.query.offset);
+    const searchParams = {
             keyword: req.query.keyword,
             category: req.query.category,
             status: req.query.status,
             minBudget: req.query.minBudget ? parseFloat(req.query.minBudget) : null,
             maxBudget: req.query.maxBudget ? parseFloat(req.query.maxBudget) : null,
-            limit: Math.min(parseInt(req.query.limit) || 20, 100),
-            offset: req.query.offset ? parseInt(req.query.offset) : 0
+            limit,
+            offset
         };
 
         const results = await SearchService.searchTenders(searchParams);
@@ -56,7 +57,8 @@ router.get('/suppliers', authMiddleware, async (req, res) => {
 router.get('/users', async (req, res) => {
     try {
         const db = req.app.get('db');
-        const { keyword = '', limit = 20 } = req.query;
+        const { keyword = '' } = req.query;
+        const { limit, offset, sql } = buildPaginationQuery(50, 0);
 
         const result = await db.query(`
             SELECT 
@@ -70,8 +72,8 @@ router.get('/users', async (req, res) => {
             LEFT JOIN user_profiles up ON u.id = up.user_id
             WHERE (u.company_name ILIKE $1 OR u.full_name ILIKE $1)
             AND u.is_active = true
-            LIMIT $2
-        `, [`%${keyword}%`, limit]);
+            ${sql}
+        `, [`%${keyword}%`, limit, offset]);
 
         res.status(200).json({
             success: true,

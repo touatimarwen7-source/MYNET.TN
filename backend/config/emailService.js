@@ -1,4 +1,6 @@
 // Email Service Configuration - TURN 3 OPTIONAL
+const { KeyManagementHelper } = require('../utils/keyManagementHelper');
+
 let nodemailer;
 try {
   nodemailer = require('nodemailer');
@@ -10,13 +12,13 @@ let transporter;
 let emailServiceEnabled = false;
 
 const initializeEmailService = async () => {
-  const provider = process.env.EMAIL_PROVIDER || 'gmail';
+  const provider = KeyManagementHelper.getOptionalEnv('EMAIL_PROVIDER', 'gmail');
 
   try {
     if (provider === 'sendgrid') {
       try {
         const sgMail = require('@sendgrid/mail');
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        sgMail.setApiKey(KeyManagementHelper.getOptionalEnv('SENDGRID_API_KEY', ''));
         transporter = sgMail;
         emailServiceEnabled = true;
         // SendGrid initialized
@@ -26,7 +28,7 @@ const initializeEmailService = async () => {
     } else if (provider === 'resend') {
       try {
         const { Resend } = require('resend');
-        transporter = new Resend(process.env.RESEND_API_KEY);
+        transporter = new Resend(KeyManagementHelper.getOptionalEnv('RESEND_API_KEY', ''));
         emailServiceEnabled = true;
         // Resend initialized
       } catch (e) {
@@ -37,8 +39,8 @@ const initializeEmailService = async () => {
         transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
+            user: KeyManagementHelper.getOptionalEnv('EMAIL_USER', ''),
+            pass: KeyManagementHelper.getOptionalEnv('EMAIL_PASSWORD', '')
           }
         });
         emailServiceEnabled = true;
@@ -58,26 +60,27 @@ const sendEmail = async (to, subject, htmlContent) => {
   }
 
   try {
-    const provider = process.env.EMAIL_PROVIDER || 'gmail';
+    const provider = KeyManagementHelper.getOptionalEnv('EMAIL_PROVIDER', 'gmail');
 
+    const emailFrom = KeyManagementHelper.getOptionalEnv('EMAIL_FROM', 'noreply@mynet.tn');
     if (provider === 'sendgrid') {
       await transporter.send({
         to,
-        from: process.env.EMAIL_FROM || 'noreply@mynet.tn',
+        from: emailFrom,
         subject,
         html: htmlContent
       });
     } else if (provider === 'resend') {
       await transporter.emails.send({
         to,
-        from: process.env.EMAIL_FROM || 'noreply@mynet.tn',
+        from: emailFrom,
         subject,
         html: htmlContent
       });
     } else if (nodemailer) {
       await transporter.sendMail({
         to,
-        from: process.env.EMAIL_FROM || 'noreply@mynet.tn',
+        from: emailFrom,
         subject,
         html: htmlContent
       });
@@ -94,34 +97,43 @@ const sendEmail = async (to, subject, htmlContent) => {
 
 // Email templates
 const emailTemplates = {
-  newOffer: (tenderId, supplierName, price) => ({
-    subject: `New Offer for Your Tender #${tenderId}`,
-    html: `
-      <h2>New Offer Received</h2>
-      <p>You have received a new offer for your tender.</p>
-      <p><strong>Supplier:</strong> ${supplierName}</p>
-      <p><strong>Price:</strong> $${price}</p>
-      <a href="${process.env.FRONTEND_URL}/tenders/${tenderId}" style="background-color: #0056B3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">View Offer</a>
-    `
-  }),
+  newOffer: (tenderId, supplierName, price) => {
+    const frontendUrl = KeyManagementHelper.getOptionalEnv('FRONTEND_URL', 'http://localhost:5000');
+    return {
+      subject: `New Offer for Your Tender #${tenderId}`,
+      html: `
+        <h2>New Offer Received</h2>
+        <p>You have received a new offer for your tender.</p>
+        <p><strong>Supplier:</strong> ${supplierName}</p>
+        <p><strong>Price:</strong> $${price}</p>
+        <a href="${frontendUrl}/tenders/${tenderId}" style="background-color: #0056B3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">View Offer</a>
+      `
+    };
+  },
 
-  tenderUpdate: (tenderId, status) => ({
-    subject: `Tender #${tenderId} Status Update`,
-    html: `
-      <h2>Tender Status Changed</h2>
-      <p>Your tender has been ${status}.</p>
-      <a href="${process.env.FRONTEND_URL}/tenders/${tenderId}" style="background-color: #0056B3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">View Tender</a>
-    `
-  }),
+  tenderUpdate: (tenderId, status) => {
+    const frontendUrl = KeyManagementHelper.getOptionalEnv('FRONTEND_URL', 'http://localhost:5000');
+    return {
+      subject: `Tender #${tenderId} Status Update`,
+      html: `
+        <h2>Tender Status Changed</h2>
+        <p>Your tender has been ${status}.</p>
+        <a href="${frontendUrl}/tenders/${tenderId}" style="background-color: #0056B3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">View Tender</a>
+      `
+    };
+  },
 
-  newMessage: (senderName, senderCompany) => ({
-    subject: `New Message from ${senderCompany}`,
-    html: `
-      <h2>You have a new message</h2>
-      <p>From: <strong>${senderName}</strong> (${senderCompany})</p>
-      <a href="${process.env.FRONTEND_URL}/messages" style="background-color: #0056B3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Read Message</a>
-    `
-  }),
+  newMessage: (senderName, senderCompany) => {
+    const frontendUrl = KeyManagementHelper.getOptionalEnv('FRONTEND_URL', 'http://localhost:5000');
+    return {
+      subject: `New Message from ${senderCompany}`,
+      html: `
+        <h2>You have a new message</h2>
+        <p>From: <strong>${senderName}</strong> (${senderCompany})</p>
+        <a href="${frontendUrl}/messages" style="background-color: #0056B3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Read Message</a>
+      `
+    };
+  },
 
   newReview: (reviewerName, rating) => ({
     subject: `New Review: ${rating} Stars from ${reviewerName}`,

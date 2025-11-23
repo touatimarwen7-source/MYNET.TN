@@ -52,8 +52,7 @@ router.post('/', authMiddleware, async (req, res) => {
 // Get inbox (received messages)
 router.get('/inbox', authMiddleware, async (req, res) => {
   try {
-    const { page = 1, limit = 20, unread_only = false } = req.query;
-    const offset = (page - 1) * limit;
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
     const db = req.app.get('db');
 
     let query = `
@@ -67,11 +66,11 @@ router.get('/inbox', authMiddleware, async (req, res) => {
     `;
     const params = [req.user.id];
 
-    if (unread_only === 'true') {
+    if (req.query.unread_only === 'true') {
       query += ' AND m.is_read = false';
     }
 
-    query += ' ORDER BY m.created_at DESC LIMIT $2 OFFSET $3';
+    query += ` ORDER BY m.created_at DESC ${sql}`;
     params.push(limit, offset);
 
     const result = await db.query(query, params);
@@ -97,8 +96,7 @@ router.get('/inbox', authMiddleware, async (req, res) => {
 // Get sent messages
 router.get('/sent', authMiddleware, async (req, res) => {
   try {
-    const { page = 1, limit = 20 } = req.query;
-    const offset = (page - 1) * limit;
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
     const db = req.app.get('db');
 
     const result = await db.query(`
@@ -110,7 +108,7 @@ router.get('/sent', authMiddleware, async (req, res) => {
       LEFT JOIN users u ON m.receiver_id = u.id
       WHERE m.sender_id = $1
       ORDER BY m.created_at DESC
-      LIMIT $2 OFFSET $3
+      ${sql}
     `, [req.user.id, limit, offset]);
 
     const countResult = await db.query(
