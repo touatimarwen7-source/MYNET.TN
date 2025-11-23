@@ -12,6 +12,7 @@ import ToastContainer from './components/ToastContainer';
 import Sidebar from './components/Sidebar';
 import { ToastContext } from './contexts/ToastContext';
 import { DarkModeProvider } from './contexts/DarkModeContext';
+import { SuperAdminProvider } from './contexts/SuperAdminContext';
 import TokenManager from './services/tokenManager';
 
 // Core pages (eager load)
@@ -186,8 +187,9 @@ function App() {
       <ThemeProvider theme={institutionalTheme}>
         <CssBaseline />
         <DarkModeProvider>
-          <ToastContext.Provider value={{ addToast }}>
-            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <SuperAdminProvider>
+            <ToastContext.Provider value={{ addToast }}>
+              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <AlertStrip />
             <UnifiedHeader />
@@ -564,6 +566,7 @@ function App() {
             </Box>
           </Router>
             </ToastContext.Provider>
+            </SuperAdminProvider>
           </DarkModeProvider>
         </ThemeProvider>
       </ErrorBoundary>
