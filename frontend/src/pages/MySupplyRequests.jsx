@@ -34,7 +34,7 @@ export default function MySupplyRequests() {
   const [filterStatus, setFilterStatus] = useState('');
 
   useEffect(() => {
-    setPageTitle('طلبات الشراء المباشر');
+    setPageTitle('Demandes d'Achat Direct');
     fetchRequests();
   }, []);
 
@@ -46,7 +46,7 @@ export default function MySupplyRequests() {
       setError('');
     } catch (err) {
       console.error('Error fetching requests:', err);
-      setError('خطأ في تحميل الطلبات');
+      setError('Erreur lors du chargement des demandes');
     } finally {
       setLoading(false);
     }
@@ -69,10 +69,10 @@ export default function MySupplyRequests() {
 
   const getStatusLabel = (status) => {
     const labels = {
-      pending: 'قيد الانتظار',
-      accepted: 'مقبول',
-      rejected: 'مرفوض',
-      completed: 'منتهي',
+      pending: 'En attente',
+      accepted: 'Acceptée',
+      rejected: 'Rejetée',
+      completed: 'Complétée',
     };
     return labels[status] || status;
   };
@@ -94,7 +94,7 @@ export default function MySupplyRequests() {
       <Container maxWidth="lg">
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3' }}>
-            طلبات الشراء المباشر
+            Demandes d'Achat Direct
           </Typography>
           <Button
             variant="contained"
@@ -123,10 +123,10 @@ export default function MySupplyRequests() {
                   }}
                 >
                   <option value="">جميع الحالات</option>
-                  <option value="pending">قيد الانتظار</option>
-                  <option value="accepted">مقبول</option>
-                  <option value="rejected">مرفوض</option>
-                  <option value="completed">منتهي</option>
+                  <option value="pending">En attente</option>
+                  <option value="accepted">Acceptée</option>
+                  <option value="rejected">Rejetée</option>
+                  <option value="completed">Complétée</option>
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -171,7 +171,7 @@ export default function MySupplyRequests() {
                       />
                     </TableCell>
                     <TableCell>
-                      {new Date(request.created_at).toLocaleDateString('ar-TN')}
+                      {new Date(request.created_at).toLocaleDateString('fr-FR')}
                     </TableCell>
                     <TableCell>
                       <Button

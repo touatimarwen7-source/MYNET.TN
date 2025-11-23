@@ -291,7 +291,7 @@ export default function StaticPagesManager() {
                   </TableCell>
                   <TableCell>
                     <Typography variant="caption" sx={{ color: '#616161' }}>
-                      {new Date(page.updated_at || page.lastModified).toLocaleDateString('ar-TN')}
+                      {new Date(page.updated_at || page.lastModified).toLocaleDateString('fr-FR')}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">

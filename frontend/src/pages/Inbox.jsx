@@ -42,7 +42,7 @@ export default function Inbox() {
   const limit = 15;
 
   useEffect(() => {
-    setPageTitle('صندوق الوارد');
+    setPageTitle('Boîte de Réception');
     fetchMessages();
     fetchStats();
   }, [page, unreadOnly]);
@@ -62,7 +62,7 @@ export default function Inbox() {
       setError('');
     } catch (err) {
       console.error('Error fetching messages:', err);
-      setError('خطأ في تحميل الرسائل');
+      setError('Erreur lors du chargement des messages');
     } finally {
       setLoading(false);
     }
@@ -78,14 +78,14 @@ export default function Inbox() {
   };
 
   const handleDelete = async (messageId) => {
-    if (!window.confirm('هل تريد حذف هذه الرسالة؟')) return;
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce message?')) return;
     try {
       await axiosInstance.delete(`/messaging/${messageId}`);
       fetchMessages();
       setError('');
     } catch (err) {
       console.error('Error:', err);
-      setError('خطأ في حذف الرسالة');
+      setError('Erreur lors de la suppression du message');
     }
   };
 
@@ -119,7 +119,7 @@ export default function Inbox() {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '8px' }}>
-              صندوق الوارد
+              Boîte de Réception
             </Typography>
             <Typography variant="body2" sx={{ color: '#666' }}>
               {stats.unread} رسالة غير مقروءة
@@ -207,7 +207,7 @@ export default function Inbox() {
                         {message.content}
                       </TableCell>
                       <TableCell sx={{ fontSize: '12px', color: '#666' }}>
-                        {new Date(message.created_at).toLocaleDateString('ar-TN')}
+                        {new Date(message.created_at).toLocaleDateString('fr-FR')}
                       </TableCell>
                       <TableCell sx={{ textAlign: 'center' }}>
                         <Button

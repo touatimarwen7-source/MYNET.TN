@@ -42,7 +42,7 @@ export default function Compose() {
       setError('');
     } catch (err) {
       console.error('Error fetching receivers:', err);
-      setError('خطأ في تحميل قائمة المستقبلين');
+      setError('Erreur lors du chargement de la liste des destinataires');
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ export default function Compose() {
       setTimeout(() => navigate('/inbox'), 2000);
     } catch (err) {
       console.error('Error:', err);
-      setError('خطأ في إرسال الرسالة');
+      setError('Erreur lors de l'envoi du message');
     } finally {
       setSending(false);
     }

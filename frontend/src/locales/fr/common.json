@@ -2,9 +2,7 @@
   "common": {
     "appName": "MyNet.tn",
     "language": "Langue",
-    "french": "Français",
-    "english": "English",
-    "arabic": "العربية"
+    "french": "Français"
   },
   "navigation": {
     "home": "Accueil",

@@ -40,7 +40,7 @@ export default function SupplierRequests() {
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
-    setPageTitle('الطلبات المستقبلة');
+    setPageTitle('Demandes Reçues');
     fetchRequests();
   }, []);
 
@@ -52,7 +52,7 @@ export default function SupplierRequests() {
       setError('');
     } catch (err) {
       console.error('Error fetching requests:', err);
-      setError('خطأ في تحميل الطلبات');
+      setError('Erreur lors du chargement des demandes');
     } finally {
       setLoading(false);
     }
@@ -75,10 +75,10 @@ export default function SupplierRequests() {
 
   const getStatusLabel = (status) => {
     const labels = {
-      pending: 'قيد الانتظار',
-      accepted: 'مقبول',
-      rejected: 'مرفوض',
-      completed: 'منتهي',
+      pending: 'En attente',
+      accepted: 'Acceptée',
+      rejected: 'Rejetée',
+      completed: 'Complétée',
     };
     return labels[status] || status;
   };
@@ -106,7 +106,7 @@ export default function SupplierRequests() {
       alert('تم تحديث حالة الطلب بنجاح');
     } catch (err) {
       console.error('Error updating status:', err);
-      setError('خطأ في تحديث الحالة');
+      setError('Erreur lors de la mise à jour du statut');
     }
   };
 
@@ -126,7 +126,7 @@ export default function SupplierRequests() {
     <Box sx={{ backgroundColor: '#f9f9f9', paddingY: '40px', minHeight: '100vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h4" sx={{ fontWeight: 600, color: '#0056B3', marginBottom: '30px' }}>
-          الطلبات المستقبلة
+          Demandes Reçues
         </Typography>
 
         {error && <Alert severity="error" sx={{ marginBottom: '20px' }}>{error}</Alert>}
@@ -146,10 +146,10 @@ export default function SupplierRequests() {
                   }}
                 >
                   <option value="">جميع الحالات</option>
-                  <option value="pending">قيد الانتظار</option>
-                  <option value="accepted">مقبول</option>
-                  <option value="rejected">مرفوض</option>
-                  <option value="completed">منتهي</option>
+                  <option value="pending">En attente</option>
+                  <option value="accepted">Acceptée</option>
+                  <option value="rejected">Rejetée</option>
+                  <option value="completed">Complétée</option>
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -194,7 +194,7 @@ export default function SupplierRequests() {
                       />
                     </TableCell>
                     <TableCell>
-                      {new Date(request.created_at).toLocaleDateString('ar-TN')}
+                      {new Date(request.created_at).toLocaleDateString('fr-FR')}
                     </TableCell>
                     <TableCell>
                       <Button

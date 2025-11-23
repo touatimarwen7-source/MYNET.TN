@@ -49,7 +49,7 @@ export default function PurchaseOrders() {
       setError('');
     } catch (err) {
       console.error('Error:', err);
-      setError('خطأ في تحميل أوامر الشراء');
+      setError('Erreur lors du chargement des bons de commande');
     } finally {
       setLoading(false);
     }
@@ -115,7 +115,7 @@ export default function PurchaseOrders() {
                         size="small"
                       />
                     </TableCell>
-                    <TableCell>{new Date(order.created_at).toLocaleDateString('ar-TN')}</TableCell>
+                    <TableCell>{new Date(order.created_at).toLocaleDateString('fr-FR')}</TableCell>
                     <TableCell>
                       <Button
                         size="small"

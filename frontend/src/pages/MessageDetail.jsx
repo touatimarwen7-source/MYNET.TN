@@ -25,7 +25,7 @@ export default function MessageDetail() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setPageTitle('تفاصيل الرسالة');
+    setPageTitle('Détails du Message');
     fetchMessage();
   }, [messageId]);
 
@@ -37,14 +37,14 @@ export default function MessageDetail() {
       setError('');
     } catch (err) {
       console.error('Error fetching message:', err);
-      setError('خطأ في تحميل الرسالة');
+      setError('Erreur lors du chargement du message');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('هل تريد حذف هذه الرسالة؟')) return;
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce message?')) return;
     try {
       await axiosInstance.delete(`/messaging/${messageId}`);
       navigate('/inbox');
@@ -58,7 +58,7 @@ export default function MessageDetail() {
     navigate('/compose', {
       state: {
         receiver_id: message.sender_id,
-        subject: message.subject ? `رد: ${message.subject}` : 'رد',
+        subject: message.subject ? `Réponse: ${message.subject}` : 'Réponse',
       }
     });
   };
@@ -103,7 +103,7 @@ export default function MessageDetail() {
                   من: <strong>{message.sender_company}</strong>
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#999' }}>
-                  {new Date(message.created_at).toLocaleDateString('ar-TN', {
+                  {new Date(message.created_at).toLocaleDateString('fr-FR', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
@@ -118,7 +118,7 @@ export default function MessageDetail() {
                   onClick={handleReply}
                   sx={{ color: '#0056B3' }}
                 >
-                  رد
+                  Réponse
                 </Button>
                 <Button
                   startIcon={<DeleteIcon />}
