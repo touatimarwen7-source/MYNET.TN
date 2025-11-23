@@ -867,26 +867,41 @@ export default function CreateTender() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let finalValue = type === 'checkbox' ? checked : value;
+
+    // Convert to number for numeric fields
+    if (name === 'budget_min' || name === 'budget_max' || name === 'offer_validity_days') {
+      finalValue = value ? parseFloat(value) : '';
+    }
 
     if (name.includes('.')) {
       const [key, subKey] = name.split('.');
-      setFormData((prev) => ({
-        ...prev,
-        [key]: {
-          ...prev[key],
-          [subKey]: type === 'checkbox' ? checked : value,
-        },
-      }));
+      setFormData((prev) => {
+        const updated = {
+          ...prev,
+          [key]: {
+            ...prev[key],
+            [subKey]: finalValue,
+          },
+        };
+        // Auto-save after update
+        setTimeout(() => {
+          localStorage.setItem('tenderDraft', JSON.stringify(updated));
+        }, 100);
+        return updated;
+      });
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value,
-      }));
-    }
-
-    // Auto-save
-    if (window.localStorage) {
-      localStorage.setItem('tenderDraft', JSON.stringify(formData));
+      setFormData((prev) => {
+        const updated = {
+          ...prev,
+          [name]: finalValue,
+        };
+        // Auto-save after update
+        setTimeout(() => {
+          localStorage.setItem('tenderDraft', JSON.stringify(updated));
+        }, 100);
+        return updated;
+      });
     }
   };
 
