@@ -50,7 +50,8 @@ const { globalErrorHandler, notFoundHandler, asyncHandler } = require('./middlew
 const { safeQueryMiddleware } = require('./middleware/safeQueryMiddleware');
 const { validationMiddleware } = require('./middleware/validationMiddleware');
 const { attachValidators } = require('./middleware/endpointValidators');
-const { cacheMiddleware, cacheControlHeaders } = require('./middleware/cacheMiddleware');
+const { cacheMiddleware } = require('./middleware/cacheMiddleware');
+const comprehensiveCacheMiddleware = require('./middleware/comprehensiveCacheMiddleware');
 const { errorTracker } = require('./services/ErrorTrackingService');
 
 const app = express();
@@ -106,8 +107,8 @@ app.use(requestIdMiddleware);
 // ENHANCEMENT: Add performance monitoring
 app.use(performanceMiddleware);
 
-// 🚀 CACHING: Add cache middleware
-app.use(cacheMiddleware({ ttl: 300 })); // 5 minute default TTL
+// 🚀 CACHING: Add comprehensive cache middleware (100% endpoints)
+app.use(comprehensiveCacheMiddleware);
 
 // ENHANCEMENT: Add API version headers
 app.use(versionMiddleware);
