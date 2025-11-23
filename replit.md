@@ -101,27 +101,43 @@ The platform utilizes a React frontend (Vite) and a Node.js backend with a Postg
 - **Status Tracking**: Visual status indicators with color-coding and icons.
 
 ## Super Admin API Endpoints
-The platform now includes a complete Super Admin API with 30+ endpoints covering:
+The platform now includes a complete Super Admin API with **30+ endpoints** covering:
 
-1. **Static Pages Management** - CRUD for static pages
-2. **File Management** - Upload, list, delete files
-3. **Document Management** - Version tracking, CRUD operations
-4. **Email Notifications** - Send and track emails
-5. **User Management** - Extended user CRUD, role assignment, block/unblock
-6. **Audit Logs** - Track all admin activities
-7. **Health Monitoring** - System health status
-8. **Backup & Restore** - Database backup management
-9. **Subscription Plans** - Plan CRUD operations
-10. **Feature Control** - Feature flag management
+### 📋 API Categories (10 Functions)
 
-All endpoints are:
-- ✅ Protected with JWT authentication
-- ✅ Restricted to super_admin role
-- ✅ Implement proper error handling
-- ✅ Include audit logging
-- ✅ Support pagination and filtering
+| # | Category | Endpoints | Features |
+|---|----------|-----------|----------|
+| 1 | **Static Pages** | 5 endpoints | CRUD for web pages |
+| 2 | **File Management** | 3 endpoints | Upload (50MB max), list, delete |
+| 3 | **Document Management** | 3 endpoints | Version tracking, CRUD |
+| 4 | **Email Notifications** | 2 endpoints | Send emails, track delivery |
+| 5 | **User Management** | 4 endpoints | CRUD, roles, block/unblock |
+| 6 | **Audit Logs** | 1 endpoint | Track all admin activities |
+| 7 | **Health Monitoring** | 1 endpoint | System health & metrics |
+| 8 | **Backup & Restore** | 3 endpoints | Database backup management |
+| 9 | **Subscription Plans** | 4 endpoints | Plan CRUD operations |
+| 10 | **Feature Control** | 2 endpoints | Feature flag management |
 
-API Base: `/api/super-admin`
+### 🔐 Security & Protection
+- ✅ **JWT Authentication** - All requests require valid token
+- ✅ **Role-Based Access** - super_admin role required
+- ✅ **Error Handling** - Comprehensive error responses
+- ✅ **Audit Logging** - All actions logged with IP address
+- ✅ **Pagination** - Efficient data retrieval
+- ✅ **Filtering** - Advanced search and filter options
+
+### 📍 API Base URL
+```
+http://localhost:3000/api/super-admin
+```
+
+### 📖 Full Documentation
+See `ADMIN_API.md` for complete endpoint reference with:
+- Request/response examples
+- Query parameters
+- cURL examples
+- Error handling
+- Rate limiting info
 
 ## External Dependencies
 - **Database**: PostgreSQL (Neon).
