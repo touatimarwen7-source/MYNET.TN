@@ -1401,30 +1401,25 @@ export default function CreateTender() {
     }
 
     if (currentStep === 1) {
-      if (!formData.budget_min || !formData.budget_max) {
-        setError('Les budgets minimum et maximum sont requis');
+      // Use unified validation
+      const budgetCheck = validateBudget(formData.budget_min, formData.budget_max);
+      if (!budgetCheck.valid) {
+        setError(budgetCheck.error);
         return false;
       }
-      if (parseFloat(formData.budget_min) >= parseFloat(formData.budget_max)) {
-        setError('Le budget minimum doit être inférieur au budget maximum');
-        return false;
-      }
-      if (!formData.deadline) {
-        setError('La date de clôture est requise');
+      
+      const deadlineCheck = validateDeadline(formData.deadline);
+      if (!deadlineCheck.valid) {
+        setError(deadlineCheck.error);
         return false;
       }
     }
 
     if (currentStep === 2) {
-      if (!formData.lots || formData.lots.length === 0) {
-        setError('Au moins un lot est requis');
-        return false;
-      }
-      const hasValidArticles = formData.lots.every(
-        (lot) => lot.articles && lot.articles.length > 0
-      );
-      if (!hasValidArticles) {
-        setError('Chaque lot doit contenir au moins un article');
+      // Use unified validation
+      const lotsCheck = validateLots(formData.lots, formData.awardLevel);
+      if (!lotsCheck.valid) {
+        setError(lotsCheck.error);
         return false;
       }
     }
@@ -1446,36 +1441,27 @@ export default function CreateTender() {
   };
 
   const handleSubmit = async () => {
-    // Enhanced validation
+    // Validation using unified helpers
     if (getTotalCriteria() !== 100) {
       setError('Les critères d\'évaluation doivent totaliser exactement 100%');
       return;
     }
 
-    // Validate Award Level compatibility
     if (!formData.awardLevel) {
       setError('Niveau de ترسية requis');
       return;
     }
 
-    // Validate Lots & Articles
-    if (!formData.lots || formData.lots.length === 0) {
-      setError('Au moins un lot est requis');
+    const lotsCheck = validateLots(formData.lots, formData.awardLevel);
+    if (!lotsCheck.valid) {
+      setError(lotsCheck.error);
       return;
     }
 
-    for (let i = 0; i < formData.lots.length; i++) {
-      const lot = formData.lots[i];
-      if (!lot.articles || lot.articles.length === 0) {
-        setError(`Le lot "${lot.objet}" n'a pas d'articles`);
-        return;
-      }
-      for (const article of lot.articles) {
-        if (!article.name || !article.quantity || !article.unit) {
-          setError(`Article incomplet dans le lot "${lot.objet}"`);
-          return;
-        }
-      }
+    const budgetCheck = validateBudget(formData.budget_min, formData.budget_max);
+    if (!budgetCheck.valid) {
+      setError(budgetCheck.error);
+      return;
     }
 
     setLoading(true);
@@ -1489,8 +1475,7 @@ export default function CreateTender() {
       clearDraft('tender_draft');
       navigate(`/tender/${response.data.tender.id}`);
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message;
-      setError('Erreur: ' + (errorMsg || 'Erreur lors de la création de l\'appel d\'offres'));
+      setError(handleAPIError(err));
     } finally {
       setLoading(false);
     }

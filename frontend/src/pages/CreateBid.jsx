@@ -38,6 +38,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
 import { autosaveDraft, recoverDraft, clearDraft } from '../utils/draftStorageHelper';
+import { validateEmail, validatePhone, validateLineItems, validateFile, handleAPIError } from '../utils/validationHelpers';
 
 // ============ Configuration ============
 const STAGES = [
@@ -708,18 +709,31 @@ export default function CreateBid() {
 
   const validateStep = () => {
     switch (currentStep) {
-      case 0:
+      case 0: {
         if (!formData.supplier_name || !formData.supplier_email || !formData.supplier_phone) {
           setError('Veuillez remplir tous les champs obligatoires');
           return false;
         }
-        break;
-      case 1:
-        if (!formData.line_items || formData.line_items.length === 0) {
-          setError('Veuillez ajouter au moins un article');
+        const emailCheck = validateEmail(formData.supplier_email);
+        if (!emailCheck.valid) {
+          setError(emailCheck.error);
+          return false;
+        }
+        const phoneCheck = validatePhone(formData.supplier_phone);
+        if (!phoneCheck.valid) {
+          setError(phoneCheck.error);
           return false;
         }
         break;
+      }
+      case 1: {
+        const lineItemsCheck = validateLineItems(formData.line_items, null);
+        if (!lineItemsCheck.valid) {
+          setError(lineItemsCheck.error);
+          return false;
+        }
+        break;
+      }
       case 2:
         if (!formData.delivery_time || !formData.delivery_location) {
           setError('Veuillez remplir tous les champs obligatoires');
@@ -752,33 +766,18 @@ export default function CreateBid() {
   const handleSubmit = async () => {
     if (!validateStep()) return;
 
-    // Enhanced validation
-    // Validate prices
-    for (let i = 0; i < formData.line_items.length; i++) {
-      const item = formData.line_items[i];
-      const price = parseFloat(item.unit_price);
-      if (!item.unit_price || isNaN(price) || price <= 0) {
-        setError(`Article ${i + 1}: Prix invalide (doit être > 0)`);
-        return;
-      }
-      const total = price * (parseFloat(item.quantity) || 1);
-      if (tender.budget_max && total > tender.budget_max) {
-        setError(`Article ${i + 1}: Dépasse le budget maximum`);
-        return;
-      }
+    // Validate line items with budget
+    const lineItemsCheck = validateLineItems(formData.line_items, tender?.budget_max);
+    if (!lineItemsCheck.valid) {
+      setError(lineItemsCheck.error);
+      return;
     }
 
     // Validate files
-    const validFileTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    const maxFileSize = 10 * 1024 * 1024; // 10MB
-    
     for (const file of (formData.attachments || [])) {
-      if (!validFileTypes.includes(file.type)) {
-        setError(`Fichier "${file.name}": Type non autorisé (PDF/DOC seulement)`);
-        return;
-      }
-      if (file.size > maxFileSize) {
-        setError(`Fichier "${file.name}": Trop volumineux (max 10MB)`);
+      const fileCheck = validateFile(file, 10);
+      if (!fileCheck.valid) {
+        setError(`Fichier "${file.name}": ${fileCheck.error}`);
         return;
       }
     }
@@ -815,8 +814,7 @@ export default function CreateBid() {
         navigate(`/tender/${tenderId}`);
       }, 2000);
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message;
-      setError('Erreur: ' + (errorMsg || 'Erreur lors de la soumission'));
+      setError(handleAPIError(err));
     } finally {
       setLoading(false);
     }
