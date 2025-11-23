@@ -42,6 +42,7 @@ const requestIdMiddleware = require('./middleware/requestIdMiddleware');
 const performanceMiddleware = require('./middleware/performanceMiddleware');
 const { versionMiddleware } = require('./config/apiVersion');
 const { globalErrorHandler, notFoundHandler, asyncHandler } = require('./middleware/errorHandlingMiddleware');
+const { safeQueryMiddleware } = require('./middleware/safeQueryMiddleware');
 
 const app = express();
 
@@ -95,6 +96,9 @@ app.use(versionMiddleware);
 
 // ISSUE FIX #9: Add logging middleware
 app.use(loggingMiddleware);
+
+// 🛡️ CRITICAL FIX #1: Safe database connection handling
+app.use(safeQueryMiddleware);
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');

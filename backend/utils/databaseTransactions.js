@@ -22,6 +22,7 @@ const { getPool } = require('../config/db');
 async function withTransaction(callback) {
   const pool = getPool();
   const client = await pool.connect();
+  let isReleased = false;
 
   try {
     // Start transaction
@@ -36,11 +37,23 @@ async function withTransaction(callback) {
     return result;
   } catch (error) {
     // Rollback on any error
-    await client.query('ROLLBACK');
+    try {
+      await client.query('ROLLBACK');
+    } catch (rollbackErr) {
+      console.error('⚠️ Rollback error:', rollbackErr.message);
+    }
     throw error;
   } finally {
-    // Always release client
-    client.release();
+    // Always release client safely (only once)
+    if (!isReleased) {
+      try {
+        isReleased = true;
+        client.release();
+      } catch (releaseErr) {
+        console.error('⚠️ Failed to release connection in transaction:', releaseErr.message);
+        // Continue anyway - connection will be garbage collected
+      }
+    }
   }
 }
 
