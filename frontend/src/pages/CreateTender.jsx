@@ -993,7 +993,10 @@ export default function CreateTender() {
           return false;
         }
         break;
-      case 3: // Calendrier
+      case 3: // Lots et Articles
+        // Lots are optional, allow navigation without validation
+        break;
+      case 6: // Calendrier
         if (!formData.deadline) {
           setError('La date de fermeture est requise');
           return false;
@@ -1031,7 +1034,7 @@ export default function CreateTender() {
     e.preventDefault();
     setError('');
 
-    if (!validateStep(2) || !validateStep(3)) {
+    if (!validateStep(2) || !validateStep(6)) {
       return;
     }
 

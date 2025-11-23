@@ -259,3 +259,24 @@ export default function PageName() {
 - ✅ 100% error-free compilation
 - ✅ All routes working
 - ✅ Production-ready state ACHIEVED
+
+## Bug Fix - CreateTender Validation (November 23, 2025)
+
+### Fixed: "Lots et Articles" Step Navigation Error ✅
+**Issue**: Error "Désolé, une erreur s'est produite" when clicking next on "Lots et Articles" step
+**Root Cause**: validateStep function had incorrect case mapping - case 3 was checking for calendar dates instead of validating Lots et Articles
+**Symptoms**: Navigation blocked on Lots et Articles step with unexpected error
+
+**Solution**: Fixed validateStep case mappings in CreateTender.jsx
+- case 3: Now validates "Lots et Articles" (optional, allows navigation)
+- case 6: Moved Calendar validation to correct step index
+- Updated handleSubmit to validate case 6 instead of case 3
+
+**Files Modified**:
+- `frontend/src/pages/CreateTender.jsx` - validateStep and handleSubmit functions
+
+**Results**:
+- ✅ Users can now click next on "Lots et Articles" without error
+- ✅ Navigation flows smoothly through all wizard steps
+- ✅ Calendar validation moved to correct step (Calendar section)
+- ✅ All form submissions properly validated
