@@ -29,6 +29,7 @@ const performanceTrackingRoutes = require('./routes/performanceTrackingRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const superAdminRoutes = require('./routes/superAdminRoutes');
+const backupRoutes = require('./routes/backupRoutes');
 const { ipMiddleware } = require('./middleware/ipMiddleware');
 let initializeEmailService;
 try {
@@ -185,6 +186,9 @@ app.use('/api/notifications', notificationRoutes);
 
 // Email service routes
 app.use('/api/email', emailRoutes);
+
+// 🔄 CRITICAL FIX #4: Backup management routes
+app.use('/api/backups', backupRoutes);
 
 // Initialize email service
 initializeEmailService();

@@ -3,6 +3,7 @@ const app = require('./app');
 const { initializeDb } = require('./config/db');
 const { initializeSchema } = require('./config/schema');
 const { getPool } = require('./config/db');
+const BackupScheduler = require('./services/backup/BackupScheduler');
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,6 +19,9 @@ async function startServer() {
             const pool = getPool();
             await initializeSchema(pool);
             console.log('✅ Database initialized successfully');
+
+            // 🔄 Initialize backup scheduler
+            BackupScheduler.start();
         } else {
             console.warn('⚠️  Server starting without database connection');
         }
