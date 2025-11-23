@@ -56,7 +56,7 @@ const STEPS = [
 ];
 
 // Helper component to memoize step content
-const StepContent = ({ type, formData, handleChange, loading, newRequirement, setNewRequirement, addRequirement, removeRequirement, removeAttachment, handleFileUpload, selectedFiles, handleCriteriaChange, totalCriteria }) => {
+const StepContent = ({ type, formData, handleChange, loading, newRequirement, setNewRequirement, addRequirement, removeRequirement, removeAttachment, handleFileUpload, selectedFiles, handleCriteriaChange, totalCriteria, requirementType, setRequirementType, requirementPriority, setRequirementPriority, editRequirement, editingIndex, setEditingIndex }) => {
   switch (type) {
     case 'step1':
       return (
@@ -237,36 +237,164 @@ const StepContent = ({ type, formData, handleChange, loading, newRequirement, se
       );
     case 'step5':
       return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <Box sx={{ display: 'flex', gap: '8px' }}>
-            <TextField
-              fullWidth
-              label="Ajouter une exigence"
-              value={newRequirement}
-              onChange={(e) => setNewRequirement(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && addRequirement()}
-              disabled={loading}
-              placeholder="Ex: Expérience minimale de 3 ans"
-            />
-            <Button
-              variant="outlined"
-              onClick={addRequirement}
-              disabled={loading || !newRequirement.trim()}
-              sx={{ color: '#0056B3', borderColor: '#0056B3', minWidth: '44px' }}
-            >
-              <AddIcon />
-            </Button>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <Box sx={{ backgroundColor: '#f5f5f5', padding: '16px', borderRadius: '4px' }}>
+            <Typography sx={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#212121' }}>
+              {editingIndex !== null ? 'Modifier l\'Exigence' : 'Ajouter une Exigence'}
+            </Typography>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <TextField
+                fullWidth
+                label="Description de l'Exigence *"
+                value={newRequirement}
+                onChange={(e) => setNewRequirement(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addRequirement()}
+                disabled={loading}
+                placeholder="Ex: Expérience minimale de 3 ans en gestion de projet"
+                multiline
+                rows={2}
+              />
+              
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr' }, gap: '12px' }}>
+                <FormControl fullWidth>
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    value={requirementType}
+                    onChange={(e) => setRequirementType(e.target.value)}
+                    label="Type"
+                    disabled={loading}
+                  >
+                    <MenuItem value="technical">Technique</MenuItem>
+                    <MenuItem value="commercial">Commercial</MenuItem>
+                    <MenuItem value="administrative">Administratif</MenuItem>
+                    <MenuItem value="legal">Légal</MenuItem>
+                  </Select>
+                </FormControl>
+                
+                <FormControl fullWidth>
+                  <InputLabel>Priorité</InputLabel>
+                  <Select
+                    value={requirementPriority}
+                    onChange={(e) => setRequirementPriority(e.target.value)}
+                    label="Priorité"
+                    disabled={loading}
+                  >
+                    <MenuItem value="essential">Essentielle</MenuItem>
+                    <MenuItem value="important">Important</MenuItem>
+                    <MenuItem value="desirable">Souhaitable</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              
+              <Box sx={{ display: 'flex', gap: '8px' }}>
+                <Button
+                  variant="contained"
+                  onClick={addRequirement}
+                  disabled={loading || !newRequirement.trim()}
+                  sx={{
+                    flex: 1,
+                    backgroundColor: '#0056B3',
+                    color: '#ffffff',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    minHeight: '40px'
+                  }}
+                >
+                  {editingIndex !== null ? 'Mettre à Jour' : 'Ajouter'}
+                </Button>
+                {editingIndex !== null && (
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setNewRequirement('');
+                      setRequirementType('technical');
+                      setRequirementPriority('important');
+                      setEditingIndex(null);
+                    }}
+                    disabled={loading}
+                    sx={{
+                      flex: 1,
+                      color: '#d32f2f',
+                      borderColor: '#d32f2f',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      minHeight: '40px'
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                )}
+              </Box>
+            </Box>
           </Box>
+
           {formData.requirements.length > 0 && (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {formData.requirements.map((req, index) => (
-                <Chip
-                  key={index}
-                  label={req}
-                  onDelete={() => removeRequirement(index)}
-                  sx={{ backgroundColor: '#e3f2fd', color: '#0056B3' }}
-                />
-              ))}
+            <Box>
+              <Typography sx={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#212121' }}>
+                Exigences ({formData.requirements.length})
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {formData.requirements.map((req, index) => (
+                  <Paper
+                    key={index}
+                    sx={{
+                      padding: '12px 16px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      backgroundColor: '#ffffff',
+                      borderLeft: `4px solid ${req.priority === 'essential' ? '#d32f2f' : req.priority === 'important' ? '#ff9800' : '#4caf50'}`
+                    }}
+                  >
+                    <Box sx={{ flex: 1 }}>
+                      <Typography sx={{ fontSize: '13px', color: '#212121', marginBottom: '4px' }}>
+                        {req.text}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: '8px' }}>
+                        <Chip
+                          label={req.type === 'technical' ? 'Technique' : req.type === 'commercial' ? 'Commercial' : req.type === 'administrative' ? 'Administratif' : 'Légal'}
+                          size="small"
+                          sx={{
+                            height: '24px',
+                            fontSize: '11px',
+                            backgroundColor: req.type === 'technical' ? '#e3f2fd' : req.type === 'commercial' ? '#f3e5f5' : req.type === 'administrative' ? '#fce4ec' : '#e0f2f1',
+                            color: req.type === 'technical' ? '#0056B3' : req.type === 'commercial' ? '#7b1fa2' : req.type === 'administrative' ? '#c2185b' : '#00695c'
+                          }}
+                        />
+                        <Chip
+                          label={req.priority === 'essential' ? 'Essentielle' : req.priority === 'important' ? 'Important' : 'Souhaitable'}
+                          size="small"
+                          sx={{
+                            height: '24px',
+                            fontSize: '11px',
+                            backgroundColor: req.priority === 'essential' ? '#ffebee' : req.priority === 'important' ? '#fff3e0' : '#e8f5e9',
+                            color: req.priority === 'essential' ? '#d32f2f' : req.priority === 'important' ? '#ff9800' : '#4caf50'
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: '4px', marginLeft: '12px' }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => editRequirement(index)}
+                        disabled={loading}
+                        sx={{ color: '#0056B3' }}
+                      >
+                        ✎
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => removeRequirement(index)}
+                        disabled={loading}
+                        sx={{ color: '#d32f2f' }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
             </Box>
           )}
         </Box>
@@ -402,12 +530,15 @@ export default function CreateTender() {
   });
 
   const [newRequirement, setNewRequirement] = useState('');
+  const [requirementType, setRequirementType] = useState('technical');
+  const [requirementPriority, setRequirementPriority] = useState('important');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [autoSaved, setAutoSaved] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [stepsCompleted, setStepsCompleted] = useState({});
+  const [editingIndex, setEditingIndex] = useState(null);
 
   useEffect(() => {
     setPageTitle('Créer un Appel d\'Offres - Assistant');
@@ -448,11 +579,31 @@ export default function CreateTender() {
 
   const addRequirement = () => {
     if (newRequirement.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        requirements: [...prev.requirements, newRequirement]
-      }));
+      const requirementObj = {
+        id: Date.now(),
+        text: newRequirement.trim(),
+        type: requirementType,
+        priority: requirementPriority
+      };
+      
+      if (editingIndex !== null) {
+        setFormData(prev => ({
+          ...prev,
+          requirements: prev.requirements.map((req, i) => 
+            i === editingIndex ? requirementObj : req
+          )
+        }));
+        setEditingIndex(null);
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          requirements: [...prev.requirements, requirementObj]
+        }));
+      }
+      
       setNewRequirement('');
+      setRequirementType('technical');
+      setRequirementPriority('important');
     }
   };
 
@@ -461,6 +612,14 @@ export default function CreateTender() {
       ...prev,
       requirements: prev.requirements.filter((_, i) => i !== index)
     }));
+  };
+
+  const editRequirement = (index) => {
+    const req = formData.requirements[index];
+    setNewRequirement(req.text);
+    setRequirementType(req.type);
+    setRequirementPriority(req.priority);
+    setEditingIndex(index);
   };
 
   const handleFileUpload = (e) => {
@@ -588,6 +747,13 @@ export default function CreateTender() {
         selectedFiles={selectedFiles}
         handleCriteriaChange={handleCriteriaChange}
         totalCriteria={totalCriteria}
+        requirementType={requirementType}
+        setRequirementType={setRequirementType}
+        requirementPriority={requirementPriority}
+        setRequirementPriority={setRequirementPriority}
+        editRequirement={editRequirement}
+        editingIndex={editingIndex}
+        setEditingIndex={setEditingIndex}
       />
     );
   };

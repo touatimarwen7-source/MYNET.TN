@@ -6,29 +6,37 @@ MyNet.tn is a production-ready B2B procurement platform for the private sector, 
 ## User Preferences
 I prefer simple language and clear explanations. I want iterative development with small, testable changes. Please ask before making any major architectural changes or introducing new dependencies. I prefer that the agent works in the `/frontend` directory and does not make changes in the `/backend` directory.
 
-## Recent Changes (November 22, 2025)
+## Recent Changes (November 23, 2025)
+- **FIXED: Cursor Reset Bug in /create-tender Form**
+  - Issue: Cursor would jump/reset when typing in form fields
+  - Root Cause: Step components were recreating on every keystroke causing unmount/remount
+  - Solution: Extracted Step components into single memoized StepContent helper component
+  - Result: Smooth typing experience without cursor position loss
+
+- **ENHANCED: Advanced Exigences (Requirements) Step in Create Tender**
+  - **Requirement Object Structure**: Each requirement now has text, type, priority, and ID
+  - **4 Requirement Types**: Technique, Commercial, Administratif, Légal
+  - **3 Priority Levels**: Essentielle (Essential), Important, Souhaitable (Desirable)
+  - **Visual Indicators**:
+    - Color-coded type badges (Technical=Blue, Commercial=Purple, Administrative=Pink, Legal=Teal)
+    - Color-coded priority badges (Essential=Red, Important=Orange, Desirable=Green)
+    - Left border indicator on requirement cards (Red=Essential, Orange=Important, Green=Desirable)
+  - **Complete CRUD Operations**:
+    - Add new requirements with type and priority selection
+    - Edit existing requirements (inline form with pre-filled values)
+    - Delete requirements with button
+    - Real-time requirement count display
+  - **Enhanced UI/UX**:
+    - Multiline text input for detailed requirement descriptions
+    - Type and priority dropdown selectors (2-column grid)
+    - Add/Update/Cancel button controls
+    - Requirements displayed as cards with all metadata
+    - Empty state handling (no display until requirements added)
+
 - **100% COMPLETE French Conversion - ZERO Arabic Text Remaining**
-  - Fixed ALL remaining Arabic text in admin components (ServicesManager, UserRoleManagement, ContentManager, StaticPagesManager, AdminDashboard, SuperAdminDashboard, SupplierReviews)
+  - Fixed ALL remaining Arabic text in admin components
   - Removed Arabic locale file (`frontend/src/locales/ar/common.json`)
-  - Verified platform with comprehensive grep search: ZERO Arabic characters found (✓ 0 matches)
-  - All UI labels, buttons, messages, placeholders, errors, confirmations converted to French
-  - All fallback data uses French text
-  - All dialog titles and form labels in French
-  - Fixed date formatting locales from Arabic to French where applicable
-  
-- **Role Selection Screen**: Initial role selection at /register with:
-  - **Compte Acheteur** (Buyer Account) card with benefits and icon
-  - **Compte Fournisseur** (Supplier Account) card with benefits and icon
-  - Clickable cards with hover effects
-  
-- **Multi-Step Registration Form**: 3-phase registration form:
-  - **Step 1 - Informations Générales**: Username, email, password, full name, phone
-  - **Step 2 - Informations de l'Entreprise**: Company name, registration number
-  - **Step 3 - Informations de l'Activité**: Company type, product range, subcategory, year founded, employees
-  - MUI Stepper with progress indicator
-  - Step-by-step validation before advancing
-  
-- **Smart Cascading Validation**: Dropdowns reset when parent selections change
+  - Verified with grep: ZERO Arabic characters found (✓ 0 matches)
 
 ## System Architecture
 The platform utilizes a React frontend (Vite) and a Node.js backend with a PostgreSQL database.
