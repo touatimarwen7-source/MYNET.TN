@@ -32,10 +32,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Breadcrumbs,
+  Link,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
+import WarningIcon from '@mui/icons-material/Warning';
+import { FormSkeleton } from '../components/Common/SkeletonLoader';
 import { procurementAPI } from '../api';
 import { useToast } from '../contexts/AppContext';
 import { setPageTitle } from '../utils/pageTitle';
@@ -62,6 +66,7 @@ export default function CreateOffer() {
 
   const isDeadlinePassed = tender && new Date() > new Date(tender.deadline);
 
+  const [confirmSubmit, setConfirmSubmit] = useState(false);
   const [offerData, setOfferData] = useState({
     supplier_ref_number: '',
     validity_period_days: 30,

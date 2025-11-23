@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import institutionalTheme from '../theme/theme';
 import {
   Container,
@@ -23,22 +23,28 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Breadcrumbs,
+  Link,
 } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import DownloadIcon from '@mui/icons-material/Download';
 import InfoIcon from '@mui/icons-material/Info';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { TableSkeleton, CardSkeleton } from '../components/Common/SkeletonLoader';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
 
 export default function OfferAnalysis() {
   const theme = institutionalTheme;
   const { tenderId } = useParams();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [offers, setOffers] = useState([]);
+  const [tender, setTender] = useState(null);
   const [analysis, setAnalysis] = useState({
     avgPrice: 0,
     minPrice: 0,
@@ -58,10 +64,12 @@ export default function OfferAnalysis() {
       setLoading(true);
       setError('');
 
-      // Get offers for this tender
+      // Get tender and offers
+      const tenderRes = await procurementAPI.getTender(tenderId);
       const response = await procurementAPI.getOffers(tenderId);
       const offersData = response.data.offers || [];
 
+      setTender(tenderRes.data.tender);
       setOffers(offersData);
 
       // Calculate analysis
@@ -137,8 +145,13 @@ export default function OfferAnalysis() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress sx={{ color: theme.palette.primary.main }} />
+      <Box sx={{ backgroundColor: '#FAFAFA', paddingY: '40px', minHeight: '100vh' }}>
+        <Container maxWidth="lg">
+          <CardSkeleton />
+          <Box sx={{ mt: '24px' }}>
+            <TableSkeleton rows={5} columns={5} />
+          </Box>
+        </Container>
       </Box>
     );
   }
@@ -173,22 +186,65 @@ export default function OfferAnalysis() {
   return (
     <Box sx={{ backgroundColor: '#FAFAFA', paddingY: '40px', minHeight: '100vh' }}>
       <Container maxWidth="lg">
-        {/* Header */}
-        <Box sx={{ marginBottom: '32px' }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontSize: '32px',
-              fontWeight: 600,
-              color: theme.palette.primary.main,
-              mb: '8px',
-            }}
+        {/* Breadcrumb Navigation */}
+        <Breadcrumbs sx={{ mb: '24px' }}>
+          <Link 
+            component="button"
+            onClick={() => navigate('/tenders')}
+            sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
           >
-            📊 تحليل العروض
+            المناقصات
+          </Link>
+          <Link
+            component="button"
+            onClick={() => navigate(`/tender/${tenderId}`)}
+            sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+          >
+            المناقصة
+          </Link>
+          <Typography sx={{ color: theme.palette.primary.main, fontWeight: 600 }}>
+            تحليل العروض
           </Typography>
-          <Typography sx={{ fontSize: '14px', color: '#666666' }}>
-            المناقصة رقم: {tenderId}
-          </Typography>
+        </Breadcrumbs>
+
+        {/* Header */}
+        <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box>
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: '32px',
+                fontWeight: 600,
+                color: theme.palette.primary.main,
+                mb: '8px',
+              }}
+            >
+              📊 تحليل العروض
+            </Typography>
+            <Typography sx={{ fontSize: '14px', color: '#666666' }}>
+              المناقصة رقم: {tenderId}
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={1}>
+            <Button
+              startIcon={<DownloadIcon />}
+              onClick={exportToCSV}
+              variant="outlined"
+              size="small"
+              sx={{ color: theme.palette.primary.main, borderColor: theme.palette.primary.main }}
+            >
+              تصدير CSV
+            </Button>
+            <Button
+              startIcon={<DownloadIcon />}
+              onClick={exportToJSON}
+              variant="outlined"
+              size="small"
+              sx={{ color: theme.palette.primary.main, borderColor: theme.palette.primary.main }}
+            >
+              تصدير JSON
+            </Button>
+          </Stack>
         </Box>
 
         {error && (

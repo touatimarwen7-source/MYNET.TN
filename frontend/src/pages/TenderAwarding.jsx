@@ -22,11 +22,15 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Breadcrumbs,
+  Link,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
+import WarningIcon from '@mui/icons-material/Warning';
+import { TableSkeleton } from '../components/Common/SkeletonLoader';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
 
@@ -101,8 +105,10 @@ export default function TenderAwarding() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress sx={{ color: theme.palette.primary.main }} />
+      <Box sx={{ backgroundColor: '#FAFAFA', paddingY: '40px', minHeight: '100vh' }}>
+        <Container maxWidth="lg">
+          <TableSkeleton rows={3} columns={5} />
+        </Container>
       </Box>
     );
   }
@@ -114,15 +120,38 @@ export default function TenderAwarding() {
   return (
     <Box sx={{ backgroundColor: '#FAFAFA', paddingY: '40px', minHeight: '100vh' }}>
       <Container maxWidth="lg">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumbs sx={{ mb: '24px' }}>
+          <Link 
+            component="button"
+            onClick={() => navigate('/tenders')}
+            sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+          >
+            المناقصات
+          </Link>
+          <Link
+            component="button"
+            onClick={() => navigate(`/tender/${tenderId}`)}
+            sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+          >
+            المناقصة
+          </Link>
+          <Typography sx={{ color: theme.palette.primary.main, fontWeight: 600 }}>
+            إعلان الفائز
+          </Typography>
+        </Breadcrumbs>
+
         {/* Header */}
         <Box sx={{ marginBottom: '32px' }}>
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(`/tender/${tenderId}`)}
-            sx={{ color: theme.palette.primary.main, textTransform: 'none', mb: '16px' }}
-          >
-            العودة
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px', mb: '16px' }}>
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate(`/tender/${tenderId}`)}
+              sx={{ color: theme.palette.primary.main, textTransform: 'none' }}
+            >
+              العودة
+            </Button>
+          </Box>
           <Typography 
             variant="h2" 
             sx={{ 
@@ -445,24 +474,37 @@ export default function TenderAwarding() {
 
       {/* Confirmation Dialog */}
       <Dialog open={confirmDialog} onClose={() => setConfirmDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontSize: '18px', fontWeight: 600, color: '#0056B3' }}>
-          ✅ تأكيد إعلان الفائز
+        <DialogTitle sx={{ fontSize: '18px', fontWeight: 600, color: '#D32F2F', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <WarningIcon /> ⚠️ تأكيد الإعلان عن الفائز
         </DialogTitle>
         <DialogContent sx={{ pt: '16px' }}>
-          <Typography sx={{ fontSize: '14px', color: '#212121', mb: '12px' }}>
-            هل أنت متأكد من اختيار <strong>{winner?.supplier_name}</strong> كفائز لهذه المناقصة؟
-          </Typography>
-          <Typography sx={{ fontSize: '12px', color: '#666666' }}>
-            المبلغ: <strong>{parseFloat(winner?.total_amount || 0).toFixed(2)} TND</strong>
-          </Typography>
-          <Alert severity="info" sx={{ mt: '12px' }}>
-            لا يمكن تغيير هذا القرار بعد التأكيد
+          <Alert severity="error" sx={{ mb: '16px' }}>
+            ⚠️ هذا الإجراء نهائي ولا يمكن التراجع عنه
           </Alert>
+          <Stack spacing={2}>
+            <Typography sx={{ fontSize: '14px', color: '#212121' }}>
+              هل تريد إعلان <strong sx={{ color: '#0056B3' }}>{winner?.supplier_name}</strong> كفائز؟
+            </Typography>
+            <Paper sx={{ p: '12px', backgroundColor: '#E8F5E9', border: '1px solid #4CAF50' }}>
+              <Stack spacing={1}>
+                <Typography sx={{ fontSize: '12px', color: '#2E7D32', fontWeight: 600 }}>
+                  💰 المبلغ: {parseFloat(winner?.total_amount || 0).toFixed(2)} TND
+                </Typography>
+                <Typography sx={{ fontSize: '12px', color: '#2E7D32' }}>
+                  🚚 التسليم: {winner?.delivery_time || 'N/A'}
+                </Typography>
+                <Typography sx={{ fontSize: '12px', color: '#2E7D32' }}>
+                  ⭐ التقييم: {winner?.evaluation_score?.toFixed(1) || 0}/100
+                </Typography>
+              </Stack>
+            </Paper>
+          </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ p: '16px' }}>
           <Button 
             onClick={() => setConfirmDialog(false)}
             disabled={submitting}
+            sx={{ color: theme.palette.primary.main }}
           >
             إلغاء
           </Button>
@@ -471,11 +513,12 @@ export default function TenderAwarding() {
             onClick={handleAwardTender}
             disabled={submitting}
             sx={{
-              backgroundColor: '#4CAF50',
-              '&:hover': { backgroundColor: '#388E3C' },
+              backgroundColor: '#D32F2F',
+              '&:hover': { backgroundColor: '#B71C1C' },
+              '&:disabled': { backgroundColor: '#BDBDBD' },
             }}
           >
-            {submitting ? 'جاري...' : 'تأكيد'}
+            {submitting ? '⏳ جاري...' : '✓ تأكيد الإعلان'}
           </Button>
         </DialogActions>
       </Dialog>
