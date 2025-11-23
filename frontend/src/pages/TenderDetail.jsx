@@ -163,6 +163,43 @@ export default function TenderDetail() {
                 </Typography>
               </Box>
 
+              {tender.awardLevel && (
+                <Box sx={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
+                  <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: theme.palette.text.primary, marginBottom: '8px' }}>
+                    🎯 Niveau de ترسية
+                  </Typography>
+                  <Typography sx={{ color: '#0056B3', fontWeight: 600 }}>
+                    {tender.awardLevel === 'lot' ? 'Par Lot' : tender.awardLevel === 'article' ? 'Par Article' : 'Global (Toute l\'appel d\'offres)'}
+                  </Typography>
+                </Box>
+              )}
+
+              {tender.lots && tender.lots.length > 0 && (
+                <Box sx={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
+                  <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: theme.palette.text.primary, marginBottom: '12px' }}>
+                    📦 Lots et Articles ({tender.lots.length})
+                  </Typography>
+                  <Stack spacing={2}>
+                    {tender.lots.map((lot, idx) => (
+                      <Paper key={idx} sx={{ p: '12px', backgroundColor: '#F9F9F9', borderLeft: '4px solid #0056B3' }}>
+                        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '8px' }}>
+                          Lot {lot.numero}: {lot.objet}
+                        </Typography>
+                        {lot.articles && lot.articles.length > 0 && (
+                          <Box sx={{ ml: '12px', pl: '8px', borderLeft: '2px dashed #0056B3' }}>
+                            {lot.articles.map((article, aIdx) => (
+                              <Typography key={aIdx} sx={{ fontSize: '12px', color: '#666666', py: '4px' }}>
+                                ├─ {article.name} : <strong>{article.quantity} {article.unit}</strong>
+                              </Typography>
+                            ))}
+                          </Box>
+                        )}
+                      </Paper>
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+
               {offers.length > 0 && (
                 <Box sx={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
                   <Typography variant="h4" sx={{ fontSize: '16px', fontWeight: 600, color: theme.palette.text.primary, marginBottom: '16px' }}>

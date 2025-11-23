@@ -153,9 +153,21 @@ export default function TenderEvaluation() {
             📊 Évaluation des Offres
           </Typography>
           {tender && (
-            <Typography sx={{ fontSize: '14px', color: '#666666' }}>
-              {tender.title} - {offers.length} offre(s) reçue(s)
-            </Typography>
+            <Box>
+              <Typography sx={{ fontSize: '14px', color: '#666666', mb: '8px' }}>
+                {tender.title} - {offers.length} offre(s) reçue(s)
+              </Typography>
+              {tender.awardLevel && (
+                <Typography sx={{ fontSize: '12px', color: '#0056B3', fontWeight: 600 }}>
+                  🎯 Niveau de ترسية: {tender.awardLevel === 'lot' ? 'Par Lot' : tender.awardLevel === 'article' ? 'Par Article' : 'Global'}
+                </Typography>
+              )}
+              {tender.lots && tender.lots.length > 0 && (
+                <Typography sx={{ fontSize: '12px', color: '#666666', mt: '4px' }}>
+                  📦 Lots: {tender.lots.length}
+                </Typography>
+              )}
+            </Box>
           )}
         </Box>
 

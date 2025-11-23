@@ -153,9 +153,19 @@ export default function BidComparison() {
             <Typography sx={{ fontSize: '13px', color: '#666', marginBottom: '8px' }}>
               <strong>Deadline:</strong> {new Date(tender.deadline).toLocaleDateString('fr-TN')}
             </Typography>
-            <Typography sx={{ fontSize: '13px', color: '#666' }}>
+            <Typography sx={{ fontSize: '13px', color: '#666', marginBottom: '8px' }}>
               <strong>Nombre d'offres:</strong> {sortedOffers.length}
             </Typography>
+            {tender.awardLevel && (
+              <Typography sx={{ fontSize: '13px', color: '#0056B3', fontWeight: 600, marginBottom: '8px' }}>
+                <strong>🎯 Niveau de ترسية:</strong> {tender.awardLevel === 'lot' ? 'Par Lot' : tender.awardLevel === 'article' ? 'Par Article' : 'Global'}
+              </Typography>
+            )}
+            {tender.lots && tender.lots.length > 0 && (
+              <Typography sx={{ fontSize: '13px', color: '#666' }}>
+                <strong>Lots:</strong> {tender.lots.length}
+              </Typography>
+            )}
           </Paper>
         )}
       </Container>

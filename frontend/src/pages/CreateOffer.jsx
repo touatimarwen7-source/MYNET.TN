@@ -249,6 +249,37 @@ export default function CreateOffer() {
         {error && <Alert severity="error" sx={{ marginBottom: '24px' }}>{error}</Alert>}
         {success && <Alert severity="success" sx={{ marginBottom: '24px' }}>✅ Votre offre a été envoyée avec succès!</Alert>}
 
+        {tender?.lots && tender.lots.length > 0 && (
+          <Paper sx={{ p: '16px', backgroundColor: '#F5F5F5', mb: '24px', borderLeft: '4px solid #0056B3' }}>
+            <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#0056B3', mb: '12px' }}>
+              📦 Lots et Articles
+            </Typography>
+            <Stack spacing={1.5}>
+              {tender.lots.map((lot, idx) => (
+                <Box key={idx} sx={{ pl: '8px', borderLeft: '2px dashed #0056B3' }}>
+                  <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#212121' }}>
+                    Lot {lot.numero}: {lot.objet}
+                  </Typography>
+                  {lot.articles && lot.articles.length > 0 && (
+                    <Stack spacing={0.5} sx={{ mt: '6px', ml: '8px' }}>
+                      {lot.articles.map((article, aIdx) => (
+                        <Typography key={aIdx} sx={{ fontSize: '11px', color: '#666666' }}>
+                          ├─ {article.name}: {article.quantity} {article.unit}
+                        </Typography>
+                      ))}
+                    </Stack>
+                  )}
+                </Box>
+              ))}
+            </Stack>
+            {tender.awardLevel && (
+              <Typography sx={{ fontSize: '11px', color: '#0056B3', fontWeight: 600, mt: '12px', pt: '12px', borderTop: '1px solid #ddd' }}>
+                🎯 ترسية: {tender.awardLevel === 'lot' ? 'Par Lot' : tender.awardLevel === 'article' ? 'Par Article' : 'Global'}
+              </Typography>
+            )}
+          </Paper>
+        )}
+
         <Card sx={{ border: '1px solid #e0e0e0' }}>
           <CardContent sx={{ padding: '32px' }}>
             <Typography variant="h2" sx={{ fontSize: '28px', fontWeight: 500, color: theme.palette.text.primary, marginBottom: '8px' }}>
