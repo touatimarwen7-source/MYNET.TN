@@ -34,6 +34,7 @@ const superAdminRoutes = require('./routes/superAdminRoutes');
 const backupRoutes = require('./routes/backupRoutes');
 const passwordResetRoutes = require('./routes/passwordResetRoutes');
 const offerEvaluationRoutes = require('./routes/offerEvaluationRoutes');
+const tenderManagementRoutes = require('./routes/tenderManagementRoutes');
 const { ipMiddleware } = require('./middleware/ipMiddleware');
 const { requestTimeout } = require('./middleware/timeoutMiddleware');
 const { perUserLimiter, apiLimiters } = require('./middleware/perUserRateLimiting');
@@ -261,6 +262,9 @@ app.use('/api', inquiryRoutes);
 
 // 📊 OFFER OPENING & EVALUATION ROUTES
 app.use('/api/evaluation', offerEvaluationRoutes);
+
+// 🏆 TENDER MANAGEMENT ROUTES (Awards, Archives, Cancellation)
+app.use('/api/tender-management', tenderManagementRoutes);
 
 // Initialize email service
 initializeEmailService();
