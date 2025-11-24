@@ -3,6 +3,14 @@ const router = express.Router();
 const AwardNotificationService = require('../services/AwardNotificationService');
 const ArchiveService = require('../services/ArchiveService');
 const TenderCancellationService = require('../services/TenderCancellationService');
+const DataFetchingOptimizer = require('../utils/dataFetchingOptimizer');
+const { getPool } = require('../config/db');
+
+const getPaginationParams = (req) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+  return { page, limit };
+};
 
 router.post('/award-winners/:tenderId', async (req, res) => {
   try {
@@ -23,8 +31,32 @@ router.post('/award-winners/:tenderId', async (req, res) => {
 router.get('/award-status/:tenderId', async (req, res) => {
   try {
     const { tenderId } = req.params;
-    const status = await AwardNotificationService.getAwardStatus(parseInt(tenderId));
-    res.status(200).json({ success: true, status });
+    const { page, limit } = getPaginationParams(req);
+    const pool = getPool();
+    
+    // Get total count
+    const totalResult = await pool.query(
+      `SELECT COUNT(*) FROM offers WHERE tender_id = $1 AND status = 'submitted'`,
+      [tenderId]
+    );
+    const total = parseInt(totalResult.rows[0].count);
+    
+    // Get paginated status with selective columns
+    const offset = (page - 1) * limit;
+    const result = await pool.query(
+      `SELECT id, offer_number, supplier_id, final_score, award_status, awarded_at, ranking
+       FROM offers 
+       WHERE tender_id = $1 AND status = 'submitted'
+       ORDER BY ranking ASC NULLS LAST
+       LIMIT $2 OFFSET $3`,
+      [tenderId, limit, offset]
+    );
+    
+    res.status(200).json({ 
+      success: true, 
+      status: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+    });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }
@@ -55,8 +87,32 @@ router.get('/archive/:archiveId', async (req, res) => {
 router.get('/archives/:tenderId', async (req, res) => {
   try {
     const { tenderId } = req.params;
-    const archives = await ArchiveService.getArchivesByTender(parseInt(tenderId));
-    res.status(200).json({ success: true, archives });
+    const { page, limit } = getPaginationParams(req);
+    const pool = getPool();
+    
+    // Get total count
+    const totalResult = await pool.query(
+      `SELECT COUNT(*) FROM document_archives WHERE document_ref_id = $1 AND status = 'active'`,
+      [tenderId]
+    );
+    const total = parseInt(totalResult.rows[0].count);
+    
+    // Get paginated archives with selective columns
+    const offset = (page - 1) * limit;
+    const result = await pool.query(
+      `SELECT archive_id, document_type, archived_at, retention_years, expiration_date, status
+       FROM document_archives 
+       WHERE document_ref_id = $1 AND status = 'active'
+       ORDER BY archived_at DESC
+       LIMIT $2 OFFSET $3`,
+      [tenderId, limit, offset]
+    );
+    
+    res.status(200).json({ 
+      success: true, 
+      archives: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+    });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }

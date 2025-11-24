@@ -7,6 +7,15 @@ const ReviewController = require('../controllers/procurement/ReviewController');
 const TenderAwardController = require('../controllers/procurement/TenderAwardController');
 const AuthorizationGuard = require('../security/AuthorizationGuard');
 const { Permissions } = require('../config/Roles');
+const DataFetchingOptimizer = require('../utils/dataFetchingOptimizer');
+const { getPool } = require('../config/db');
+
+// Pagination helper
+const getPaginationParams = (req) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = Math.min(parseInt(req.query.limit) || 20, 100); // Max 100
+  return { page, limit };
+};
 
 // Tenders
 router.post('/tenders', 
@@ -17,10 +26,55 @@ router.post('/tenders',
 
 router.get('/my-tenders',
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
-    TenderController.getMyTenders.bind(TenderController)
+    async (req, res) => {
+      try {
+        const { page, limit } = getPaginationParams(req);
+        const buyerId = req.user?.userId;
+        const pool = getPool();
+        
+        // Optimized query with selective columns and pagination
+        let query = DataFetchingOptimizer.buildSelectQuery('tenders', 'tender_list');
+        query += ` WHERE buyer_id = $1 AND is_deleted = FALSE`;
+        
+        const totalResult = await pool.query(`SELECT COUNT(*) FROM tenders WHERE buyer_id = $1 AND is_deleted = FALSE`, [buyerId]);
+        const total = parseInt(totalResult.rows[0].count);
+        
+        query = DataFetchingOptimizer.addPagination(query, page, limit);
+        const result = await pool.query(query + ` ORDER BY created_at DESC`, [buyerId]);
+        
+        res.json({
+          tenders: result.rows,
+          pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+        });
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    }
 );
 
-router.get('/tenders', TenderController.getAllTenders.bind(TenderController));
+router.get('/tenders', async (req, res) => {
+  try {
+    const { page, limit } = getPaginationParams(req);
+    const pool = getPool();
+    
+    // Optimized query with selective columns and pagination
+    let query = DataFetchingOptimizer.buildSelectQuery('tenders', 'tender_list');
+    query += ` WHERE is_deleted = FALSE AND is_public = TRUE`;
+    
+    const totalResult = await pool.query(`SELECT COUNT(*) FROM tenders WHERE is_deleted = FALSE AND is_public = TRUE`);
+    const total = parseInt(totalResult.rows[0].count);
+    
+    query = DataFetchingOptimizer.addPagination(query, page, limit);
+    const result = await pool.query(query + ` ORDER BY created_at DESC`);
+    
+    res.json({
+      tenders: result.rows,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 router.get('/tenders/:id', TenderController.getTender.bind(TenderController));
 
@@ -63,12 +117,56 @@ router.get('/offers/:id',
 router.get('/tenders/:tenderId/offers',
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.VIEW_OFFER).bind(AuthorizationGuard),
-    OfferController.getOffersByTender.bind(OfferController)
+    async (req, res) => {
+      try {
+        const { tenderId } = req.params;
+        const { page, limit } = getPaginationParams(req);
+        const pool = getPool();
+        
+        let query = DataFetchingOptimizer.buildSelectQuery('offers', 'offer_list');
+        query += ` WHERE tender_id = $1 AND is_deleted = FALSE`;
+        
+        const totalResult = await pool.query(`SELECT COUNT(*) FROM offers WHERE tender_id = $1 AND is_deleted = FALSE`, [tenderId]);
+        const total = parseInt(totalResult.rows[0].count);
+        
+        query = DataFetchingOptimizer.addPagination(query, page, limit);
+        const result = await pool.query(query + ` ORDER BY ranking ASC NULLS LAST`, [tenderId]);
+        
+        res.json({
+          offers: result.rows,
+          pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+        });
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    }
 );
 
 router.get('/my-offers',
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
-    OfferController.getMyOffers.bind(OfferController)
+    async (req, res) => {
+      try {
+        const { page, limit } = getPaginationParams(req);
+        const supplierId = req.user?.userId;
+        const pool = getPool();
+        
+        let query = DataFetchingOptimizer.buildSelectQuery('offers', 'offer_list');
+        query += ` WHERE supplier_id = $1 AND is_deleted = FALSE`;
+        
+        const totalResult = await pool.query(`SELECT COUNT(*) FROM offers WHERE supplier_id = $1 AND is_deleted = FALSE`, [supplierId]);
+        const total = parseInt(totalResult.rows[0].count);
+        
+        query = DataFetchingOptimizer.addPagination(query, page, limit);
+        const result = await pool.query(query + ` ORDER BY submitted_at DESC`, [supplierId]);
+        
+        res.json({
+          offers: result.rows,
+          pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+        });
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    }
 );
 
 router.post('/offers/:id/evaluate',
@@ -99,7 +197,35 @@ router.post('/invoices',
 router.get('/invoices', 
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.VIEW_INVOICE).bind(AuthorizationGuard),
-    InvoiceController.getMyInvoices.bind(InvoiceController)
+    async (req, res) => {
+      try {
+        const { page, limit } = getPaginationParams(req);
+        const userId = req.user?.userId;
+        const pool = getPool();
+        
+        const totalResult = await pool.query(
+          `SELECT COUNT(*) FROM invoices WHERE (supplier_id = $1 OR buyer_id = $1) AND is_deleted = FALSE`,
+          [userId]
+        );
+        const total = parseInt(totalResult.rows[0].count);
+        
+        const offset = (page - 1) * limit;
+        const result = await pool.query(
+          `SELECT id, invoice_number, po_id, amount, tax_amount, status, created_at 
+           FROM invoices 
+           WHERE (supplier_id = $1 OR buyer_id = $1) AND is_deleted = FALSE
+           ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+          [userId, limit, offset]
+        );
+        
+        res.json({
+          invoices: result.rows,
+          pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+        });
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    }
 );
 
 router.patch('/invoices/:id/paid', 
