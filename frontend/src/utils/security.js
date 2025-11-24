@@ -33,12 +33,14 @@ export function hasPermission(userRole, requiredRole) {
 }
 
 // Surveillance de l'inactivité
-export function setupInactivityTimer(timeout = 15 * 60 * 1000) {
+// Timeout: 3 heures (10800000ms) - بناءً على أفضل الممارسات الأمنية للتطبيقات B2B
+export function setupInactivityTimer(timeout = 3 * 60 * 60 * 1000) {
   let inactivityTimer;
   
   const resetTimer = () => {
     clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(() => {
+      console.warn('[Security] Session timeout - logging out user due to inactivity');
       TokenManager.clearTokens();
       window.location.replace('/login');
     }, timeout);

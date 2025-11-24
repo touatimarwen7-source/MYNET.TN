@@ -201,8 +201,9 @@ export function AppProvider({ children }) {
   useEffect(() => {
     if (!isAuthenticated || !user) return;
 
-    // Set up inactivity timer (15 minutes)
-    const cleanup = setupInactivityTimer(15 * 60 * 1000);
+    // Set up inactivity timer (3 hours default)
+    // The timeout is reset on user activity (mousemove, click, keypress)
+    const cleanup = setupInactivityTimer();
     return cleanup;
   }, [isAuthenticated, user]);
 
