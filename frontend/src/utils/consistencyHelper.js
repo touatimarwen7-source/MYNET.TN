@@ -9,7 +9,6 @@
  */
 
 import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 
 /**
  * French labels mapping - Fallback if i18n is not initialized
@@ -27,6 +26,8 @@ export const FRENCH_LABELS = {
   voir: 'Voir',
   télécharger: 'Télécharger',
   charger: 'Charger',
+  dupliquer: 'Dupliquer',
+  fermer: 'Fermer',
   
   // Status
   actif: 'Actif',
@@ -36,6 +37,8 @@ export const FRENCH_LABELS = {
   en_attente: 'En attente',
   bloqué: 'Bloqué',
   archivé: 'Archivé',
+  approuvé: 'Approuvé',
+  rejeté: 'Rejeté',
   
   // Messages
   chargement: 'Chargement...',
@@ -43,6 +46,8 @@ export const FRENCH_LABELS = {
   erreur: 'Erreur',
   succès: 'Succès',
   avertissement: 'Avertissement',
+  info: 'Information',
+  confirmez_action: 'Êtes-vous sûr?',
   
   // Form fields
   email: 'Email',
@@ -61,6 +66,7 @@ export const FRENCH_LABELS = {
   utilisateur: 'Utilisateur',
   montant: 'Montant',
   type: 'Type',
+  résultat: 'Résultat',
 };
 
 /**
@@ -69,6 +75,7 @@ export const FRENCH_LABELS = {
  * @returns {string} French label
  */
 export const getFrenchLabel = (key) => {
+  if (!key || typeof key !== 'string') return '';
   return FRENCH_LABELS[key] || key;
 };
 
@@ -99,12 +106,12 @@ export const useConsistentTheme = () => {
     
     // Spacing - Always use theme spacing
     spacing: {
-      xs: theme.spacing(0.5),    // 4px
-      sm: theme.spacing(1),       // 8px
-      md: theme.spacing(2),       // 16px
-      lg: theme.spacing(3),       // 24px
-      xl: theme.spacing(4),       // 32px
-      xxl: theme.spacing(5),      // 40px
+      xs: theme.spacing(0.5),
+      sm: theme.spacing(1),
+      md: theme.spacing(2),
+      lg: theme.spacing(3),
+      xl: theme.spacing(4),
+      xxl: theme.spacing(5),
     },
     
     // Typography - Use theme variants
@@ -129,9 +136,12 @@ export const useConsistentTheme = () => {
  * Verified sx prop (Material-UI style object)
  * Ensures no inline styles, only theme-based sx
  * @param {Object} baseStyles - Base sx styles
+ * @param {Object} theme - MUI theme object
  * @returns {Object} Verified sx object
  */
 export const createThemedSx = (baseStyles, theme) => {
+  if (!baseStyles || !theme) return {};
+  
   return {
     ...baseStyles,
     // Force theme-based colors
@@ -160,72 +170,62 @@ export const responsiveBreakpoints = {
 
 /**
  * Common sx props for consistency
+ * All patterns use theme values - no hardcoded colors/spacing
  */
 export const CONSISTENT_SX = {
-  // Card
+  // Card with consistent styling
   card: (theme) => ({
     p: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     borderRadius: theme.shape.borderRadius,
     boxShadow: 'none',
     border: `1px solid ${theme.palette.divider}`,
+    transition: 'border-color 0.2s ease',
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
   }),
   
-  // Button
+  // Button with consistent styling
   button: (theme) => ({
     textTransform: 'none',
     fontWeight: theme.typography.fontWeightMedium,
     borderRadius: theme.shape.borderRadius,
     boxShadow: 'none',
-  }),
-  
-  // Input
-  input: (theme) => ({
-    '& .MuiOutlinedInput-root': {
-      borderRadius: theme.shape.borderRadius,
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      boxShadow: 'none',
     },
   }),
   
-  // Table
+  // Input with consistent styling
+  input: (theme) => ({
+    '& .MuiOutlinedInput-root': {
+      borderRadius: theme.shape.borderRadius,
+      transition: 'border-color 0.2s ease',
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.divider,
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.primary.main,
+    },
+  }),
+  
+  // Table with consistent styling
   table: (theme) => ({
     borderCollapse: 'collapse',
     '& .MuiTableCell-head': {
       backgroundColor: theme.palette.background.default,
       fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.text.primary,
+      borderColor: theme.palette.divider,
     },
-  }),
-  
-  // Mobile responsive table
-  responsiveTable: (theme) => ({
-    // Desktop: show full table
-    [theme.breakpoints.up('md')]: {
-      display: 'table',
+    '& .MuiTableCell-body': {
+      borderColor: theme.palette.divider,
     },
-    // Mobile: show as stack
-    [theme.breakpoints.down('md')]: {
-      display: 'block',
-      '& thead': {
-        display: 'none',
-      },
-      '& tbody': {
-        display: 'block',
-      },
-      '& tr': {
-        display: 'block',
-        marginBottom: theme.spacing(2),
-        border: `1px solid ${theme.palette.divider}`,
-        borderRadius: theme.shape.borderRadius,
-      },
-      '& td': {
-        display: 'block',
-        padding: theme.spacing(1),
-        textAlign: 'right',
-        '&:before': {
-          content: 'attr(data-label)',
-          fontWeight: theme.typography.fontWeightBold,
-          float: 'left',
-        },
-      },
+    '& .MuiTableBody-root .MuiTableRow-root:hover': {
+      backgroundColor: theme.palette.action.hover,
     },
   }),
 };
@@ -236,23 +236,25 @@ export const CONSISTENT_SX = {
 export const validateConsistency = {
   // Check for inline styles (should use sx instead)
   hasInlineStyles: (element) => {
-    return element?.getAttribute('style') !== null;
+    if (!element || typeof element !== 'object') return false;
+    return element?.getAttribute?.('style') !== null;
   },
   
   // Check for non-theme colors
   hasNonThemeColors: (color, theme) => {
+    if (!color || !theme) return false;
     const themeColors = Object.values(theme.palette);
     return !themeColors.some(paletteColor => 
       paletteColor === color || 
-      (paletteColor.main === color)
+      (typeof paletteColor === 'object' && paletteColor.main === color)
     );
   },
   
   // Check for non-French text (simple check)
   hasNonFrenchText: (text) => {
-    // Match non-Latin characters (Arabic, Chinese, etc.)
-    // Allow accented French characters (àâäéèêëïîôöùûüœç)
-    return /[A-Z]{2,}/.test(text); // Flag all-caps English acronyms
+    if (!text || typeof text !== 'string') return false;
+    // Flag all-caps English acronyms (but allow French accents)
+    return /[A-Z]{2,}(?![a-z])/.test(text);
   },
 };
 
