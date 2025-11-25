@@ -12,15 +12,14 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import institutionalTheme from '../../theme/theme';
 import { UNIT_OPTIONS } from '../../utils/unitOptions';
+import { THEME_COLORS, THEME_STYLES } from './themeHelpers';
 
 export default function StepThree({ formData, setFormData, loading }) {
   const [newLot, setNewLot] = useState({ numero: '', objet: '', articles: [] });
   const [newArticle, setNewArticle] = useState({ name: '', quantity: '', unit: '' });
   const [editingLotIndex, setEditingLotIndex] = useState(null);
   const [editingArticleIndex, setEditingArticleIndex] = useState(null);
-  const theme = institutionalTheme;
 
   const handleAddArticle = () => {
     if (!newArticle.name.trim() || !newArticle.quantity.trim() || !newArticle.unit || newArticle.unit === 'unité') {
@@ -86,11 +85,11 @@ export default function StepThree({ formData, setFormData, loading }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Award Level Selection */}
-      <Box sx={{ p: '16px', backgroundColor: '#FFF3E0', borderRadius: '4px', borderLeft: '4px solid #FF9800' }}>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#F57C00', mb: '12px' }}>
+      <Box sx={{ p: '16px', backgroundColor: `${THEME_COLORS.warningLight}15`, borderRadius: '4px', borderLeft: `4px solid ${THEME_COLORS.warningLight}` }}>
+        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.warning, mb: '12px' }}>
           🎯 Niveau de ترسية (Attribution)
         </Typography>
-        <Typography sx={{ fontSize: '12px', color: '#666666', mb: '12px' }}>
+        <Typography sx={{ fontSize: '12px', color: THEME_COLORS.textSecondary, mb: '12px' }}>
           Sélectionnez à quel niveau l'attribution sera effectuée :
         </Typography>
         <Stack direction="row" spacing={2}>
@@ -105,18 +104,18 @@ export default function StepThree({ formData, setFormData, loading }) {
               sx={{
                 flex: 1,
                 p: '12px',
-                border: formData.awardLevel === option.value ? '2px solid #0056B3' : '1px solid #ddd',
-                backgroundColor: formData.awardLevel === option.value ? '#E3F2FD' : '#fff',
+                border: formData.awardLevel === option.value ? `2px solid ${THEME_COLORS.primary}` : '1px solid #ddd',
+                backgroundColor: formData.awardLevel === option.value ? `${THEME_COLORS.primary}10` : THEME_COLORS.bgPaper,
                 borderRadius: '4px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                '&:hover': { borderColor: '#0056B3' },
+                '&:hover': { borderColor: THEME_COLORS.primary },
               }}
             >
-              <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#212121' }}>
+              <Typography sx={{ fontSize: '12px', fontWeight: 600, color: THEME_COLORS.textPrimary }}>
                 {option.label}
               </Typography>
-              <Typography sx={{ fontSize: '11px', color: '#666666' }}>
+              <Typography sx={{ fontSize: '11px', color: THEME_COLORS.textSecondary }}>
                 {option.description}
               </Typography>
             </Box>
@@ -125,8 +124,8 @@ export default function StepThree({ formData, setFormData, loading }) {
       </Box>
 
       {/* Lot Input */}
-      <Box sx={{ p: '16px', backgroundColor: '#E3F2FD', borderRadius: '4px', borderLeft: '4px solid #0056B3' }}>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#0056B3', mb: '16px' }}>
+      <Box sx={{ p: '16px', backgroundColor: `${THEME_COLORS.primary}10`, borderRadius: '4px', borderLeft: `4px solid ${THEME_COLORS.primary}` }}>
+        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.primary, mb: '16px' }}>
           ➕ Créer un Nouveau Lot
         </Typography>
 
@@ -155,26 +154,17 @@ export default function StepThree({ formData, setFormData, loading }) {
           />
 
           {/* Articles Section */}
-          <Box sx={{ p: '14px', backgroundColor: '#FFFFFF', borderRadius: '4px', border: '2px dashed #0056B3' }}>
+          <Box sx={{ p: '14px', backgroundColor: THEME_COLORS.bgPaper, borderRadius: '4px', border: `2px dashed ${THEME_COLORS.primary}` }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', mb: '14px' }}>
-              <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#0056B3' }}>
+              <Typography sx={{ fontSize: '12px', fontWeight: 600, color: THEME_COLORS.primary }}>
                 📦 Articles du Lot {newLot.numero || '?'}
               </Typography>
-              <Box
-                sx={{
-                  fontSize: '10px',
-                  color: '#fff',
-                  backgroundColor: '#0056B3',
-                  px: '6px',
-                  py: '2px',
-                  borderRadius: '12px',
-                }}
-              >
+              <Box sx={THEME_STYLES.badge}>
                 {(newLot.articles || []).length}
               </Box>
             </Box>
 
-            <Typography sx={{ fontSize: '11px', color: '#666666', mb: '12px', fontStyle: 'italic' }}>
+            <Typography sx={{ fontSize: '11px', color: THEME_COLORS.textSecondary, mb: '12px', fontStyle: 'italic' }}>
               📌 Les articles ci-dessous appartiennent au Lot ci-dessus
             </Typography>
 
@@ -210,7 +200,7 @@ export default function StepThree({ formData, setFormData, loading }) {
                   sx={{ minWidth: '120px' }}
                 >
                   {UNIT_OPTIONS.map((group) => [
-                    <MenuItem key={`header-${group.group}`} disabled sx={{ fontWeight: 600, color: '#0056B3', fontSize: '12px' }}>
+                    <MenuItem key={`header-${group.group}`} disabled sx={{ fontWeight: 600, color: THEME_COLORS.primary, fontSize: '12px' }}>
                       ─ {group.group}
                     </MenuItem>,
                     ...group.options.map((opt) => (
@@ -225,11 +215,7 @@ export default function StepThree({ formData, setFormData, loading }) {
                   variant="contained"
                   onClick={handleAddArticle}
                   disabled={loading}
-                  sx={{
-                    backgroundColor: '#0056B3',
-                    color: '#fff',
-                    textTransform: 'none',
-                  }}
+                  sx={{ ...THEME_STYLES.buttonPrimary }}
                 >
                   {editingArticleIndex !== null ? '✓ MAJ' : '+ Ajouter'}
                 </Button>
@@ -242,7 +228,7 @@ export default function StepThree({ formData, setFormData, loading }) {
                       setEditingArticleIndex(null);
                     }}
                     disabled={loading}
-                    sx={{ color: '#d32f2f', borderColor: '#d32f2f' }}
+                    sx={THEME_STYLES.buttonError}
                   >
                     Annuler
                   </Button>
@@ -261,11 +247,11 @@ export default function StepThree({ formData, setFormData, loading }) {
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      backgroundColor: '#F9F9F9',
-                      borderLeft: '3px solid #4CAF50',
+                      backgroundColor: THEME_COLORS.bgDefault,
+                      borderLeft: `3px solid ${THEME_COLORS.successLight}`,
                     }}
                   >
-                    <Typography sx={{ fontSize: '12px', color: '#212121' }}>
+                    <Typography sx={{ fontSize: '12px', color: THEME_COLORS.textPrimary }}>
                       {article.name} - {article.quantity} {article.unit}
                     </Typography>
                     <Box sx={{ display: 'flex', gap: '4px' }}>
@@ -274,14 +260,14 @@ export default function StepThree({ formData, setFormData, loading }) {
                         onClick={() => handleEditArticle(idx)}
                         disabled={loading}
                       >
-                        <EditIcon sx={{ fontSize: '16px', color: '#0056B3' }} />
+                        <EditIcon sx={{ fontSize: '16px', color: THEME_COLORS.primary }} />
                       </IconButton>
                       <IconButton
                         size="small"
                         onClick={() => handleRemoveArticle(idx)}
                         disabled={loading}
                       >
-                        <DeleteIcon sx={{ fontSize: '16px', color: '#d32f2f' }} />
+                        <DeleteIcon sx={{ fontSize: '16px', color: THEME_COLORS.errorLight }} />
                       </IconButton>
                     </Box>
                   </Paper>
@@ -295,12 +281,7 @@ export default function StepThree({ formData, setFormData, loading }) {
               variant="contained"
               onClick={handleAddLot}
               disabled={loading || (newLot.articles || []).length === 0}
-              sx={{
-                backgroundColor: '#0056B3',
-                color: '#fff',
-                flex: 1,
-                textTransform: 'none',
-              }}
+              sx={{ ...THEME_STYLES.buttonPrimary, flex: 1 }}
             >
               {editingLotIndex !== null ? '✓ Mettre à Jour' : '✓ Ajouter Lot'}
             </Button>
@@ -314,7 +295,7 @@ export default function StepThree({ formData, setFormData, loading }) {
                   setEditingArticleIndex(null);
                 }}
                 disabled={loading}
-                sx={{ color: '#d32f2f', borderColor: '#d32f2f' }}
+                sx={THEME_STYLES.buttonError}
               >
                 Annuler
               </Button>
@@ -326,7 +307,7 @@ export default function StepThree({ formData, setFormData, loading }) {
       {/* Lots List */}
       {lots.length > 0 && (
         <Box>
-          <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '12px' }}>
+          <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.textPrimary, mb: '12px' }}>
             📋 Lots ({lots.length})
           </Typography>
           <Stack spacing={2}>
@@ -335,16 +316,16 @@ export default function StepThree({ formData, setFormData, loading }) {
                 key={index}
                 sx={{
                   p: '16px',
-                  backgroundColor: '#F9F9F9',
-                  borderLeft: '4px solid #0056B3',
+                  backgroundColor: THEME_COLORS.bgDefault,
+                  borderLeft: `4px solid ${THEME_COLORS.primary}`,
                 }}
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: '12px' }}>
                   <Box sx={{ flex: 1 }}>
-                    <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121' }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.textPrimary }}>
                       Lot {lot.numero}
                     </Typography>
-                    <Typography sx={{ fontSize: '12px', color: '#666666' }}>
+                    <Typography sx={{ fontSize: '12px', color: THEME_COLORS.textSecondary }}>
                       {lot.objet}
                     </Typography>
                   </Box>
@@ -354,22 +335,22 @@ export default function StepThree({ formData, setFormData, loading }) {
                       onClick={() => handleEditLot(index)}
                       disabled={loading}
                     >
-                      <EditIcon sx={{ fontSize: '18px', color: '#0056B3' }} />
+                      <EditIcon sx={{ fontSize: '18px', color: THEME_COLORS.primary }} />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => handleRemoveLot(index)}
                       disabled={loading}
                     >
-                      <DeleteIcon sx={{ fontSize: '18px', color: '#d32f2f' }} />
+                      <DeleteIcon sx={{ fontSize: '18px', color: THEME_COLORS.errorLight }} />
                     </IconButton>
                   </Box>
                 </Box>
 
                 {/* Articles Display */}
                 {(lot.articles || []).length > 0 && (
-                  <Box sx={{ mt: '12px', ml: '16px', pl: '12px', borderLeft: '3px dashed #0056B3' }}>
-                    <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#0056B3', mb: '8px' }}>
+                  <Box sx={{ mt: '12px', ml: '16px', pl: '12px', borderLeft: `3px dashed ${THEME_COLORS.primary}` }}>
+                    <Typography sx={{ fontSize: '11px', fontWeight: 600, color: THEME_COLORS.primary, mb: '8px' }}>
                       📌 Articles :
                     </Typography>
                     <Stack spacing={1}>
@@ -378,22 +359,22 @@ export default function StepThree({ formData, setFormData, loading }) {
                           key={aIdx}
                           sx={{
                             p: '8px 10px',
-                            backgroundColor: '#FAFAFA',
-                            borderLeft: '3px solid #4CAF50',
+                            backgroundColor: THEME_COLORS.bgDefault,
+                            borderLeft: `3px solid ${THEME_COLORS.successLight}`,
                             borderRadius: '3px',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '8px',
                           }}
                         >
-                          <Typography sx={{ fontSize: '11px', color: '#4CAF50', fontWeight: 600 }}>
+                          <Typography sx={{ fontSize: '11px', color: THEME_COLORS.successLight, fontWeight: 600 }}>
                             ├─
                           </Typography>
                           <Box sx={{ flex: 1 }}>
-                            <Typography sx={{ fontSize: '11px', fontWeight: 500, color: '#212121' }}>
+                            <Typography sx={{ fontSize: '11px', fontWeight: 500, color: THEME_COLORS.textPrimary }}>
                               {article.name}
                             </Typography>
-                            <Typography sx={{ fontSize: '10px', color: '#999999' }}>
+                            <Typography sx={{ fontSize: '10px', color: THEME_COLORS.textDisabled }}>
                               Quantité: <strong>{article.quantity} {article.unit}</strong>
                             </Typography>
                           </Box>

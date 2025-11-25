@@ -16,6 +16,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { REQUIREMENT_TYPES, REQUIREMENT_PRIORITIES } from './constants';
+import { THEME_COLORS, THEME_STYLES } from './themeHelpers';
 
 export default function StepFour({ formData, setFormData, loading }) {
   const [newReq, setNewReq] = useState('');
@@ -65,8 +66,8 @@ export default function StepFour({ formData, setFormData, loading }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Input Area */}
-      <Box sx={{ p: '16px', backgroundColor: '#FFF3E0', borderRadius: '4px' }}>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#F57C00', mb: '16px' }}>
+      <Box sx={{ p: '16px', backgroundColor: `${THEME_COLORS.warningLight}15`, borderRadius: '4px' }}>
+        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.warning, mb: '16px' }}>
           ➕ Ajouter une Exigence
         </Typography>
 
@@ -121,12 +122,7 @@ export default function StepFour({ formData, setFormData, loading }) {
               variant="contained"
               onClick={handleAddRequirement}
               disabled={loading}
-              sx={{
-                backgroundColor: '#0056B3',
-                color: '#fff',
-                flex: 1,
-                textTransform: 'none',
-              }}
+              sx={{ ...THEME_STYLES.buttonPrimary, flex: 1 }}
             >
               {editingIndex !== null ? 'Mettre à Jour' : 'Ajouter'}
             </Button>
@@ -140,7 +136,7 @@ export default function StepFour({ formData, setFormData, loading }) {
                   setEditingIndex(null);
                 }}
                 disabled={loading}
-                sx={{ color: '#d32f2f', borderColor: '#d32f2f' }}
+                sx={THEME_STYLES.buttonError}
               >
                 Annuler
               </Button>
@@ -152,7 +148,7 @@ export default function StepFour({ formData, setFormData, loading }) {
       {/* Requirements List */}
       {requirements.length > 0 && (
         <Box>
-          <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '12px' }}>
+          <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.textPrimary, mb: '12px' }}>
             Exigences ({requirements.length})
           </Typography>
           <Stack spacing={1}>
@@ -164,26 +160,21 @@ export default function StepFour({ formData, setFormData, loading }) {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'flex-start',
-                  backgroundColor: '#F9F9F9',
+                  backgroundColor: THEME_COLORS.bgDefault,
                   borderLeft: `4px solid ${
                     REQUIREMENT_PRIORITIES.find((p) => p.value === req.priority)?.color || '#999'
                   }`,
                 }}
               >
                 <Box sx={{ flex: 1 }}>
-                  <Typography sx={{ fontSize: '13px', color: '#212121', mb: '8px' }}>
+                  <Typography sx={{ fontSize: '13px', color: THEME_COLORS.textPrimary, mb: '8px' }}>
                     {req.text}
                   </Typography>
                   <Box sx={{ display: 'flex', gap: '8px' }}>
                     <Chip
                       label={REQUIREMENT_TYPES.find((t) => t.value === req.type)?.label}
                       size="small"
-                      sx={{
-                        height: '24px',
-                        fontSize: '11px',
-                        backgroundColor: '#E3F2FD',
-                        color: '#0056B3',
-                      }}
+                      sx={THEME_STYLES.chipPrimary}
                     />
                     <Chip
                       label={REQUIREMENT_PRIORITIES.find((p) => p.value === req.priority)?.label}
@@ -191,8 +182,8 @@ export default function StepFour({ formData, setFormData, loading }) {
                       sx={{
                         height: '24px',
                         fontSize: '11px',
-                        backgroundColor: '#F0F0F0',
-                        color: '#212121',
+                        backgroundColor: THEME_COLORS.bgDefault,
+                        color: THEME_COLORS.textPrimary,
                       }}
                     />
                   </Box>
@@ -203,14 +194,14 @@ export default function StepFour({ formData, setFormData, loading }) {
                     onClick={() => handleEditRequirement(index)}
                     disabled={loading}
                   >
-                    <EditIcon sx={{ fontSize: '18px', color: '#0056B3' }} />
+                    <EditIcon sx={{ fontSize: '18px', color: THEME_COLORS.primary }} />
                   </IconButton>
                   <IconButton
                     size="small"
                     onClick={() => handleRemoveRequirement(index)}
                     disabled={loading}
                   >
-                    <DeleteIcon sx={{ fontSize: '18px', color: '#d32f2f' }} />
+                    <DeleteIcon sx={{ fontSize: '18px', color: THEME_COLORS.errorLight }} />
                   </IconButton>
                 </Box>
               </Paper>

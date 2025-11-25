@@ -1,5 +1,6 @@
 import { Box, Typography, TextField, Stack, Paper, Alert } from '@mui/material';
 import { CATEGORIES } from './constants';
+import { THEME_COLORS, THEME_STYLES } from './themeHelpers';
 
 export default function StepSeven({ formData, handleChange, loading }) {
   const awardLevelLabel = {
@@ -10,61 +11,61 @@ export default function StepSeven({ formData, handleChange, loading }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <Alert severity="success" sx={{ backgroundColor: '#E8F5E9', color: '#2E7D32' }}>
+      <Alert severity="success" sx={THEME_STYLES.alertSuccess}>
         ✅ Vous êtes prêt pour soumettre votre appel d'offres
       </Alert>
 
-      <Paper sx={{ p: '20px', backgroundColor: '#F9F9F9', borderRadius: '4px' }}>
-        <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#0056B3', mb: '16px' }}>
+      <Paper sx={{ p: '20px', backgroundColor: THEME_COLORS.bgDefault, borderRadius: '4px' }}>
+        <Typography sx={{ fontSize: '14px', fontWeight: 600, color: THEME_COLORS.primary, mb: '16px' }}>
           📋 Résumé de l'Appel d'Offres
         </Typography>
 
         <Stack spacing={2} sx={{ fontSize: '13px' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#666666' }}>Titre:</Typography>
-            <Typography sx={{ fontWeight: 600, color: '#212121' }}>
+            <Typography sx={{ color: THEME_COLORS.textSecondary }}>Titre:</Typography>
+            <Typography sx={{ fontWeight: 600, color: THEME_COLORS.textPrimary }}>
               {formData.title || 'Non défini'}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#666666' }}>Catégorie:</Typography>
-            <Typography sx={{ fontWeight: 600, color: '#212121' }}>
+            <Typography sx={{ color: THEME_COLORS.textSecondary }}>Catégorie:</Typography>
+            <Typography sx={{ fontWeight: 600, color: THEME_COLORS.textPrimary }}>
               {CATEGORIES.find((c) => c.value === formData.category)?.label || 'Non définie'}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#666666' }}>Budget:</Typography>
-            <Typography sx={{ fontWeight: 600, color: '#212121' }}>
+            <Typography sx={{ color: THEME_COLORS.textSecondary }}>Budget:</Typography>
+            <Typography sx={{ fontWeight: 600, color: THEME_COLORS.textPrimary }}>
               {formData.budget_min} - {formData.budget_max} {formData.currency}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#666666' }}>🎯 Niveau d'Attribution:</Typography>
-            <Typography sx={{ fontWeight: 600, color: '#0056B3' }}>
+            <Typography sx={{ color: THEME_COLORS.textSecondary }}>🎯 Niveau d'Attribution:</Typography>
+            <Typography sx={{ fontWeight: 600, color: THEME_COLORS.primary }}>
               {awardLevelLabel[formData.awardLevel] || 'Non défini'}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#666666' }}>Lots:</Typography>
-            <Typography sx={{ fontWeight: 600, color: '#212121' }}>
+            <Typography sx={{ color: THEME_COLORS.textSecondary }}>Lots:</Typography>
+            <Typography sx={{ fontWeight: 600, color: THEME_COLORS.textPrimary }}>
               {(formData.lots || []).length}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#666666' }}>Exigences:</Typography>
-            <Typography sx={{ fontWeight: 600, color: '#212121' }}>
+            <Typography sx={{ color: THEME_COLORS.textSecondary }}>Exigences:</Typography>
+            <Typography sx={{ fontWeight: 600, color: THEME_COLORS.textPrimary }}>
               {(formData.requirements || []).length}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#666666' }}>Visibilité:</Typography>
-            <Typography sx={{ fontWeight: 600, color: '#212121' }}>
+            <Typography sx={{ color: THEME_COLORS.textSecondary }}>Visibilité:</Typography>
+            <Typography sx={{ fontWeight: 600, color: THEME_COLORS.textPrimary }}>
               {formData.is_public ? 'Public' : 'Privé'}
             </Typography>
           </Box>
@@ -73,8 +74,8 @@ export default function StepSeven({ formData, handleChange, loading }) {
 
       {/* Detailed Lots Section */}
       {(formData.lots || []).length > 0 && (
-        <Paper sx={{ p: '20px', backgroundColor: '#F9F9F9', borderRadius: '4px' }}>
-          <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#0056B3', mb: '16px' }}>
+        <Paper sx={{ p: '20px', backgroundColor: THEME_COLORS.bgDefault, borderRadius: '4px' }}>
+          <Typography sx={{ fontSize: '14px', fontWeight: 600, color: THEME_COLORS.primary, mb: '16px' }}>
             📦 Détail des Lots et Articles
           </Typography>
 
@@ -84,13 +85,13 @@ export default function StepSeven({ formData, handleChange, loading }) {
                 key={idx}
                 sx={{
                   p: '12px',
-                  backgroundColor: '#fff',
-                  border: '1px solid #E0E0E0',
+                  backgroundColor: THEME_COLORS.bgPaper,
+                  border: `1px solid ${THEME_COLORS.divider}`,
                   borderRadius: '4px',
-                  borderLeft: '4px solid #0056B3',
+                  borderLeft: `4px solid ${THEME_COLORS.primary}`,
                 }}
               >
-                <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#212121', mb: '8px' }}>
+                <Typography sx={{ fontSize: '12px', fontWeight: 600, color: THEME_COLORS.textPrimary, mb: '8px' }}>
                   Lot {lot.numero}: {lot.objet}
                 </Typography>
 
@@ -101,10 +102,10 @@ export default function StepSeven({ formData, handleChange, loading }) {
                         key={aIdx}
                         sx={{
                           p: '6px',
-                          backgroundColor: '#F9F9F9',
+                          backgroundColor: THEME_COLORS.bgDefault,
                           borderRadius: '2px',
                           fontSize: '11px',
-                          color: '#666666',
+                          color: THEME_COLORS.textSecondary,
                         }}
                       >
                         • <strong>{article.name}</strong> : {article.quantity} {article.unit}
@@ -120,7 +121,7 @@ export default function StepSeven({ formData, handleChange, loading }) {
 
       {/* Contact Info */}
       <Box>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '12px' }}>
+        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.textPrimary, mb: '12px' }}>
           Informations de Contact
         </Typography>
 

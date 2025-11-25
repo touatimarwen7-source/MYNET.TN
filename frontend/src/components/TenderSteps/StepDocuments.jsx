@@ -11,6 +11,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { THEME_COLORS, THEME_STYLES } from './themeHelpers';
 
 export default function StepDocuments({ formData, setFormData, loading }) {
   const [dragOver, setDragOver] = useState(false);
@@ -34,7 +35,7 @@ export default function StepDocuments({ formData, setFormData, loading }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <Alert severity="info" sx={{ backgroundColor: '#E3F2FD', color: '#0056B3' }}>
+      <Alert severity="info" sx={THEME_STYLES.alertInfo}>
         📄 Uploadez le cahier des charges, les spécifications techniques et tout document pertinent
       </Alert>
 
@@ -51,21 +52,21 @@ export default function StepDocuments({ formData, setFormData, loading }) {
           handleFileUpload(e.dataTransfer.files);
         }}
         sx={{
-          border: '2px dashed #0056B3',
+          border: `2px dashed ${THEME_COLORS.primary}`,
           borderRadius: '8px',
           padding: '40px',
           textAlign: 'center',
-          backgroundColor: dragOver ? '#E3F2FD' : '#F9F9F9',
+          backgroundColor: dragOver ? `${THEME_COLORS.primary}10` : THEME_COLORS.bgDefault,
           cursor: 'pointer',
           transition: 'all 0.3s ease',
-          '&:hover': { backgroundColor: '#E3F2FD' },
+          '&:hover': { backgroundColor: `${THEME_COLORS.primary}10` },
         }}
       >
-        <UploadFileIcon sx={{ fontSize: 48, color: '#0056B3', mb: 2 }} />
-        <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#212121', mb: 1 }}>
+        <UploadFileIcon sx={{ fontSize: 48, color: THEME_COLORS.primary, mb: 2 }} />
+        <Typography sx={{ fontSize: '14px', fontWeight: 600, color: THEME_COLORS.textPrimary, mb: 1 }}>
           Glissez-déposez vos fichiers ici
         </Typography>
-        <Typography sx={{ fontSize: '12px', color: '#999999' }}>
+        <Typography sx={{ fontSize: '12px', color: THEME_COLORS.textDisabled }}>
           ou cliquez pour sélectionner
         </Typography>
         <input
@@ -81,8 +82,8 @@ export default function StepDocuments({ formData, setFormData, loading }) {
             component="span"
             variant="contained"
             sx={{
-              backgroundColor: '#0056B3',
-              color: '#fff',
+              backgroundColor: THEME_COLORS.primary,
+              color: THEME_COLORS.bgPaper,
               marginTop: '12px',
               textTransform: 'none',
             }}
@@ -96,7 +97,7 @@ export default function StepDocuments({ formData, setFormData, loading }) {
       {/* Files List */}
       {docs.length > 0 && (
         <Box>
-          <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '12px' }}>
+          <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.textPrimary, mb: '12px' }}>
             Fichiers uploadés ({docs.length})
           </Typography>
           <Stack spacing={1}>
@@ -108,17 +109,17 @@ export default function StepDocuments({ formData, setFormData, loading }) {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  backgroundColor: '#F9F9F9',
-                  borderLeft: '4px solid #0056B3',
+                  backgroundColor: THEME_COLORS.bgDefault,
+                  borderLeft: `4px solid ${THEME_COLORS.primary}`,
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                  <FileDownloadIcon sx={{ color: '#0056B3' }} />
+                  <FileDownloadIcon sx={{ color: THEME_COLORS.primary }} />
                   <Box>
-                    <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121' }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.textPrimary }}>
                       {file.name || 'Fichier'}
                     </Typography>
-                    <Typography sx={{ fontSize: '12px', color: '#999999' }}>
+                    <Typography sx={{ fontSize: '12px', color: THEME_COLORS.textDisabled }}>
                       {file.size ? `${(file.size / 1024).toFixed(2)} KB` : 'Taille inconnue'}
                     </Typography>
                   </Box>
@@ -128,7 +129,7 @@ export default function StepDocuments({ formData, setFormData, loading }) {
                   onClick={() => handleRemoveFile(index)}
                   disabled={loading}
                 >
-                  <DeleteIcon sx={{ fontSize: '18px', color: '#d32f2f' }} />
+                  <DeleteIcon sx={{ fontSize: '18px', color: THEME_COLORS.errorLight }} />
                 </IconButton>
               </Paper>
             ))}

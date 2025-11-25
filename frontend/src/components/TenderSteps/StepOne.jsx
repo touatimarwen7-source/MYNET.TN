@@ -1,5 +1,6 @@
 import { Box, Typography, TextField, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import institutionalTheme from '../../theme/theme';
+import { THEME_COLORS, THEME_STYLES } from './themeHelpers';
 
 const CATEGORIES = [
   { value: 'technology', label: 'Technologie & IT' },
@@ -16,7 +17,7 @@ export default function StepOne({ formData, handleChange, loading }) {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Consultation Number */}
       <Box>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '8px' }}>
+        <Typography sx={THEME_STYLES.label}>
           N° Consultation *
         </Typography>
         <TextField
@@ -26,18 +27,13 @@ export default function StepOne({ formData, handleChange, loading }) {
           value={formData.consultation_number}
           onChange={handleChange}
           disabled={loading}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '4px',
-              backgroundColor: '#FAFAFA',
-            },
-          }}
+          sx={THEME_STYLES.textFieldBase}
         />
       </Box>
 
       {/* Title */}
       <Box>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '8px' }}>
+        <Typography sx={THEME_STYLES.label}>
           Titre de l'Appel d'Offres *
         </Typography>
         <TextField
@@ -48,21 +44,16 @@ export default function StepOne({ formData, handleChange, loading }) {
           onChange={handleChange}
           disabled={loading}
           inputProps={{ maxLength: 100 }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '4px',
-              backgroundColor: '#FAFAFA',
-            },
-          }}
+          sx={THEME_STYLES.textFieldBase}
         />
-        <Typography sx={{ fontSize: '12px', color: '#999999', mt: '6px' }}>
+        <Typography sx={THEME_STYLES.helperText}>
           {(formData.title || '').length}/100 caractères
         </Typography>
       </Box>
 
       {/* Description */}
       <Box>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121', mb: '8px' }}>
+        <Typography sx={THEME_STYLES.label}>
           Description Détaillée *
         </Typography>
         <TextField
@@ -74,14 +65,9 @@ export default function StepOne({ formData, handleChange, loading }) {
           disabled={loading}
           multiline
           rows={5}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '4px',
-              backgroundColor: '#FAFAFA',
-            },
-          }}
+          sx={THEME_STYLES.textFieldBase}
         />
-        <Typography sx={{ fontSize: '12px', color: '#999999', mt: '6px' }}>
+        <Typography sx={THEME_STYLES.helperText}>
           Minimum 20 caractères | Actuel: {(formData.description || '').length}
         </Typography>
       </Box>

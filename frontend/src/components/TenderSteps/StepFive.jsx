@@ -1,4 +1,5 @@
 import { Box, Typography, TextField, Stack, Alert } from '@mui/material';
+import { THEME_COLORS, THEME_STYLES } from './themeHelpers';
 
 export default function StepFive({ formData, handleChange, totalCriteria, loading }) {
   const criteria = [
@@ -10,7 +11,7 @@ export default function StepFive({ formData, handleChange, totalCriteria, loadin
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <Alert severity="info" sx={{ backgroundColor: '#E3F2FD', color: '#0056B3' }}>
+      <Alert severity="info" sx={THEME_STYLES.alertInfo}>
         ℹ️ Distribuer 100 points entre les critères. Total actuel: <strong>{totalCriteria}%</strong>
       </Alert>
 
@@ -18,15 +19,14 @@ export default function StepFive({ formData, handleChange, totalCriteria, loadin
         {criteria.map((c) => (
           <Box key={c.key}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: '8px' }}>
-              <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#212121' }}>
+              <Typography sx={{ fontSize: '13px', fontWeight: 600, color: THEME_COLORS.textPrimary }}>
                 {c.label}
               </Typography>
               <Typography
                 sx={{
                   fontSize: '13px',
                   fontWeight: 600,
-                  color:
-                    formData.evaluation_criteria[c.key] > 0 ? '#0056B3' : '#999999',
+                  color: formData.evaluation_criteria[c.key] > 0 ? THEME_COLORS.primary : THEME_COLORS.textDisabled,
                 }}
               >
                 {formData.evaluation_criteria[c.key]}%
@@ -49,25 +49,20 @@ export default function StepFive({ formData, handleChange, totalCriteria, loadin
               disabled={loading}
               inputProps={{ min: 0, max: 100 }}
               size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '4px',
-                  backgroundColor: '#FAFAFA',
-                },
-              }}
+              sx={THEME_STYLES.textFieldBase}
             />
           </Box>
         ))}
       </Stack>
 
       {totalCriteria === 100 && (
-        <Alert severity="success" sx={{ backgroundColor: '#E8F5E9', color: '#2E7D32' }}>
+        <Alert severity="success" sx={THEME_STYLES.alertSuccess}>
           ✅ Critères correctement distribués
         </Alert>
       )}
 
       {totalCriteria !== 100 && totalCriteria > 0 && (
-        <Alert severity="warning" sx={{ backgroundColor: '#FFF3CD', color: '#856404' }}>
+        <Alert severity="warning" sx={THEME_STYLES.alertWarning}>
           ⚠️ Le total doit être exactement 100% (actuel: {totalCriteria}%)
         </Alert>
       )}
