@@ -41,16 +41,12 @@ export default function SystemConfig() {
   const fetchConfig = async () => {
     try {
       setLoading(true);
-      try {
-        const response = await adminAPI.config.getAll();
-        setConfig(response.data || response);
-      } catch {
-        // Utiliser les paramètres par défaut
-      }
       setErrorMsg('');
+      const response = await adminAPI.config.getAll();
+      setConfig(response.data || response);
     } catch (error) {
       const formatted = errorHandler.getUserMessage(error);
-      setErrorMsg('');
+      setErrorMsg(formatted.message || 'Erreur lors du chargement');
     } finally {
       setLoading(false);
     }
@@ -60,15 +56,12 @@ export default function SystemConfig() {
     const newValue = !config[key];
     try {
       setUpdating(true);
+      setErrorMsg('');
       
-      try {
-        if (key === 'maintenanceMode') {
-          await adminAPI.config.toggleMaintenance(newValue);
-        } else {
-          await adminAPI.config.update({ [key]: newValue });
-        }
-      } catch {
-        // Mise à jour locale en cas d'échec
+      if (key === 'maintenanceMode') {
+        await adminAPI.config.toggleMaintenance(newValue);
+      } else {
+        await adminAPI.config.update({ [key]: newValue });
       }
 
       setConfig({ ...config, [key]: newValue });
@@ -85,11 +78,8 @@ export default function SystemConfig() {
   const handleCacheClean = async () => {
     try {
       setUpdating(true);
-      try {
-        await adminAPI.config.clearCache();
-      } catch {
-        // Mise à jour locale en cas d'échec
-      }
+      setErrorMsg('');
+      await adminAPI.config.clearCache();
       setSuccessMsg('Cache nettoyé avec succès');
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch (error) {

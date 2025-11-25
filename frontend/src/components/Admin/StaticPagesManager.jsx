@@ -94,13 +94,9 @@ export default function StaticPagesManager() {
   const fetchPages = async () => {
     try {
       setLoading(true);
-      try {
-        const res = await adminAPI.content.getPages();
-        setPages(res.data || res);
-      } catch {
-        setPages(FALLBACK_PAGES);
-      }
       setErrorMsg('');
+      const res = await adminAPI.content.getPages();
+      setPages(res.data || res);
     } catch (error) {
       const formatted = errorHandler.getUserMessage(error);
       setErrorMsg(formatted.message || 'Erreur de chargement');

@@ -88,18 +88,13 @@ export default function ServicesManager() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      try {
-        const [featuresRes, plansRes] = await Promise.all([
-          adminAPI.features.getAll(),
-          adminAPI.subscriptions.getPlans()
-        ]);
-        setFeatures(featuresRes.features || featuresRes);
-        setPlans(plansRes || []);
-      } catch {
-        setFeatures(FALLBACK_FEATURES);
-        setPlans(FALLBACK_PLANS);
-      }
       setErrorMsg('');
+      const [featuresRes, plansRes] = await Promise.all([
+        adminAPI.features.getAll(),
+        adminAPI.subscriptions.getPlans()
+      ]);
+      setFeatures(featuresRes.features || featuresRes);
+      setPlans(plansRes || []);
     } catch (error) {
       const formatted = errorHandler.getUserMessage(error);
       setErrorMsg(formatted.message || 'Erreur de chargement');
@@ -113,12 +108,11 @@ export default function ServicesManager() {
   const handleToggleFeature = async (featureId, currentStatus, featureName) => {
     try {
       setSaving(true);
+      setErrorMsg('');
       const action = currentStatus ? 'disable' : 'enable';
       const featureKey = features.find(f => f.id === featureId)?.feature_key;
       
-      try {
-        await adminAPI.features[action](featureKey);
-      } catch {}
+      await adminAPI.features[action](featureKey);
 
       setFeatures(features.map(f =>
         f.id === featureId ? { ...f, is_enabled: !currentStatus } : f
