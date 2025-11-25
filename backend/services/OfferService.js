@@ -4,9 +4,13 @@ const crypto = require('crypto');
 const KeyManagementService = require('../security/KeyManagementService');
 const DataMapper = require('../helpers/DataMapper');
 const { validateSchema, createOfferSchema } = require('../utils/validationSchemas');
+const { logger } = require('../utils/logger');
 
 class OfferService {
-    // 🚀 PERFORMANCE: Batch processing queue
+    /**
+     * Constructor - Initializes batch processing configuration for high-frequency submissions
+     * Implements performance optimization for bulk offer creation
+     */
     constructor() {
         this.offerQueue = [];
         this.queueProcessingInterval = null;
@@ -14,13 +18,26 @@ class OfferService {
         this.batchTimeoutMs = 500; // Process batch every 500ms or when full
     }
 
+    /**
+     * Generates a unique offer number in format OFF-YYYYMMDD-RANDOMHEX
+     * @returns {string} Unique offer number
+     */
     generateOfferNumber() {
         const timestamp = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
         return `OFF-${timestamp}-${randomPart}`;
     }
 
-    // 🚀 OPTIMIZATION: Batch insert for high-frequency bid submissions
+    /**
+     * Creates multiple offers in a single batch operation
+     * Optimized for high-frequency bid submissions with multi-row INSERT
+     * Encrypts sensitive financial data for each offer
+     * @async
+     * @param {Array<Object>} offersData - Array of offer objects to create
+     * @param {string} userId - ID of the user creating the offers
+     * @returns {Promise<Array>} Array of created offer objects
+     * @throws {Error} If batch creation fails
+     */
     async createOfferBatch(offersData, userId) {
         const pool = getPool();
         
@@ -66,6 +83,15 @@ class OfferService {
         }
     }
 
+    /**
+     * Creates a single offer with validation and encryption of financial data
+     * Encrypts sensitive financial proposal and payment terms information
+     * @async
+     * @param {Object} offerData - Offer details (technical proposal, financial terms, etc.)
+     * @param {string} userId - ID of the supplier submitting the offer
+     * @returns {Promise<Object>} Created offer object
+     * @throws {Error} If validation or creation fails
+     */
     async createOffer(offerData, userId) {
         // Validate input data type
         const validatedData = validateSchema(offerData, createOfferSchema);
@@ -107,6 +133,15 @@ class OfferService {
         }
     }
 
+    /**
+     * Retrieves a single offer by ID with sealed offer protection
+     * Hides financial details before opening date (except for supplier)
+     * @async
+     * @param {string} offerId - The ID of the offer to fetch
+     * @param {string} userId - ID of the user requesting (null for anonymous)
+     * @returns {Promise<Object|null>} Offer object or sealed notification
+     * @throws {Error} If database query fails
+     */
     async getOfferById(offerId, userId = null) {
         const pool = getPool();
         
@@ -148,6 +183,15 @@ class OfferService {
         }
     }
 
+    /**
+     * Retrieves all offers for a tender with sealed offer protection
+     * Returns sealed notification for buyers before opening, full details after opening
+     * @async
+     * @param {string} tenderId - The ID of the tender
+     * @param {string} userId - ID of the user requesting (null for anonymous)
+     * @returns {Promise<Object>} Object with is_sealed flag and offers array
+     * @throws {Error} If database query fails
+     */
     async getOffersByTender(tenderId, userId = null) {
         const pool = getPool();
         
@@ -205,6 +249,13 @@ class OfferService {
         }
     }
 
+    /**
+     * Retrieves all offers submitted by a specific supplier
+     * @async
+     * @param {string} supplierId - The ID of the supplier
+     * @returns {Promise<Array>} Array of supplier's offer objects
+     * @throws {Error} If database query fails
+     */
     async getOffersBySupplier(supplierId) {
         const pool = getPool();
         
@@ -224,6 +275,16 @@ class OfferService {
         }
     }
 
+    /**
+     * Evaluates an offer with technical and financial scores
+     * Updates offer status to 'evaluated'
+     * @async
+     * @param {string} offerId - The ID of the offer to evaluate
+     * @param {Object} evaluationData - Evaluation data (score, notes)
+     * @param {string} userId - ID of the evaluator
+     * @returns {Promise<Object>} Updated offer object
+     * @throws {Error} If database operation fails
+     */
     async evaluateOffer(offerId, evaluationData, userId) {
         const pool = getPool();
         
@@ -241,6 +302,15 @@ class OfferService {
         }
     }
 
+    /**
+     * Selects an offer as the winner in a transaction
+     * Atomically updates winning status, tender status, and marks other offers as non-winners
+     * @async
+     * @param {string} offerId - The ID of the winning offer
+     * @param {string} userId - ID of the user selecting the winner
+     * @returns {Promise<Object>} Updated offer object with is_winner=true
+     * @throws {Error} If transaction fails
+     */
     async selectWinningOffer(offerId, userId) {
         const pool = getPool();
         const client = await pool.connect();
@@ -251,11 +321,13 @@ class OfferService {
             const offerResult = await client.query('SELECT tender_id FROM offers WHERE id = $1', [offerId]);
             const tenderId = offerResult.rows[0].tender_id;
             
+            // Mark all other offers in this tender as non-winners
             await client.query(
                 'UPDATE offers SET is_winner = FALSE WHERE tender_id = $1',
                 [tenderId]
             );
             
+            // Mark selected offer as winner
             const result = await client.query(
                 `UPDATE offers SET is_winner = TRUE, status = 'accepted', 
                  updated_by = $1, updated_at = CURRENT_TIMESTAMP 
@@ -263,6 +335,7 @@ class OfferService {
                 [userId, offerId]
             );
             
+            // Update tender status to awarded
             await client.query(
                 `UPDATE tenders SET status = 'awarded', updated_by = $1, updated_at = CURRENT_TIMESTAMP 
                  WHERE id = $2`,
@@ -280,6 +353,14 @@ class OfferService {
         }
     }
 
+    /**
+     * Rejects an offer (marks as rejected)
+     * @async
+     * @param {string} offerId - The ID of the offer to reject
+     * @param {string} userId - ID of the user rejecting the offer
+     * @returns {Promise<Object>} Updated offer object with status='rejected'
+     * @throws {Error} If database operation fails
+     */
     async rejectOffer(offerId, userId) {
         const pool = getPool();
         

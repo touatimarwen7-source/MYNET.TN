@@ -3,8 +3,17 @@ const { getPool } = require('../config/db');
 const Invoice = require('../models/Invoice');
 const DataMapper = require('../helpers/DataMapper');
 const { validateSchema, createInvoiceSchema, markInvoiceAsPaidSchema } = require('../utils/validationSchemas');
+const { logger } = require('../utils/logger');
 
 class InvoiceService {
+  /**
+   * Creates a new invoice for a purchase order
+   * Verifies PO ownership, generates unique invoice number, handles transaction
+   * @async
+   * @param {Object} invoiceData - Invoice details (po_id, supplier_id, amount, tax, dates)
+   * @returns {Promise<Object>} Created invoice object
+   * @throws {Error} If PO not found, unauthorized, or database operation fails
+   */
   async createInvoice(invoiceData) {
     // Validate input data type
     const validatedData = validateSchema(invoiceData, createInvoiceSchema);
@@ -56,6 +65,13 @@ class InvoiceService {
     }
   }
 
+  /**
+   * Retrieves all invoices for a supplier with associated purchase order details
+   * @async
+   * @param {string} supplierId - The ID of the supplier
+   * @returns {Promise<Array>} Array of invoice objects ordered by creation date DESC
+   * @throws {Error} If database query fails
+   */
   async getInvoicesBySupplier(supplierId) {
     const pool = getPool();
     const result = await pool.query(
@@ -69,6 +85,14 @@ class InvoiceService {
     return result.rows;
   }
 
+  /**
+   * Marks an invoice as paid with payment date
+   * Updates status to 'paid' and records payment timestamp
+   * @async
+   * @param {Object} paymentData - Payment data (invoice_id, payment_date)
+   * @returns {Promise<Object>} Updated invoice object with status='paid'
+   * @throws {Error} If validation fails or database operation fails
+   */
   async markAsPaid(paymentData) {
     // Validate input data type
     const validatedData = validateSchema(paymentData, markInvoiceAsPaidSchema);

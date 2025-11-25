@@ -5,15 +5,25 @@ const NotificationService = require('./NotificationService');
 const AuditLogService = require('./AuditLogService');
 const QueueService = require('./QueueService');
 const { validateSchema, createTenderSchema, updateTenderSchema } = require('../utils/validationSchemas');
+const { logger } = require('../utils/logger');
 
 class TenderService {
+    /**
+     * Generates a unique tender number in format TND-YYYYMMDD-RANDOMHEX
+     * @returns {string} Unique tender number
+     */
     generateTenderNumber() {
         const timestamp = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
         return `TND-${timestamp}-${randomPart}`;
     }
 
-    // Map frontend field names to database column names
+    /**
+     * Maps frontend field names to database column names
+     * Handles field transformations and merges complex nested data
+     * @param {Object} tenderData - Frontend tender data
+     * @returns {Object} Mapped database fields
+     */
     mapFrontendToDatabaseFields(tenderData) {
         const mapped = {};
         
@@ -52,15 +62,17 @@ class TenderService {
             ];
         }
         
-        // Fields to ignore (not in database schema):
-        // - consultation_number
-        // - quantity_required
-        // - unit
-        // - awardLevel (not stored in tender table)
-        
         return mapped;
     }
 
+    /**
+     * Creates a new tender with comprehensive validation and audit logging
+     * @async
+     * @param {Object} tenderData - Tender details (title, description, budget, etc.)
+     * @param {string} userId - ID of the user creating the tender
+     * @returns {Promise<Object>} Created tender object with ID and tender_number
+     * @throws {Error} If validation fails or database operation fails
+     */
     async createTender(tenderData, userId) {
         // Validate input data type
         const validatedData = validateSchema(tenderData, createTenderSchema);
@@ -141,6 +153,13 @@ class TenderService {
         }
     }
 
+    /**
+     * Retrieves a tender by ID (non-deleted records only)
+     * @async
+     * @param {string} tenderId - The ID of the tender to fetch
+     * @returns {Promise<Object|null>} Tender object or null if not found
+     * @throws {Error} If database query fails
+     */
     async getTenderById(tenderId) {
         const pool = getPool();
 
@@ -153,7 +172,6 @@ class TenderService {
             // Log the audit trail for fetching tender by ID
             await AuditLogService.log(null, 'tender', tenderId, 'read', 'Tender fetched by ID');
 
-
             return result.rows[0] || null;
         } catch (error) {
             // Log the audit trail for failed tender fetching
@@ -162,6 +180,14 @@ class TenderService {
         }
     }
 
+    /**
+     * Fetches all tenders with optional filtering by status, category, and publicity
+     * @async
+     * @param {Object} filters - Filter criteria (status, category, is_public, limit)
+     * @param {string} userId - ID of the user requesting (for audit logging)
+     * @returns {Promise<Array>} Array of tender objects
+     * @throws {Error} If database query fails
+     */
     async getAllTenders(filters = {}, userId) {
         const pool = getPool();
         let query = 'SELECT * FROM tenders WHERE is_deleted = FALSE';
@@ -200,7 +226,6 @@ class TenderService {
             // Log the audit trail for fetching all tenders
             await AuditLogService.log(userId, 'tender', null, 'read', 'All tenders fetched with filters');
 
-
             return result.rows;
         } catch (error) {
             // Log the audit trail for failed fetching all tenders
@@ -209,6 +234,14 @@ class TenderService {
         }
     }
 
+    /**
+     * Fetches all tenders created by a specific user
+     * @async
+     * @param {string} userId - ID of the user who created the tenders
+     * @param {Object} filters - Optional filters (status, category, limit)
+     * @returns {Promise<Array>} Array of user's tender objects
+     * @throws {Error} If database query fails
+     */
     async getMyTenders(userId, filters = {}) {
         const pool = getPool();
         let query = 'SELECT * FROM tenders WHERE is_deleted = FALSE AND created_by = $1';
@@ -245,6 +278,15 @@ class TenderService {
         }
     }
 
+    /**
+     * Updates a tender with new data
+     * @async
+     * @param {string} tenderId - The ID of the tender to update
+     * @param {Object} updateData - Fields to update
+     * @param {string} userId - ID of the user performing the update
+     * @returns {Promise<Object>} Updated tender object
+     * @throws {Error} If database operation fails
+     */
     async updateTender(tenderId, updateData, userId) {
         const pool = getPool();
 
@@ -274,7 +316,6 @@ class TenderService {
             // Log the audit trail for tender update
             await AuditLogService.log(userId, 'tender', tenderId, 'update', 'Tender updated successfully');
 
-
             return result.rows[0];
         } catch (error) {
             // Log the audit trail for failed tender update
@@ -283,6 +324,14 @@ class TenderService {
         }
     }
 
+    /**
+     * Soft-deletes a tender (marks as deleted without removing from database)
+     * @async
+     * @param {string} tenderId - The ID of the tender to delete
+     * @param {string} userId - ID of the user performing the deletion
+     * @returns {Promise<Object>} Success confirmation object
+     * @throws {Error} If database operation fails
+     */
     async deleteTender(tenderId, userId) {
         const pool = getPool();
 
@@ -295,7 +344,6 @@ class TenderService {
             // Log the audit trail for tender deletion
             await AuditLogService.log(userId, 'tender', tenderId, 'delete', 'Tender deleted successfully');
 
-
             return { success: true, message: 'Tender deleted successfully' };
         } catch (error) {
             // Log the audit trail for failed tender deletion
@@ -304,6 +352,15 @@ class TenderService {
         }
     }
 
+    /**
+     * Publishes a tender, making it visible to suppliers
+     * Sets status to 'published' and records publication timestamp
+     * @async
+     * @param {string} tenderId - The ID of the tender to publish
+     * @param {string} userId - ID of the user publishing the tender
+     * @returns {Promise<Object>} Published tender object
+     * @throws {Error} If database operation fails
+     */
     async publishTender(tenderId, userId) {
         const pool = getPool();
 
@@ -317,7 +374,6 @@ class TenderService {
             // Log the audit trail for tender publication
             await AuditLogService.log(userId, 'tender', tenderId, 'publish', 'Tender published successfully');
 
-
             return result.rows[0];
         } catch (error) {
             // Log the audit trail for failed tender publication
@@ -326,6 +382,15 @@ class TenderService {
         }
     }
 
+    /**
+     * Closes a tender, preventing new offer submissions
+     * Sets status to 'closed'
+     * @async
+     * @param {string} tenderId - The ID of the tender to close
+     * @param {string} userId - ID of the user closing the tender
+     * @returns {Promise<Object>} Closed tender object
+     * @throws {Error} If database operation fails
+     */
     async closeTender(tenderId, userId) {
         const pool = getPool();
 
@@ -338,7 +403,6 @@ class TenderService {
 
             // Log the audit trail for tender closure
             await AuditLogService.log(userId, 'tender', tenderId, 'close', 'Tender closed successfully');
-
 
             return result.rows[0];
         } catch (error) {

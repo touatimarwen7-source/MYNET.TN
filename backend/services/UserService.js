@@ -3,8 +3,17 @@ const KeyManagementService = require('../security/KeyManagementService');
 const User = require('../models/User');
 const DataMapper = require('../helpers/DataMapper');
 const { validateSchema, updateUserRoleSchema, blockUserSchema } = require('../utils/validationSchemas');
+const { logger } = require('../utils/logger');
 
 class UserService {
+    /**
+     * Creates a new user with password hashing and validation
+     * Handles duplicate email/username with proper error messages
+     * @async
+     * @param {Object} userData - User details (username, email, password, full_name, phone, role, company info)
+     * @returns {Promise<Object>} Created user object (without password hash/salt)
+     * @throws {Error} If username/email already exists or database operation fails
+     */
     async createUser(userData) {
         // Input validation is handled at controller level for password strength
         const pool = getPool();
@@ -34,6 +43,16 @@ class UserService {
         }
     }
 
+    /**
+     * Authenticates a user with email and password
+     * Verifies credentials, generates JWT tokens, updates last_login asynchronously
+     * Includes connection timeout to prevent hanging
+     * @async
+     * @param {string} email - User's email address
+     * @param {string} password - User's password
+     * @returns {Promise<Object>} Object with user (without password), accessToken, and refreshToken
+     * @throws {Error} If credentials are invalid or authentication fails
+     */
     async authenticateUser(email, password) {
         const pool = getPool();
         const startTime = Date.now();
@@ -87,6 +106,7 @@ class UserService {
                 
                 const duration = Date.now() - startTime;
                 if (duration > 500) {
+                    logger.warn('Slow authentication', { duration, email });
                 }
                 
                 return {
@@ -102,6 +122,14 @@ class UserService {
         }
     }
 
+    /**
+     * Retrieves a user by ID with public profile information
+     * Excludes sensitive fields (password hashes, deleted flags)
+     * @async
+     * @param {string} userId - The ID of the user to fetch
+     * @returns {Promise<Object|null>} User object (public fields only) or null if not found
+     * @throws {Error} If database query fails
+     */
     async getUserById(userId) {
         const pool = getPool();
         
@@ -117,6 +145,15 @@ class UserService {
         }
     }
 
+    /**
+     * Updates user profile information (full_name, phone, company details)
+     * Only allows updating specific fields, ignores role/admin changes
+     * @async
+     * @param {string} userId - The ID of the user to update
+     * @param {Object} updateData - Fields to update (full_name, phone, company_name, company_registration)
+     * @returns {Promise<Object>} Updated user object
+     * @throws {Error} If no valid fields provided or database operation fails
+     */
     async updateUser(userId, updateData) {
         const pool = getPool();
         
@@ -151,6 +188,15 @@ class UserService {
         }
     }
 
+    /**
+     * Retrieves all users with optional filtering by role and verification status
+     * Includes timeout protection to prevent hanging queries
+     * Returns maximum 1000 users ordered by creation date DESC
+     * @async
+     * @param {Object} filters - Filter options (role, is_verified)
+     * @returns {Promise<Array>} Array of user objects
+     * @throws {Error} If database connection fails or query fails
+     */
     async getAllUsers(filters = {}) {
         const pool = getPool();
         let query = 'SELECT id, username, email, full_name, phone, role, company_name, is_verified, is_active, created_at FROM users WHERE is_deleted = FALSE';
