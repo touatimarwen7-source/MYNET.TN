@@ -65,7 +65,7 @@ router.post('/emails/send', superAdminController.sendEmail);
 router.get('/users', superAdminController.listUsers);
 router.put('/users/:id/role', validateIdMiddleware('id'), adminMiddleware.adminMutationLimiter, superAdminController.updateUserRole);
 router.post('/users/:id/block', validateIdMiddleware('id'), adminMiddleware.adminMutationLimiter, superAdminController.blockUser);
-router.post('/users/:id/unblock', adminMiddleware.adminMutationLimiter, superAdminController.unblockUser);
+router.post('/users/:id/unblock', validateIdMiddleware('id'), adminMiddleware.adminMutationLimiter, superAdminController.unblockUser);
 
 // ===== 6. AUDIT LOGS =====
 router.get('/audit-logs', superAdminController.getAuditLogs);
@@ -76,7 +76,7 @@ router.get('/health', superAdminController.getSystemHealth);
 // ===== 8. BACKUP & RESTORE =====
 router.get('/backups', superAdminController.listBackups);
 router.post('/backups/create', superAdminController.createBackup);
-router.post('/backups/:id/restore', superAdminController.restoreBackup);
+router.post('/backups/:id/restore', validateIdMiddleware('id'), superAdminController.restoreBackup);
 
 // ===== 9. SUBSCRIPTION PLANS =====
 router.get('/subscription-plans', superAdminController.listSubscriptionPlans);

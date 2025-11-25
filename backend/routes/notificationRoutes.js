@@ -54,7 +54,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // Mark notification as read
-router.put('/:notificationId/read', authMiddleware, async (req, res) => {
+router.put('/:notificationId/read', validateIdMiddleware('notificationId'), authMiddleware, async (req, res) => {
   try {
     const { notificationId } = req.params;
     const db = req.app.get('db');

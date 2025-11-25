@@ -18,11 +18,11 @@ router.get('/all', authMiddleware.verifyToken, authMiddleware.checkPermission('v
     FeatureFlagController.getAllFeatures(req, res)
 );
 
-router.get('/category/:category', authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
+router.get('/category/:category', validateIdMiddleware('category'), authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
     FeatureFlagController.getFeaturesByCategory(req, res)
 );
 
-router.get('/:feature_key', authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
+router.get('/:feature_key', validateIdMiddleware('feature_key'), authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
     FeatureFlagController.getFeatureStatus(req, res)
 );
 

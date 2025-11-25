@@ -153,7 +153,7 @@ router.get('/received-requests', authMiddleware, async (req, res) => {
 });
 
 // Update supply request status (supplier)
-router.put('/:requestId/status', authMiddleware, async (req, res) => {
+router.put('/:requestId/status', validateIdMiddleware('requestId'), authMiddleware, async (req, res) => {
   try {
     const { requestId } = req.params;
     const { status } = req.body;

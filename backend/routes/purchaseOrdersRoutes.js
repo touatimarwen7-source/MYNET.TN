@@ -108,7 +108,7 @@ router.get('/:poId', validateIdMiddleware('poId'), authMiddleware, async (req, r
 });
 
 // Update PO status - ISSUE FIX #2 #3: Add authorization + validation
-router.put('/:poId/status', authMiddleware, async (req, res) => {
+router.put('/:poId/status', validateIdMiddleware('poId'), authMiddleware, async (req, res) => {
   try {
     const { poId } = req.params;
     const { status } = req.body;

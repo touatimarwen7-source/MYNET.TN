@@ -20,22 +20,22 @@ router.get('/available', authMiddleware.verifyToken, authMiddleware.checkPermiss
 );
 
 // Get features by category
-router.get('/category/:category', authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
+router.get('/category/:category', validateIdMiddleware('category'), authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
     SupplierFeatureController.getFeaturesByCategory(req, res)
 );
 
 // Get supplier's features
-router.get('/supplier/:supplier_id', authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
+router.get('/supplier/:supplier_id', validateIdMiddleware('supplier_id'), authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
     SupplierFeatureController.getSupplierFeatures(req, res)
 );
 
 // Get supplier's active features
-router.get('/supplier/:supplier_id/active', authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
+router.get('/supplier/:supplier_id/active', validateIdMiddleware('supplier_id'), authMiddleware.verifyToken, authMiddleware.checkPermission('view_features'), (req, res) =>
     SupplierFeatureController.getActiveFeatures(req, res)
 );
 
 // Check specific feature for supplier
-router.get('/supplier/:supplier_id/check/:feature_key', authMiddleware.verifyToken, (req, res) =>
+router.get('/supplier/:supplier_id/check/:feature_key', validateIdMiddleware(['supplier_id', 'feature_key']), authMiddleware.verifyToken, (req, res) =>
     SupplierFeatureController.checkSupplierFeature(req, res)
 );
 

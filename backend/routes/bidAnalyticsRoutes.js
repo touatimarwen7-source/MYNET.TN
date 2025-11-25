@@ -7,7 +7,7 @@ const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get bid statistics for a tender (optimized + cached)
-router.get('/tender/:tenderId', authMiddleware, cacheMiddleware(600), async (req, res) => {
+router.get('/tender/:tenderId', validateIdMiddleware('tenderId'), authMiddleware, cacheMiddleware(600), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const db = req.app.get('db');

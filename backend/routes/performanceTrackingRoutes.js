@@ -7,7 +7,7 @@ const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get supplier performance score (optimized + cached)
-router.get('/supplier/:supplierId', authMiddleware, cacheMiddleware(600), async (req, res) => {
+router.get('/supplier/:supplierId', validateIdMiddleware('supplierId'), authMiddleware, cacheMiddleware(600), async (req, res) => {
   try {
     const { supplierId } = req.params;
     const db = req.app.get('db');

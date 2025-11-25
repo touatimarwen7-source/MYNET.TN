@@ -166,7 +166,7 @@ router.get('/:messageId', validateIdMiddleware('messageId'), authMiddleware, asy
 });
 
 // Mark as read
-router.put('/:messageId/read', authMiddleware, async (req, res) => {
+router.put('/:messageId/read', validateIdMiddleware('messageId'), authMiddleware, async (req, res) => {
   try {
     const { messageId } = req.params;
     const db = req.app.get('db');

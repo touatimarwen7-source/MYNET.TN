@@ -5,7 +5,7 @@ const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Export tender as JSON
-router.get('/tender/:tenderId/json', authMiddleware, async (req, res) => {
+router.get('/tender/:tenderId/json', validateIdMiddleware('tenderId'), authMiddleware, async (req, res) => {
   try {
     const { tenderId } = req.params;
     const db = req.app.get('db');
@@ -30,7 +30,7 @@ router.get('/tender/:tenderId/json', authMiddleware, async (req, res) => {
 });
 
 // Export offers list as JSON
-router.get('/offers/:tenderId/json', authMiddleware, async (req, res) => {
+router.get('/offers/:tenderId/json', validateIdMiddleware('tenderId'), authMiddleware, async (req, res) => {
   try {
     const { tenderId } = req.params;
     const db = req.app.get('db');
@@ -55,7 +55,7 @@ router.get('/offers/:tenderId/json', authMiddleware, async (req, res) => {
 });
 
 // Export invoice as JSON
-router.get('/invoice/:invoiceId/json', authMiddleware, async (req, res) => {
+router.get('/invoice/:invoiceId/json', validateIdMiddleware('invoiceId'), authMiddleware, async (req, res) => {
   try {
     const { invoiceId } = req.params;
     const db = req.app.get('db');
