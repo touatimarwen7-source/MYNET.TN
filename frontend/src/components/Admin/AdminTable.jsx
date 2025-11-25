@@ -1,116 +1,27 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   Table,
-  TableHead,
   TableBody,
   TableRow,
   TableCell,
   TableContainer,
   Paper,
-  IconButton,
   Box,
   Typography,
-  TablePagination,
-  TextField,
-  Stack,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+
+// Import sub-components
+import AdminTableSearch from './AdminTableSearch';
+import AdminTableHeader from './AdminTableHeader';
+import AdminTableRow from './AdminTableRow';
+import AdminTablePagination from './AdminTablePagination';
 
 /**
- * 🚀 Optimized Admin Table
- * Performance: React.memo, useCallback, useMemo
- * Eliminates unnecessary re-renders of table rows
+ * 🚀 Optimized Admin Table Component
+ * Features: React.memo, useCallback, useMemo for performance optimization
+ * Includes: Search, Sort, Pagination
  */
-
-// Memoized table row component to prevent re-renders
-const AdminTableRow = React.memo(({ row, columns, onView, onEdit, onDelete }) => (
-  <TableRow hover>
-    {columns.map((col) => (
-      <TableCell key={`${row.id || row._id}-${col.field}`}>
-        {row[col.field]}
-      </TableCell>
-    ))}
-    <TableCell align="center">
-      <Stack direction="row" spacing={0.5} justifyContent="center">
-        {onView && (
-          <IconButton
-            size="small"
-            onClick={() => onView(row)}
-            title="Voir"
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-        )}
-        {onEdit && (
-          <IconButton
-            size="small"
-            onClick={() => onEdit(row)}
-            title="Modifier"
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-        )}
-        {onDelete && (
-          <IconButton
-            size="small"
-            onClick={() => onDelete(row)}
-            title="Supprimer"
-            sx={{ color: '#d32f2f' }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        )}
-      </Stack>
-    </TableCell>
-  </TableRow>
-), (prevProps, nextProps) => {
-  return (
-    prevProps.row === nextProps.row &&
-    prevProps.columns === nextProps.columns &&
-    prevProps.onView === nextProps.onView &&
-    prevProps.onEdit === nextProps.onEdit &&
-    prevProps.onDelete === nextProps.onDelete
-  );
-});
-
-AdminTableRow.displayName = 'AdminTableRow';
-
-// Memoized header component
-const AdminTableHeader = React.memo(({ columns, sortable, sortBy, sortOrder, onSort }) => (
-  <TableHead>
-    <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-      {columns.map((col) => (
-        <TableCell
-          key={col.field}
-          onClick={() => sortable && onSort(col.field)}
-          sx={{
-            fontWeight: 600,
-            cursor: sortable ? 'pointer' : 'default',
-            userSelect: 'none',
-          }}
-        >
-          {col.label}
-          {sortable && sortBy === col.field && (
-            <span>{sortOrder === 'asc' ? ' ▲' : ' ▼'}</span>
-          )}
-        </TableCell>
-      ))}
-      <TableCell align="center">Actions</TableCell>
-    </TableRow>
-  </TableHead>
-), (prevProps, nextProps) => {
-  return (
-    prevProps.columns === nextProps.columns &&
-    prevProps.sortBy === nextProps.sortBy &&
-    prevProps.sortOrder === nextProps.sortOrder
-  );
-});
-
-AdminTableHeader.displayName = 'AdminTableHeader';
-
-export default function AdminTableOptimized({
+export default function AdminTable({
   columns = [],
   rows = [],
   onEdit = () => {},
@@ -156,7 +67,7 @@ export default function AdminTableOptimized({
     return filtered;
   }, [rows, search, sortBy, sortOrder, columns, sortable]);
 
-  const paginatedRows = useMemo(() => 
+  const paginatedRows = useMemo(() =>
     filteredRows.slice(
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
@@ -190,12 +101,10 @@ export default function AdminTableOptimized({
   return (
     <Box>
       {searchable && (
-        <TextField
+        <AdminTableSearch 
+          value={search} 
+          onChange={handleSearch}
           placeholder="Rechercher..."
-          value={search}
-          onChange={(e) => handleSearch(e.target.value)}
-          size="small"
-          sx={{ mb: 2, width: '100%' }}
         />
       )}
 
@@ -231,17 +140,12 @@ export default function AdminTableOptimized({
         </Table>
       </TableContainer>
 
-      <TablePagination
-        component="div"
+      <AdminTablePagination
         count={filteredRows.length}
         page={page}
-        onPageChange={handlePageChange}
         rowsPerPage={rowsPerPage}
+        onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
-        labelRowsPerPage="Lignes par page:"
-        labelDisplayedRows={({ from, to, count }) =>
-          `${from}–${to} sur ${count}`
-        }
       />
     </Box>
   );
