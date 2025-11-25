@@ -76,7 +76,18 @@ router.get('/tenders', async (req, res) => {
   }
 });
 
-router.get('/tenders/:id', TenderController.getTender.bind(TenderController));
+// Get single tender with ID validation
+router.get('/tenders/:id', (req, res) => {
+  const { id } = req.params;
+  
+  // Validate ID is provided and not undefined
+  if (!id || id === 'undefined' || id === 'null') {
+    return res.status(400).json({ error: 'Invalid tender ID' });
+  }
+  
+  // Pass to controller
+  TenderController.getTender(req, res);
+});
 
 router.put('/tenders/:id',
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),

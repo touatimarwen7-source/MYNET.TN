@@ -107,7 +107,7 @@ const OpeningReport = lazy(() => import('./pages/OpeningReport'));
 
 const LoadingFallback = () => (
   <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-    <CircularProgress sx={{ color: theme.palette.primary.main }} />
+    <CircularProgress sx={{ color: institutionalTheme.palette.primary.main }} />
   </Container>
 );
 

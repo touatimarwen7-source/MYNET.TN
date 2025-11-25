@@ -9,18 +9,24 @@ const auditMiddleware = (action, entityType) => {
         const db = req.app.get('db');
         const entityId = req.params.id || req.params.userId || req.body?.id;
         
-        auditLogsRoutes.logAction(
-          db,
-          req.user.id,
-          action,
-          entityType,
-          entityId,
-          {
-            method: req.method,
-            path: req.path,
-            ip: req.ip,
-          }
-        );
+        // Get user ID from req.user - support both userId and id properties
+        const userId = req.user.userId || req.user.id;
+        
+        // Only log if we have a valid user ID
+        if (userId && entityId && entityId !== 'undefined') {
+          auditLogsRoutes.logAction(
+            db,
+            userId,
+            action,
+            entityType,
+            entityId,
+            {
+              method: req.method,
+              path: req.path,
+              ip: req.ip,
+            }
+          );
+        }
       }
 
       return originalSend.call(this, data);
