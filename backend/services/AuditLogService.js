@@ -10,11 +10,15 @@ class AuditLogService {
         const pool = getPool();
         
         try {
+            // Ensure all values are properly typed
+            const finalUserId = userId || null;
+            const finalEntityId = entityId || null;
+            
             await pool.query(
                 `INSERT INTO audit_logs 
                  (user_id, action, entity_type, entity_id, details, ip_address, user_agent, created_at)
                  VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)`,
-                [userId, action, entityType, entityId, JSON.stringify(details), 
+                [finalUserId, action, entityType, finalEntityId, JSON.stringify(details), 
                  details.ip_address || null, details.user_agent || null]
             );
         } catch (error) {
