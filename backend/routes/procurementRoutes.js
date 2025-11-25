@@ -78,37 +78,31 @@ router.get('/tenders', async (req, res) => {
 });
 
 // Get single tender with ID validation
-router.get('/tenders/:id', (req, res) => {
-  const { id } = req.params;
-  
-  // Validate ID is provided and not undefined
-  if (!id || id === 'undefined' || id === 'null') {
-    return res.status(400).json({ error: 'Invalid tender ID' });
-  }
-  
-  // Pass to controller
-  TenderController.getTender(req, res);
-});
+router.get('/tenders/:id', validateIdMiddleware('id'), TenderController.getTender.bind(TenderController));
 
 router.put('/tenders/:id',
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.EDIT_TENDER).bind(AuthorizationGuard),
     TenderController.updateTender.bind(TenderController)
 );
 
 router.delete('/tenders/:id',
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.DELETE_TENDER).bind(AuthorizationGuard),
     TenderController.deleteTender.bind(TenderController)
 );
 
 router.post('/tenders/:id/publish',
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.CREATE_TENDER).bind(AuthorizationGuard),
     TenderController.publishTender.bind(TenderController)
 );
 
 router.post('/tenders/:id/close',
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.CREATE_TENDER).bind(AuthorizationGuard),
     TenderController.closeTender.bind(TenderController)
@@ -122,11 +116,13 @@ router.post('/offers',
 );
 
 router.get('/offers/:id', 
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     OfferController.getOffer.bind(OfferController)
 );
 
 router.get('/tenders/:tenderId/offers',
+    validateIdMiddleware('tenderId'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.VIEW_OFFER).bind(AuthorizationGuard),
     async (req, res) => {
@@ -182,18 +178,21 @@ router.get('/my-offers',
 );
 
 router.post('/offers/:id/evaluate',
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.APPROVE_OFFER).bind(AuthorizationGuard),
     OfferController.evaluateOffer.bind(OfferController)
 );
 
 router.post('/offers/:id/select-winner',
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.APPROVE_OFFER).bind(AuthorizationGuard),
     OfferController.selectWinner.bind(OfferController)
 );
 
 router.post('/offers/:id/reject',
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.REJECT_OFFER).bind(AuthorizationGuard),
     OfferController.rejectOffer.bind(OfferController)
@@ -241,6 +240,7 @@ router.get('/invoices',
 );
 
 router.patch('/invoices/:id/paid', 
+    validateIdMiddleware('id'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.MARK_INVOICE_AS_PAID).bind(AuthorizationGuard),
     InvoiceController.markAsPaid.bind(InvoiceController)
@@ -248,24 +248,28 @@ router.patch('/invoices/:id/paid',
 
 // Tender Award - Partial/Multi-Supplier Award
 router.post('/tenders/:tenderId/award/initialize',
+    validateIdMiddleware('tenderId'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.CREATE_TENDER).bind(AuthorizationGuard),
     TenderAwardController.initializeAward.bind(TenderAwardController)
 );
 
 router.post('/tenders/:tenderId/award/line-items/:lineItemId/distribute',
+    validateIdMiddleware(['tenderId', 'lineItemId']),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.APPROVE_OFFER).bind(AuthorizationGuard),
     TenderAwardController.distributeLineItem.bind(TenderAwardController)
 );
 
 router.get('/tenders/:tenderId/award',
+    validateIdMiddleware('tenderId'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.VIEW_TENDER).bind(AuthorizationGuard),
     TenderAwardController.getAwardDetails.bind(TenderAwardController)
 );
 
 router.post('/tenders/:tenderId/award/finalize',
+    validateIdMiddleware('tenderId'),
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     AuthorizationGuard.requirePermission(Permissions.APPROVE_OFFER).bind(AuthorizationGuard),
     TenderAwardController.finalizeAward.bind(TenderAwardController)

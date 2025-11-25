@@ -21,15 +21,11 @@ const validateIdMiddleware = (paramName = 'id') => {
       }
       
       // Validate numeric IDs
-      if (param.includes('Id') && isNaN(parseInt(value))) {
-        return res.status(400).json({
-          error: `Parameter ${param} must be a valid number`,
-          received: value
-        });
-      }
+      // Check if it's a UUID format (36 chars with hyphens)
+      const isUUID = value && value.length === 36 && value.includes('-');
       
-      // Validate UUID format if applicable
-      if (param === 'id' && value.length === 36) {
+      if (isUUID) {
+        // Validate UUID format
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         if (!uuidRegex.test(value)) {
           return res.status(400).json({
@@ -37,6 +33,12 @@ const validateIdMiddleware = (paramName = 'id') => {
             received: value
           });
         }
+      } else if (isNaN(parseInt(value))) {
+        // Must be numeric if not UUID
+        return res.status(400).json({
+          error: `Parameter ${param} must be a valid number or UUID`,
+          received: value
+        });
       }
     }
     
