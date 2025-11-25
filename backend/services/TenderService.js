@@ -111,7 +111,7 @@ class TenderService {
                  submission_method, sealed_envelope_requirements, contact_person, contact_email, contact_phone,
                  technical_specifications, queries_start_date, queries_end_date, offer_validity_days, alert_type,
                  buyer_id, is_public, evaluation_criteria, created_by)
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
                  RETURNING *`,
                 values
             );
