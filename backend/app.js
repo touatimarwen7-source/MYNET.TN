@@ -63,8 +63,16 @@ const { getCacheManager } = require('./utils/redisCache');
 const { errorTracker } = require('./services/ErrorTrackingService');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
+const ErrorResponseFormatter = require('./utils/errorResponseFormatter');
+const ServiceValidator = require('./utils/serviceValidator');
+const DatabaseErrorHandler = require('./utils/databaseErrorHandler');
 
 const app = express();
+
+// Attach utility classes to app locals for use in routes
+app.locals.ErrorResponseFormatter = ErrorResponseFormatter;
+app.locals.ServiceValidator = ServiceValidator;
+app.locals.DatabaseErrorHandler = DatabaseErrorHandler;
 
 // ✅ CRITICAL FIX: Trust proxy for rate limiting & X-Forwarded-For headers
 app.set('trust proxy', 1);
