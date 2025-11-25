@@ -1382,26 +1382,22 @@ export default function CreateTender() {
       const criteria = getTotalCriteria();
       if (criteria !== 100) {
         setError(`Les critères d\'évaluation doivent totaliser 100% (actuellement: ${criteria}%)`);
-        console.warn('Criteria validation failed:', criteria);
         return;
       }
 
       if (!formData.awardLevel) {
         setError('Niveau d\'attribution requis');
-        console.warn('Award level missing');
         return;
       }
 
       if (!formData.lots || formData.lots.length === 0) {
         setError('Au moins un lot est requis');
-        console.warn('No lots defined');
         return;
       }
 
       const lotsCheck = validateLots(formData.lots, formData.awardLevel);
       if (!lotsCheck.valid) {
         setError(lotsCheck.error);
-        console.warn('Lots validation failed:', lotsCheck.error);
         return;
       }
 
@@ -1409,31 +1405,20 @@ export default function CreateTender() {
       const deadlineCheck = validateDeadline(formData.deadline);
       if (!deadlineCheck.valid) {
         setError(deadlineCheck.error);
-        console.warn('Deadline validation failed:', deadlineCheck.error);
         return;
       }
 
       if (!formData.title || formData.title.trim() === '') {
         setError('Le titre est requis');
-        console.warn('Title missing');
         return;
       }
 
       if (!formData.description || formData.description.trim() === '') {
         setError('La description est requise');
-        console.warn('Description missing');
         return;
       }
 
       setLoading(true);
-      console.log('🔄 [CreateTender] Submitting tender with data:', {
-        title: formData.title,
-        lots: formData.lots.length,
-        awardLevel: formData.awardLevel,
-        criteria: criteria,
-        contact_person: formData.contact_person,
-        contact_email: formData.contact_email,
-      });
 
       // Create tender data with timeout protection
       const tenderData = {
@@ -1442,13 +1427,7 @@ export default function CreateTender() {
         budget_max: formData.budget_max ? parseFloat(formData.budget_max) : 0,
       };
 
-      console.log('📤 Sending API request to /procurement/tenders');
       const response = await procurementAPI.createTender(tenderData);
-
-      console.log('✅ [CreateTender] Tender created successfully:', {
-        tender_id: response.data.tender?.id,
-        title: response.data.tender?.title,
-      });
       
       clearDraft('tender_draft');
       
@@ -1457,17 +1436,9 @@ export default function CreateTender() {
         navigate(`/tender/${response.data.tender.id}`);
       } else {
         setError('Erreur: ID du tender manquant dans la réponse');
-        console.error('Missing tender ID in response:', response.data);
       }
     } catch (err) {
       const errorMsg = handleAPIError(err);
-      console.error('❌ [CreateTender] Submit error:', {
-        error: err,
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status,
-        errorMsg: errorMsg,
-      });
       setError(errorMsg);
     } finally {
       setLoading(false);
