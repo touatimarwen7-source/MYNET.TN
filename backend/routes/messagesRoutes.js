@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Send a message - ISSUE FIX #3: Add input validation
 router.post('/', authMiddleware, async (req, res) => {
@@ -128,7 +128,7 @@ router.get('/sent', authMiddleware, async (req, res) => {
 });
 
 // Get single message
-router.get('/:messageId', authMiddleware, async (req, res) => {
+router.get('/:messageId', validateIdMiddleware('messageId'), authMiddleware, async (req, res) => {
   try {
     const { messageId } = req.params;
     const db = req.app.get('db');
@@ -215,7 +215,7 @@ router.get('/count/unread', authMiddleware, async (req, res) => {
 });
 
 // Delete message - ISSUE FIX #2 #5: Add authorization + soft delete
-router.delete('/:messageId', authMiddleware, async (req, res) => {
+router.delete('/:messageId', validateIdMiddleware('messageId'), authMiddleware, async (req, res) => {
   try {
     const { messageId } = req.params;
     const db = req.app.get('db');

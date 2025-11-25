@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const TenderController = require('../controllers/procurement/TenderController');
 const OfferController = require('../controllers/procurement/OfferController');
 const InvoiceController = require('../controllers/procurement/InvoiceController');

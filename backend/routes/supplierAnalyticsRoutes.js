@@ -2,6 +2,7 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Supplier dashboard overview
 router.get('/overview', authMiddleware, async (req, res) => {

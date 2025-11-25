@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const SearchService = require('../services/SearchService');
 const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');

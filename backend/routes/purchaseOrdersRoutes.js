@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Create PO from offer - ISSUE FIX #3: Add input validation
 router.post('/', authMiddleware, async (req, res) => {
@@ -86,7 +86,7 @@ router.get('/my-orders', authMiddleware, async (req, res) => {
 });
 
 // Get PO details
-router.get('/:poId', authMiddleware, async (req, res) => {
+router.get('/:poId', validateIdMiddleware('poId'), authMiddleware, async (req, res) => {
   try {
     const { poId } = req.params;
     const db = req.app.get('db');
@@ -148,7 +148,7 @@ router.put('/:poId/status', authMiddleware, async (req, res) => {
 });
 
 // Delete PO - ISSUE FIX #2 #5: Add authorization + soft delete
-router.delete('/:poId', authMiddleware, async (req, res) => {
+router.delete('/:poId', validateIdMiddleware('poId'), authMiddleware, async (req, res) => {
   try {
     const { poId } = req.params;
     const db = req.app.get('db');

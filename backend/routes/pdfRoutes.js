@@ -3,6 +3,7 @@ const PDFController = require('../controllers/admin/PDFController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Generate tender PDF document
 router.get('/tender/:tender_id', authMiddleware.verifyToken, (req, res) =>

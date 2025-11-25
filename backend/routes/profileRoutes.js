@@ -3,6 +3,7 @@ const ProfileController = require('../controllers/user/ProfileController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 router.put('/supplier/preferences', authMiddleware, (req, res) => 
     ProfileController.updateSupplierPreferences(req, res)

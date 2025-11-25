@@ -7,6 +7,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const authMiddleware = require('../middleware/authMiddleware');
 const queryCacheManager = require('../utils/queryCacheManager');
 const performanceOptimizer = require('../utils/performanceOptimizer');

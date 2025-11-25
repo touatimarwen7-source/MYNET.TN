@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const OfferOpeningService = require('../services/OfferOpeningService');
 const EvaluationService = require('../services/EvaluationService');
 const DataFetchingOptimizer = require('../utils/dataFetchingOptimizer');
@@ -12,7 +12,7 @@ const getPaginationParams = (req) => {
   return { page, limit };
 };
 
-router.get('/opening/:tenderId', async (req, res) => {
+router.get('/opening/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { page, limit } = getPaginationParams(req);
@@ -45,7 +45,7 @@ router.get('/opening/:tenderId', async (req, res) => {
   }
 });
 
-router.post('/opening-report/:tenderId', async (req, res) => {
+router.post('/opening-report/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const buyerId = req.user?.userId;
@@ -59,7 +59,7 @@ router.post('/opening-report/:tenderId', async (req, res) => {
   }
 });
 
-router.post('/technical/:offerId', async (req, res) => {
+router.post('/technical/:offerId', validateIdMiddleware('offerId'), async (req, res) => {
   try {
     const { offerId } = req.params;
     const { technical_score, comments } = req.body;
@@ -76,7 +76,7 @@ router.post('/technical/:offerId', async (req, res) => {
   }
 });
 
-router.post('/financial/:offerId', async (req, res) => {
+router.post('/financial/:offerId', validateIdMiddleware('offerId'), async (req, res) => {
   try {
     const { offerId } = req.params;
     const { financial_score, comments } = req.body;
@@ -93,7 +93,7 @@ router.post('/financial/:offerId', async (req, res) => {
   }
 });
 
-router.post('/calculate/:tenderId', async (req, res) => {
+router.post('/calculate/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const buyerId = req.user?.userId;
@@ -106,7 +106,7 @@ router.post('/calculate/:tenderId', async (req, res) => {
   }
 });
 
-router.get('/summary/:tenderId', async (req, res) => {
+router.get('/summary/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { page, limit } = getPaginationParams(req);

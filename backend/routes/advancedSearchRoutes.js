@@ -3,6 +3,7 @@ const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Advanced search tenders with filters
 router.get('/tenders/advanced', authMiddleware, async (req, res) => {

@@ -2,7 +2,7 @@ const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get all active suppliers
 router.get('/suppliers', authMiddleware, async (req, res) => {

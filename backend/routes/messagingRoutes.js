@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const ChatController = require('../controllers/messaging/ChatController');
 const AuthorizationGuard = require('../security/AuthorizationGuard');
 

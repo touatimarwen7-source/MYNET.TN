@@ -4,6 +4,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const QueryOptimizer = require('../utils/queryOptimizer');
 const cacheMiddleware = require('../middleware/cacheMiddleware');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get dashboard statistics for buyers (optimized + cached)
 router.get('/dashboard/buyer', authMiddleware, cacheMiddleware({ ttl: 600 }), async (req, res) => {

@@ -2,6 +2,7 @@ const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get available plans - ISSUE FIX #1: Add authentication
 router.get('/plans', authMiddleware, async (req, res) => {

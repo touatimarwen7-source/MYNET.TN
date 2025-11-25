@@ -4,7 +4,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const QueryOptimizer = require('../utils/queryOptimizer');
 const { cacheMiddleware } = require('../middleware/cacheMiddleware');
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get bid statistics for a tender (optimized + cached)
 router.get('/tender/:tenderId', authMiddleware, cacheMiddleware(600), async (req, res) => {
@@ -20,7 +20,7 @@ router.get('/tender/:tenderId', authMiddleware, cacheMiddleware(600), async (req
 });
 
 // Get bid distribution (price ranges)
-router.get('/distribution/:tenderId', authMiddleware, async (req, res) => {
+router.get('/distribution/:tenderId', validateIdMiddleware('tenderId'), authMiddleware, async (req, res) => {
   try {
     const { tenderId } = req.params;
     const db = req.app.get('db');
@@ -47,7 +47,7 @@ router.get('/distribution/:tenderId', authMiddleware, async (req, res) => {
 });
 
 // Compare bids
-router.get('/compare/:tenderId', authMiddleware, async (req, res) => {
+router.get('/compare/:tenderId', validateIdMiddleware('tenderId'), authMiddleware, async (req, res) => {
   try {
     const { tenderId } = req.params;
     const db = req.app.get('db');

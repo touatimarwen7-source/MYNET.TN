@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const AwardNotificationService = require('../services/AwardNotificationService');
 const ArchiveService = require('../services/ArchiveService');
 const TenderCancellationService = require('../services/TenderCancellationService');
@@ -13,7 +13,7 @@ const getPaginationParams = (req) => {
   return { page, limit };
 };
 
-router.post('/award-winners/:tenderId', async (req, res) => {
+router.post('/award-winners/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { winnersIds } = req.body;
@@ -29,7 +29,7 @@ router.post('/award-winners/:tenderId', async (req, res) => {
   }
 });
 
-router.get('/award-status/:tenderId', async (req, res) => {
+router.get('/award-status/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { page, limit } = getPaginationParams(req);
@@ -63,7 +63,7 @@ router.get('/award-status/:tenderId', async (req, res) => {
   }
 });
 
-router.post('/archive/:tenderId', async (req, res) => {
+router.post('/archive/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { docType, docData, retention_years } = req.body;
@@ -75,7 +75,7 @@ router.post('/archive/:tenderId', async (req, res) => {
   }
 });
 
-router.get('/archive/:archiveId', async (req, res) => {
+router.get('/archive/:archiveId', validateIdMiddleware('archiveId'), async (req, res) => {
   try {
     const { archiveId } = req.params;
     const archive = await ArchiveService.retrieveArchiveDocument(archiveId);
@@ -85,7 +85,7 @@ router.get('/archive/:archiveId', async (req, res) => {
   }
 });
 
-router.get('/archives/:tenderId', async (req, res) => {
+router.get('/archives/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { page, limit } = getPaginationParams(req);
@@ -119,7 +119,7 @@ router.get('/archives/:tenderId', async (req, res) => {
   }
 });
 
-router.post('/cancel/:tenderId', async (req, res) => {
+router.post('/cancel/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { cancellationReason } = req.body;
@@ -133,7 +133,7 @@ router.post('/cancel/:tenderId', async (req, res) => {
   }
 });
 
-router.get('/cancellation-status/:tenderId', async (req, res) => {
+router.get('/cancellation-status/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
     const status = await TenderCancellationService.getCancellationStatus(parseInt(tenderId));

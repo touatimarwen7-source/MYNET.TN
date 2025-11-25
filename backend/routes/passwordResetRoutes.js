@@ -4,6 +4,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const PasswordResetService = require('../services/auth/PasswordResetService');
 const EmailVerificationService = require('../services/email/EmailVerificationService');
 const { asyncHandler } = require('../middleware/errorHandlingMiddleware');

@@ -3,10 +3,10 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get company profile (only own profile or any if admin)
-router.get('/supplier/:supplierId', authMiddleware, async (req, res) => {
+router.get('/supplier/:supplierId', validateIdMiddleware('supplierId'), authMiddleware, async (req, res) => {
   try {
     const { supplierId } = req.params;
     const userId = parseInt(supplierId);
@@ -52,7 +52,7 @@ router.get('/supplier/:supplierId', authMiddleware, async (req, res) => {
 });
 
 // Update company profile (Admin, Suppliers, Buyers)
-router.put('/supplier/:supplierId', authMiddleware, async (req, res) => {
+router.put('/supplier/:supplierId', validateIdMiddleware('supplierId'), authMiddleware, async (req, res) => {
   try {
     const { supplierId } = req.params;
     const { company_name, phone, bio, address, city, country, profile_picture, preferred_categories, service_locations } = req.body;

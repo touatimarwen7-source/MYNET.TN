@@ -3,6 +3,7 @@ const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const { sendEmail, emailTemplates } = require('../config/emailService');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Send test email
 router.post('/send-test', authMiddleware, async (req, res) => {

@@ -2,7 +2,7 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Export tender as JSON
 router.get('/tender/:tenderId/json', authMiddleware, async (req, res) => {

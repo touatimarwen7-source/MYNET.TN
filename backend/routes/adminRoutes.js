@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const adminController = require('../controllers/adminController');
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -14,7 +15,7 @@ router.get('/audit-logs/export', adminController.exportAuditLogs);
 
 // ===== إدارة المستخدمين =====
 router.get('/users', adminController.getAllUsers);
-router.get('/users/:id', adminController.getUserDetails);
+router.get('/users/:id', validateIdMiddleware('id'), adminController.getUserDetails);
 router.put('/users/:id/role', adminController.updateUserRole);
 router.post('/users/:id/block', adminController.blockUser);
 router.post('/users/:id/unblock', adminController.unblockUser);
@@ -23,32 +24,32 @@ router.post('/users/:id/reset-password', adminController.resetUserPassword);
 // ===== إدارة المحتوى الثابت والصفحات والملفات =====
 // الصفحات الثابتة (تحرير كامل)
 router.get('/content/pages', adminController.getAllPages);
-router.get('/content/pages/:id', adminController.getPageById);
+router.get('/content/pages/:id', validateIdMiddleware('id'), adminController.getPageById);
 router.post('/content/pages', adminController.createPage);
-router.put('/content/pages/:id', adminController.updatePage);
-router.patch('/content/pages/:id', adminController.updatePagePartial);
-router.delete('/content/pages/:id', adminController.deletePage);
+router.put('/content/pages/:id', validateIdMiddleware('id'), adminController.updatePage);
+router.patch('/content/pages/:id', validateIdMiddleware('id'), adminController.updatePagePartial);
+router.delete('/content/pages/:id', validateIdMiddleware('id'), adminController.deletePage);
 
 // الملفات والصور والوثائق
 router.get('/content/files', adminController.getAllFiles);
 router.get('/content/media', adminController.getAllMedia);
 router.post('/content/files', adminController.uploadFile);
 router.post('/content/files/bulk', adminController.uploadBulkFiles);
-router.put('/content/files/:id', adminController.updateFileMetadata);
-router.delete('/content/files/:id', adminController.deleteFile);
+router.put('/content/files/:id', validateIdMiddleware('id'), adminController.updateFileMetadata);
+router.delete('/content/files/:id', validateIdMiddleware('id'), adminController.deleteFile);
 router.delete('/content/files/bulk', adminController.deleteBulkFiles);
 
 // الصور (محسّنة)
 router.get('/content/images', adminController.getAllImages);
 router.post('/content/images', adminController.uploadImage);
-router.put('/content/images/:id', adminController.updateImage);
-router.delete('/content/images/:id', adminController.deleteImage);
+router.put('/content/images/:id', validateIdMiddleware('id'), adminController.updateImage);
+router.delete('/content/images/:id', validateIdMiddleware('id'), adminController.deleteImage);
 
 // الوثائق والمستندات
 router.get('/content/documents', adminController.getAllDocuments);
 router.post('/content/documents', adminController.uploadDocument);
-router.put('/content/documents/:id', adminController.updateDocument);
-router.delete('/content/documents/:id', adminController.deleteDocument);
+router.put('/content/documents/:id', validateIdMiddleware('id'), adminController.updateDocument);
+router.delete('/content/documents/:id', validateIdMiddleware('id'), adminController.deleteDocument);
 
 // إدارة المحتوى المتقدمة
 router.post('/content/sync', adminController.syncContent);

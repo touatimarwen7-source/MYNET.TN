@@ -4,7 +4,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const QueryOptimizer = require('../utils/queryOptimizer');
 const { cacheMiddleware } = require('../middleware/cacheMiddleware');
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get supplier performance score (optimized + cached)
 router.get('/supplier/:supplierId', authMiddleware, cacheMiddleware(600), async (req, res) => {
@@ -63,7 +63,7 @@ router.get('/top-suppliers', authMiddleware, async (req, res) => {
 });
 
 // Get supplier performance history
-router.get('/history/:supplierId', authMiddleware, async (req, res) => {
+router.get('/history/:supplierId', validateIdMiddleware('supplierId'), authMiddleware, async (req, res) => {
   try {
     const { supplierId } = req.params;
     const db = req.app.get('db');

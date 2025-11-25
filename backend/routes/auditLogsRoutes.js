@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Log an action (used internally)
 const logAction = async (db, userId, action, entityType, entityId, details = {}) => {
@@ -53,7 +53,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // Get user activity
-router.get('/user/:userId', authMiddleware, async (req, res) => {
+router.get('/user/:userId', validateIdMiddleware('userId'), authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
     const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);

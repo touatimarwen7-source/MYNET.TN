@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const superAdminController = require('../controllers/superAdminController');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
@@ -36,10 +37,10 @@ router.use(adminMiddleware.concurrentRequestLimiter());     // Concurrent reques
 
 // ===== 1. STATIC PAGES =====
 router.get('/pages', superAdminController.listPages);
-router.get('/pages/:id', superAdminController.getPage);
+router.get('/pages/:id', validateIdMiddleware('id'), superAdminController.getPage);
 router.post('/pages', superAdminController.createPage);
-router.put('/pages/:id', superAdminController.updatePage);
-router.delete('/pages/:id', superAdminController.deletePage);
+router.put('/pages/:id', validateIdMiddleware('id'), superAdminController.updatePage);
+router.delete('/pages/:id', validateIdMiddleware('id'), superAdminController.deletePage);
 
 // ===== 2. FILE MANAGEMENT =====
 router.get('/files', superAdminController.listFiles);
@@ -54,7 +55,7 @@ router.delete('/files/:id', adminMiddleware.adminMutationLimiter, superAdminCont
 // ===== 3. DOCUMENT MANAGEMENT =====
 router.get('/documents', superAdminController.listDocuments);
 router.post('/documents', superAdminController.createDocument);
-router.delete('/documents/:id', superAdminController.deleteDocument);
+router.delete('/documents/:id', validateIdMiddleware('id'), superAdminController.deleteDocument);
 
 // ===== 4. EMAIL NOTIFICATIONS =====
 router.get('/emails', superAdminController.listEmails);
@@ -80,8 +81,8 @@ router.post('/backups/:id/restore', superAdminController.restoreBackup);
 // ===== 9. SUBSCRIPTION PLANS =====
 router.get('/subscription-plans', superAdminController.listSubscriptionPlans);
 router.post('/subscription-plans', superAdminController.createSubscriptionPlan);
-router.put('/subscription-plans/:id', superAdminController.updateSubscriptionPlan);
-router.delete('/subscription-plans/:id', superAdminController.deleteSubscriptionPlan);
+router.put('/subscription-plans/:id', validateIdMiddleware('id'), superAdminController.updateSubscriptionPlan);
+router.delete('/subscription-plans/:id', validateIdMiddleware('id'), superAdminController.deleteSubscriptionPlan);
 
 // ===== 10. FEATURE CONTROL =====
 router.get('/features', superAdminController.listFeatures);

@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');
 
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Helper function: Check for duplicate review
 const checkDuplicateReview = async (db, reviewerId, reviewedUserId) => {
@@ -75,7 +75,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // Get reviews for a user - ISSUE FIX #1 #8: Add authentication + exclude deleted
-router.get('/user/:userId', authMiddleware, async (req, res) => {
+router.get('/user/:userId', validateIdMiddleware('userId'), authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
     const db = req.app.get('db');
@@ -143,7 +143,7 @@ router.get('/my-given', authMiddleware, async (req, res) => {
 });
 
 // Update review
-router.put('/:reviewId', authMiddleware, async (req, res) => {
+router.put('/:reviewId', validateIdMiddleware('reviewId'), authMiddleware, async (req, res) => {
   try {
     const { reviewId } = req.params;
     const { rating, title, comment } = req.body;
@@ -192,7 +192,7 @@ router.put('/:reviewId', authMiddleware, async (req, res) => {
 });
 
 // Delete review - ISSUE FIX #5: Use soft delete + authorization
-router.delete('/:reviewId', authMiddleware, async (req, res) => {
+router.delete('/:reviewId', validateIdMiddleware('reviewId'), authMiddleware, async (req, res) => {
   try {
     const { reviewId } = req.params;
     const db = req.app.get('db');

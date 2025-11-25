@@ -2,10 +2,10 @@ const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Get supplier features - ISSUE FIX #1: Add authentication
-router.get('/supplier/:supplierId', authMiddleware, async (req, res) => {
+router.get('/supplier/:supplierId', validateIdMiddleware('supplierId'), authMiddleware, async (req, res) => {
   try {
     const { supplierId } = req.params;
     const db = req.app.get('db');
@@ -53,7 +53,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // Delete feature
-router.delete('/:featureId', authMiddleware, async (req, res) => {
+router.delete('/:featureId', validateIdMiddleware('featureId'), authMiddleware, async (req, res) => {
   try {
     const { featureId } = req.params;
     const db = req.app.get('db');

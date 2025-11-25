@@ -3,6 +3,7 @@ const SupplierFeatureController = require('../controllers/admin/SupplierFeatureC
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Admin only - manage supplier features
 router.put('/enable', authMiddleware.verifyToken, authMiddleware.checkPermission('manage_features'), (req, res) =>

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { validateIdMiddleware, normalizeUserMiddleware } = require('../middleware/validateIdMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const OpeningReportService = require('../services/OpeningReportService');
 
 // Optional authentication middleware (use if exists)

@@ -3,6 +3,7 @@ const FeatureFlagController = require('../controllers/admin/FeatureFlagControlle
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Only ADMIN can manage feature flags
 router.put('/enable', authMiddleware.verifyToken, authMiddleware.checkPermission('manage_features'), (req, res) =>
