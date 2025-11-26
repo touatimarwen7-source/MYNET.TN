@@ -364,7 +364,7 @@ app.delete('/api/admin/rate-limit-clear', (req, res) => {
 try {
   const TenderAutoCloseJob = require('./jobs/tenderAutoCloseJob');
   TenderAutoCloseJob.scheduleJob();
-  console.log('✅ Tender auto-close job initialized');
+  logger.info('✅ Tender auto-close job initialized');
 } catch (e) {
-  console.log('⚠️ Tender auto-close job optional:', e.message);
+  logger.warn('⚠️ Tender auto-close job optional: ' + e.message);
 }
