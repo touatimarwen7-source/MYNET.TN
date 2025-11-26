@@ -9,7 +9,7 @@ router.post('/tenders/:tenderId/inquiries', async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { subject, inquiry_text, attachments } = req.body;
-    const supplierId = req.user?.userId;
+    const supplierId = req.user?.id;
 
     if (!supplierId) {
       return res.status(401).json({ success: false, message: 'Authentication required' });
@@ -55,7 +55,7 @@ router.get('/tenders/:tenderId/inquiries', async (req, res) => {
 // Get my inquiries (supplier)
 router.get('/my-inquiries', async (req, res) => {
   try {
-    const supplierId = req.user?.userId;
+    const supplierId = req.user?.id;
 
     if (!supplierId) {
       return res.status(401).json({ success: false, message: 'Authentication required' });
@@ -77,7 +77,7 @@ router.post('/inquiries/:inquiryId/respond', async (req, res) => {
   try {
     const { inquiryId } = req.params;
     const { response_text, attachments } = req.body;
-    const userId = req.user?.userId;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ success: false, message: 'Authentication required' });
@@ -118,7 +118,7 @@ router.post('/tenders/:tenderId/addenda', async (req, res) => {
   try {
     const { tenderId } = req.params;
     const { title, content, inquiry_responses, supplier_emails } = req.body;
-    const userId = req.user?.userId;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ success: false, message: 'Authentication required' });
@@ -169,7 +169,7 @@ router.get('/tenders/:tenderId/addenda', async (req, res) => {
 // Get my notifications
 router.get('/my-notifications', async (req, res) => {
   try {
-    const userId = req.user?.userId;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ success: false, message: 'Authentication required' });

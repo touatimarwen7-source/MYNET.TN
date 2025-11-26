@@ -16,7 +16,7 @@ router.get('/opening/:tenderId', validateIdMiddleware('tenderId'), async (req, r
   try {
     const { tenderId } = req.params;
     const { page, limit } = getPaginationParams(req);
-    const buyerId = req.user?.userId;
+    const buyerId = req.user?.id;
     if (!buyerId) return res.status(401).json({ success: false, error: 'Authentication required' });
     
     const pool = getPool();
@@ -48,7 +48,7 @@ router.get('/opening/:tenderId', validateIdMiddleware('tenderId'), async (req, r
 router.post('/opening-report/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
-    const buyerId = req.user?.userId;
+    const buyerId = req.user?.id;
     if (!buyerId) return res.status(401).json({ success: false, error: 'Authentication required' });
     
     const offers = await OfferOpeningService.getOffersForOpening(parseInt(tenderId), buyerId);
@@ -63,7 +63,7 @@ router.post('/technical/:offerId', validateIdMiddleware('offerId'), async (req, 
   try {
     const { offerId } = req.params;
     const { technical_score, comments } = req.body;
-    const evaluatorId = req.user?.userId;
+    const evaluatorId = req.user?.id;
     if (!evaluatorId) return res.status(401).json({ success: false, error: 'Authentication required' });
     if (technical_score === undefined) return res.status(400).json({ success: false, error: 'Technical score required' });
     
@@ -80,7 +80,7 @@ router.post('/financial/:offerId', validateIdMiddleware('offerId'), async (req, 
   try {
     const { offerId } = req.params;
     const { financial_score, comments } = req.body;
-    const evaluatorId = req.user?.userId;
+    const evaluatorId = req.user?.id;
     if (!evaluatorId) return res.status(401).json({ success: false, error: 'Authentication required' });
     if (financial_score === undefined) return res.status(400).json({ success: false, error: 'Financial score required' });
     
@@ -96,7 +96,7 @@ router.post('/financial/:offerId', validateIdMiddleware('offerId'), async (req, 
 router.post('/calculate/:tenderId', validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     const { tenderId } = req.params;
-    const buyerId = req.user?.userId;
+    const buyerId = req.user?.id;
     if (!buyerId) return res.status(401).json({ success: false, error: 'Authentication required' });
     
     const results = await EvaluationService.calculateFinalScores(parseInt(tenderId), buyerId);

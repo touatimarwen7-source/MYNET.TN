@@ -52,7 +52,7 @@ router.get('/my-tenders',
     async (req, res) => {
       try {
         const { page, limit } = getPaginationParams(req);
-        const buyerId = req.user?.userId;
+        const buyerId = req.user?.id;
         const pool = getPool();
         
         // Optimized query with selective columns and pagination
@@ -177,7 +177,7 @@ router.get('/my-offers',
     async (req, res) => {
       try {
         const { page, limit } = getPaginationParams(req);
-        const supplierId = req.user?.userId;
+        const supplierId = req.user?.id;
         const pool = getPool();
         
         let query = DataFetchingOptimizer.buildSelectQuery('offers', 'offer_list');
@@ -233,7 +233,7 @@ router.get('/invoices',
     async (req, res) => {
       try {
         const { page, limit } = getPaginationParams(req);
-        const userId = req.user?.userId;
+        const userId = req.user?.id;
         const pool = getPool();
         
         const totalResult = await pool.query(

@@ -17,7 +17,7 @@ router.post('/award-winners/:tenderId', validateIdMiddleware('tenderId'), async 
   try {
     const { tenderId } = req.params;
     const { winnersIds } = req.body;
-    const buyerId = req.user?.userId;
+    const buyerId = req.user?.id;
     if (!buyerId) return res.status(401).json({ success: false, error: 'Authentication required' });
     if (!winnersIds || !Array.isArray(winnersIds) || winnersIds.length === 0) {
       return res.status(400).json({ success: false, error: 'Winners IDs required' });
@@ -123,7 +123,7 @@ router.post('/cancel/:tenderId', validateIdMiddleware('tenderId'), async (req, r
   try {
     const { tenderId } = req.params;
     const { cancellationReason } = req.body;
-    const buyerId = req.user?.userId;
+    const buyerId = req.user?.id;
     if (!buyerId) return res.status(401).json({ success: false, error: 'Authentication required' });
     if (!cancellationReason) return res.status(400).json({ success: false, error: 'Cancellation reason required' });
     const result = await TenderCancellationService.cancelTender(parseInt(tenderId), buyerId, cancellationReason);
