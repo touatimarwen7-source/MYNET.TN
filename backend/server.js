@@ -7,6 +7,9 @@ const { getPool } = require('./config/db');
 const BackupScheduler = require('./services/backup/BackupScheduler');
 const { initializeWebSocket } = require('./config/websocket');
 const { errorTracker } = require('./services/ErrorTrackingService');
+const { initializeSentry, captureException } = require('./config/sentry');
+const performanceMonitoring = require('./utils/performanceMonitoring');
+const analyticsTracking = require('./utils/analyticsTracking');
 
 const PORT = process.env.PORT || 3000;
 
@@ -15,6 +18,10 @@ async function startServer() {
         console.log('========================================');
         console.log('MyNet.tn Backend Server Starting...');
         console.log('========================================');
+
+        // Initialize monitoring and error tracking
+        initializeSentry(app);
+        console.log('✅ Error tracking initialized');
 
         const dbConnected = await initializeDb();
         
