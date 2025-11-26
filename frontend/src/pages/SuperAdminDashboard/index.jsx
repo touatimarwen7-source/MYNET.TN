@@ -63,7 +63,6 @@ import {
   Menu,
   Close,
   TrendingUp,
-  AlertCircle,
   Database,
   Globe,
   Clock,
@@ -373,7 +372,7 @@ function SuperAdminDashboardContent() {
         {systemStatus !== 'operational' && (
           <Alert 
             severity={systemStatus === 'degraded' ? 'warning' : 'error'}
-            icon={systemStatus === 'degraded' ? <AlertCircle /> : <Warning />}
+            icon={systemStatus === 'degraded' ? <Warning /> : <Warning />}
             sx={{ mb: 3, borderRadius: '8px' }}
           >
             {systemStatus === 'degraded' 
