@@ -49,7 +49,7 @@ router.get('/tenders/:tenderId/opening-report', async (req, res) => {
  */
 router.get('/my-opening-reports', authenticate, async (req, res) => {
   try {
-    if (!req.user || !req.user.userId) {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ 
         success: false, 
         message: 'User authentication required' 
@@ -67,7 +67,7 @@ router.get('/my-opening-reports', authenticate, async (req, res) => {
     }
 
     const reports = await OpeningReportService.getOpeningReportsByBuyer(
-      req.user.userId,
+      req.user.id,
       page,
       limit
     );

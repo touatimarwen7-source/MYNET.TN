@@ -20,7 +20,7 @@ class TenderAwardController {
             const items = await TenderAwardService.initializeTenderAward(
                 tenderId,
                 lineItems,
-                req.user.userId
+                req.user.id
             );
 
             res.status(201).json({
@@ -55,7 +55,7 @@ class TenderAwardController {
                 tenderId,
                 lineItemId,
                 distribution,
-                req.user.userId
+                req.user.id
             );
 
             res.status(200).json({
@@ -80,7 +80,7 @@ class TenderAwardController {
 
             const details = await TenderAwardService.getTenderAwardDetails(
                 tenderId,
-                req.user.userId
+                req.user.id
             );
 
             res.status(200).json({
@@ -104,7 +104,7 @@ class TenderAwardController {
 
             const result = await TenderAwardService.finalizeTenderAward(
                 tenderId,
-                req.user.userId
+                req.user.id
             );
 
             res.status(200).json({

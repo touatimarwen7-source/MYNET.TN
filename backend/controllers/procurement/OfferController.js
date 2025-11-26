@@ -46,7 +46,7 @@ class OfferController {
                 });
             }
 
-            const offer = await OfferService.createOffer(offerDTO, req.user.userId);
+            const offer = await OfferService.createOffer(offerDTO, req.user.id);
 
             res.status(201).json({
                 success: true,
@@ -147,7 +147,7 @@ class OfferController {
 
     async getMyOffers(req, res) {
         try {
-            const offers = await OfferService.getOffersBySupplier(req.user.userId);
+            const offers = await OfferService.getOffersBySupplier(req.user.id);
 
             res.status(200).json({
                 success: true,
@@ -196,7 +196,7 @@ class OfferController {
             const offer = await OfferService.evaluateOffer(
                 id, 
                 { score, notes }, 
-                req.user.userId
+                req.user.id
             );
 
             res.status(200).json({
@@ -215,7 +215,7 @@ class OfferController {
         try {
             const { id } = req.params;
             
-            const offer = await OfferService.selectWinningOffer(id, req.user.userId);
+            const offer = await OfferService.selectWinningOffer(id, req.user.id);
 
             res.status(200).json({
                 success: true,
@@ -233,7 +233,7 @@ class OfferController {
         try {
             const { id } = req.params;
             
-            const offer = await OfferService.rejectOffer(id, req.user.userId);
+            const offer = await OfferService.rejectOffer(id, req.user.id);
 
             res.status(200).json({
                 success: true,

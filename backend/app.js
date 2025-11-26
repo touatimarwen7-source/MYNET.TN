@@ -282,7 +282,6 @@ app.use('/api/tender-management', tenderManagementRoutes);
 initializeEmailService();
 
 // Logging middleware (#9)
-const { logger } = require('./utils/logger');
 app.use(logger.requestMiddleware());
 
 // Log startup

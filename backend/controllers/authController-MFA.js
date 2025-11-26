@@ -6,7 +6,7 @@ const { getPool } = require('../config/db');
 class MFAEndpoints {
     async setupMFA(req, res) {
         try {
-            const userId = req.user.userId;
+            const userId = req.user.id;
             const email = req.user.email;
 
             const secret = MFAValidator.generateSecret(email);
@@ -27,7 +27,7 @@ class MFAEndpoints {
     async verifyMFASetup(req, res) {
         try {
             const { token, secret, backupCodes } = req.body;
-            const userId = req.user.userId;
+            const userId = req.user.id;
             const pool = getPool();
 
             const isValid = MFAValidator.verifyToken(token, secret);

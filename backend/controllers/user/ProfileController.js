@@ -3,7 +3,7 @@ const { getPool } = require('../../config/db');
 class ProfileController {
     async updateSupplierPreferences(req, res) {
         try {
-            const userId = req.user.userId;
+            const userId = req.user.id;
             const { preferred_categories, service_locations, minimum_budget } = req.body;
 
             const pool = getPool();
@@ -44,7 +44,7 @@ class ProfileController {
 
     async getSupplierPreferences(req, res) {
         try {
-            const userId = req.user.userId;
+            const userId = req.user.id;
             const pool = getPool();
 
             const result = await pool.query(

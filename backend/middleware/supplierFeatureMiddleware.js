@@ -4,7 +4,7 @@ const supplierFeatureMiddleware = (requiredFeature) => {
     return async (req, res, next) => {
         try {
             // Get supplier ID from request
-            const supplierId = req.params.supplier_id || req.body.supplier_id || req.user.userId;
+            const supplierId = req.params.supplier_id || req.body.supplier_id || req.user.id;
 
             if (!supplierId) {
                 return res.status(400).json({ error: 'Supplier ID not found' });

@@ -4,7 +4,7 @@ class FeatureFlagController {
     async enableFeature(req, res) {
         try {
             const { feature_key } = req.body;
-            const adminId = req.user.userId;
+            const adminId = req.user.id;
 
             if (!feature_key) {
                 return res.status(400).json({ error: 'feature_key is required' });
@@ -25,7 +25,7 @@ class FeatureFlagController {
     async disableFeature(req, res) {
         try {
             const { feature_key, reason } = req.body;
-            const adminId = req.user.userId;
+            const adminId = req.user.id;
 
             if (!feature_key) {
                 return res.status(400).json({ error: 'feature_key is required' });

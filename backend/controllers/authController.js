@@ -180,7 +180,7 @@ class AuthController {
      * @async
      * @param {Object} req - Express request object
      * @param {Object} req.user - Authenticated user from middleware
-     * @param {number} req.user.userId - User ID from JWT token
+     * @param {number} req.user.id - User ID from JWT token
      * @param {Object} res - Express response object
      * @returns {void} Returns user profile data
      * @throws {404} If user not found
@@ -192,7 +192,7 @@ class AuthController {
      */
     async getProfile(req, res) {
         try {
-            const user = await UserService.getUserById(req.user.userId);
+            const user = await UserService.getUserById(req.user.id);
             
             if (!user) {
                 return res.status(404).json({ 
@@ -216,7 +216,7 @@ class AuthController {
      * @async
      * @param {Object} req - Express request object
      * @param {Object} req.user - Authenticated user from middleware
-     * @param {number} req.user.userId - User ID from JWT token
+     * @param {number} req.user.id - User ID from JWT token
      * @param {Object} req.body - Fields to update (full_name, phone, company_name, etc.)
      * @param {Object} res - Express response object
      * @returns {void} Returns updated user profile
@@ -232,7 +232,7 @@ class AuthController {
         try {
             const updateData = req.body;
             
-            const user = await UserService.updateUser(req.user.userId, updateData);
+            const user = await UserService.updateUser(req.user.id, updateData);
 
             res.status(200).json({
                 success: true,

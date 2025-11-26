@@ -5,7 +5,7 @@ class TenderController {
     async createTender(req, res) {
         try {
             const tenderData = req.body;
-            const tender = await TenderService.createTender(tenderData, req.user.userId);
+            const tender = await TenderService.createTender(tenderData, req.user.id);
 
             res.status(201).json({
                 success: true,
@@ -72,7 +72,7 @@ class TenderController {
                 limit: req.query.limit ? parseInt(req.query.limit) : 50
             };
 
-            const tenders = await TenderService.getMyTenders(req.user.userId, filters);
+            const tenders = await TenderService.getMyTenders(req.user.id, filters);
 
             res.status(200).json({
                 success: true,
@@ -91,7 +91,7 @@ class TenderController {
             const { id } = req.params;
             const updateData = req.body;
 
-            const tender = await TenderService.updateTender(id, updateData, req.user.userId);
+            const tender = await TenderService.updateTender(id, updateData, req.user.id);
 
             res.status(200).json({
                 success: true,
@@ -109,7 +109,7 @@ class TenderController {
         try {
             const { id } = req.params;
 
-            await TenderService.deleteTender(id, req.user.userId);
+            await TenderService.deleteTender(id, req.user.id);
 
             res.status(200).json({
                 success: true,
@@ -126,7 +126,7 @@ class TenderController {
         try {
             const { id } = req.params;
 
-            const tender = await TenderService.publishTender(id, req.user.userId);
+            const tender = await TenderService.publishTender(id, req.user.id);
 
             const tenderData = {
                 category: tender.category,
@@ -137,7 +137,7 @@ class TenderController {
             await NotificationService.notifyTenderPublished(
                 tender.id, 
                 tender.title, 
-                req.user.userId,
+                req.user.id,
                 tenderData
             );
 
@@ -157,7 +157,7 @@ class TenderController {
         try {
             const { id } = req.params;
 
-            const tender = await TenderService.closeTender(id, req.user.userId);
+            const tender = await TenderService.closeTender(id, req.user.id);
 
             res.status(200).json({
                 success: true,

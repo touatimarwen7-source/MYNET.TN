@@ -4,7 +4,7 @@ class SupplierFeatureController {
     async enableFeature(req, res) {
         try {
             const { supplier_id, feature_key, reason, expires_at } = req.body;
-            const adminId = req.user.userId;
+            const adminId = req.user.id;
 
             if (!supplier_id || !feature_key) {
                 return res.status(400).json({ 
@@ -33,7 +33,7 @@ class SupplierFeatureController {
     async disableFeature(req, res) {
         try {
             const { supplier_id, feature_key, reason } = req.body;
-            const adminId = req.user.userId;
+            const adminId = req.user.id;
 
             if (!supplier_id || !feature_key) {
                 return res.status(400).json({ 

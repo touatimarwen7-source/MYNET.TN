@@ -4,7 +4,7 @@ class ReviewController {
     async createReview(req, res) {
         try {
             const { offer_id, supplier_id, rating, comment, po_id } = req.body;
-            const buyerId = req.user.userId;
+            const buyerId = req.user.id;
 
             if (!offer_id || !supplier_id || !rating || !po_id) {
                 return res.status(400).json({ error: 'Missing required fields' });

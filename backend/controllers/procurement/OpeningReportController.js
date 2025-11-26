@@ -15,7 +15,7 @@ async function getOpeningReport(req, res) {
 
 async function getBuyerOpeningReports(req, res) {
   try {
-    const reports = await OpeningReportService.getOpeningReportsByBuyer(req.user.userId);
+    const reports = await OpeningReportService.getOpeningReportsByBuyer(req.user.id);
     res.status(200).json({ success: true, count: reports.length, reports });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

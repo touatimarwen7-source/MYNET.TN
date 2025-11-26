@@ -10,7 +10,7 @@ const auditMiddleware = (action, entityType) => {
         const entityId = req.params.id || req.params.userId || req.body?.id;
         
         // Get user ID from req.user - support both userId and id properties
-        const userId = req.user.userId || req.user.id;
+        const userId = req.user.id || req.user.id;
         
         // Only log if we have a valid user ID
         if (userId && entityId && entityId !== 'undefined') {
