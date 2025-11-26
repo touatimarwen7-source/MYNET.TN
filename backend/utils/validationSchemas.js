@@ -14,16 +14,37 @@ const optionalDateSchema = Joi.date().iso().allow(null);
 
 // Tender Schemas
 const createTenderSchema = Joi.object({
+  consultation_number: Joi.string().max(100).allow(null),
   title: Joi.string().max(255).required(),
   description: Joi.string().max(5000).required(),
   category: Joi.string().max(100).required(),
-  buyer_id: idSchema,
-  budget: Joi.number().positive().required(),
-  currency: Joi.string().length(3).uppercase().required(),
-  opening_date: dateSchema,
-  closing_date: dateSchema,
-  opening_location: Joi.string().max(500).allow(null),
-  is_public: Joi.boolean().default(true)
+  quantity_required: Joi.number().integer().positive().allow(null),
+  unit: Joi.string().max(50).allow(null),
+  publication_date: dateSchema.allow(null),
+  deadline: dateSchema.allow(null),
+  opening_date: dateSchema.allow(null),
+  queries_start_date: dateSchema.allow(null),
+  queries_end_date: dateSchema.allow(null),
+  offer_validity_days: Joi.number().integer().positive().allow(null),
+  alert_type: Joi.string().max(100).allow(null),
+  is_public: Joi.boolean().default(true),
+  lots: Joi.array().allow(null),
+  awardLevel: Joi.string().max(100).allow(null),
+  participation_eligibility: Joi.string().max(1000).allow(null),
+  mandatory_documents: Joi.array().allow(null),
+  disqualification_criteria: Joi.string().max(1000).allow(null),
+  submission_method: Joi.string().max(100).allow(null),
+  sealed_envelope_requirements: Joi.string().max(1000).allow(null),
+  contact_person: Joi.string().max(255).allow(null),
+  contact_email: Joi.string().email().allow(null),
+  contact_phone: Joi.string().max(20).allow(null),
+  technical_specifications: Joi.string().max(5000).allow(null),
+  requirements: Joi.array().allow(null),
+  attachments: Joi.array().allow(null),
+  specification_documents: Joi.array().allow(null),
+  evaluation_criteria: Joi.array().allow(null),
+  budget_min: Joi.number().positive().allow(null),
+  budget_max: Joi.number().positive().allow(null)
 });
 
 const updateTenderSchema = Joi.object({
