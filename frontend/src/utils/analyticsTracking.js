@@ -3,7 +3,13 @@
  * Tracks user interactions, page views, feature usage, and errors
  */
 
-import * as Sentry from '@sentry/react';
+// Lazy load Sentry to handle optional dependency
+let Sentry = null;
+try {
+  Sentry = require('@sentry/react');
+} catch (e) {
+  console.warn('⚠️ Sentry not available for analytics');
+}
 
 class FrontendAnalyticsTracker {
   constructor() {
@@ -126,11 +132,13 @@ class FrontendAnalyticsTracker {
       ...context,
     });
 
-    // Also report to Sentry
-    Sentry?.captureMessage(
-      `UI Error: ${errorType} - ${errorMessage}`,
-      'error'
-    );
+    // Also report to Sentry if available
+    if (Sentry?.captureMessage) {
+      Sentry.captureMessage(
+        `UI Error: ${errorType} - ${errorMessage}`,
+        'error'
+      );
+    }
   }
 
   /**
@@ -166,13 +174,15 @@ class FrontendAnalyticsTracker {
 
     this.events.push(event);
 
-    // Add breadcrumb to Sentry
-    Sentry?.addBreadcrumb({
-      message: eventName,
-      category: 'user-action',
-      level: 'info',
-      data: metadata,
-    });
+    // Add breadcrumb to Sentry if available
+    if (Sentry?.addBreadcrumb) {
+      Sentry.addBreadcrumb({
+        message: eventName,
+        category: 'user-action',
+        level: 'info',
+        data: metadata,
+      });
+    }
 
     // Keep last 50 events
     if (this.events.length > 50) {
