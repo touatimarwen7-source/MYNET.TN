@@ -159,6 +159,12 @@ export const adminMenu = [
 
 export const superAdminMenu = [
   {
+    id: 'admin-portal',
+    label: '🏛️ واجهة الإدارة الرسمية',
+    path: '/admin-portal',
+    subItems: []
+  },
+  {
     id: 'dashboard',
     label: '📊 Centre de Contrôle',
     path: '/super-admin/dashboard',

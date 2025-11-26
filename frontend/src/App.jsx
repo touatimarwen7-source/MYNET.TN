@@ -75,6 +75,7 @@ const SupplierInvoices = lazy(() => import('./pages/SupplierInvoices'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const SuperAdminMenuDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
 const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard/index'));
+const AdminPortal = lazy(() => import('./pages/AdminPortal/index'));
 const MFASetup = lazy(() => import('./pages/MFASetup'));
 const AuditLogViewer = lazy(() => import('./pages/AuditLogViewer'));
 const HealthMonitoring = lazy(() => import('./pages/HealthMonitoring'));
@@ -378,6 +379,11 @@ function AppContent() {
             />
 
               {/* Administration */}
+              {/* Admin Portal - Main Interface */}
+              <Route 
+              path="/admin-portal" 
+              element={user?.role === 'super_admin' ? <AdminPortal /> : <Navigate to="/tenders" />} 
+            />
               {/* Super Admin - Main Dashboard */}
               <Route 
               path="/super-admin/dashboard" 
