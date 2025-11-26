@@ -66,7 +66,7 @@ export default function EmailNotifications() {
         },
         {
           id: 3,
-          recipient: 'admin@mynet.tn',
+          recipient: 'superadmin@mynet.tn',
           subject: 'Rapport de livraison',
           template: 'delivery_report',
           status: 'sent',

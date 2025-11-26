@@ -34,8 +34,8 @@ export default function UserManagement() {
   const [users, setUsers] = useState([
     {
       id: 1,
-      email: 'admin@mynet.tn',
-      name: 'Admin MyNet',
+      email: 'superadmin@mynet.tn',
+      name: 'Super Admin MyNet',
       role: 'super_admin',
       status: 'actif',
       createdAt: '2025-01-01',
