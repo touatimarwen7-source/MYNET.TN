@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import institutionalTheme from '../theme/theme';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -49,6 +50,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
 import { logger } from '../utils/logger';
+import EnhancedErrorBoundary from '../components/EnhancedErrorBoundary';
 
 /**
  * Snackbar component لعرض الإشعارات
@@ -84,9 +86,14 @@ const ConfirmationDialog = ({ open, title, message, onConfirm, onCancel }) => (
   </Dialog>
 );
 
-export default function BuyerDashboard() {
+/**
+ * Dashboard Content - Buyer Dashboard Implementation
+ */
+function BuyerDashboardContent() {
   const theme = institutionalTheme;
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  
   const [stats, setStats] = useState({
     activeTenders: 0,
     totalOffers: 0,
@@ -103,8 +110,8 @@ export default function BuyerDashboard() {
   const [confirmDialog, setConfirmDialog] = useState({ open: false, action: null, tenderId: null });
 
   useEffect(() => {
-    setPageTitle('Tableau de Bord Acheteur');
-  }, []);
+    setPageTitle(t('dashboard.buyer.title'));
+  }, [t]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -148,7 +155,7 @@ export default function BuyerDashboard() {
       setRecentOffers(tenders.slice(0, 5));
     } catch (error) {
       logger.error('Erreur lors du chargement des données du tableau de bord', error);
-      setSnackbar({ open: true, message: 'Erreur lors du chargement des données', severity: 'error' });
+      setSnackbar({ open: true, message: t('dashboard.errors.loadingFailed'), severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -157,22 +164,22 @@ export default function BuyerDashboard() {
   const handlePublishTender = async (tenderId) => {
     try {
       await procurementAPI.publishTender(tenderId);
-      setSnackbar({ open: true, message: 'Appel d\'offre publié avec succès!', severity: 'success' });
+      setSnackbar({ open: true, message: t('dashboard.buyer.publishSuccess'), severity: 'success' });
       fetchDashboardData();
     } catch (error) {
       logger.error('Erreur lors de la publication du tender', error);
-      setSnackbar({ open: true, message: 'Erreur lors de la publication', severity: 'error' });
+      setSnackbar({ open: true, message: t('dashboard.errors.publishFailed'), severity: 'error' });
     }
   };
 
   const handleCloseTender = async (tenderId) => {
     try {
       await procurementAPI.closeTender(tenderId);
-      setSnackbar({ open: true, message: 'Appel d\'offre fermé avec succès!', severity: 'success' });
+      setSnackbar({ open: true, message: t('dashboard.buyer.closeSuccess'), severity: 'success' });
       fetchDashboardData();
     } catch (error) {
       logger.error('Erreur lors de la fermeture du tender', error);
-      setSnackbar({ open: true, message: 'Erreur lors de la fermeture', severity: 'error' });
+      setSnackbar({ open: true, message: t('dashboard.errors.closeFailed'), severity: 'error' });
     }
   };
 
@@ -221,10 +228,10 @@ export default function BuyerDashboard() {
                 marginBottom: '8px',
               }}
             >
-              Tableau de Bord Acheteur
+              {t('dashboard.buyer.title')}
             </Typography>
             <Typography sx={{ fontSize: '14px', color: '#616161', marginBottom: '16px' }}>
-              Gérez vos appels d'offres et analysez vos offres reçues
+              {t('dashboard.buyer.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -233,7 +240,7 @@ export default function BuyerDashboard() {
             variant="outlined"
             size="small"
           >
-            Actualiser
+            {t('common.refresh')}
           </Button>
         </Box>
 
@@ -241,36 +248,36 @@ export default function BuyerDashboard() {
         <Grid container spacing={2} sx={{ marginBottom: '32px' }}>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="Appels Actifs" 
+              label={t('dashboard.buyer.activeTenders')}
               value={stats.activeTenders}
-              subtitle="En cours d'évaluation"
+              subtitle={t('dashboard.buyer.evaluating')}
               icon={<AssignmentIcon />}
               color="#1976d2"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="Offres Reçues" 
+              label={t('dashboard.buyer.offersReceived')}
               value={stats.totalOffers}
-              subtitle="Au total"
+              subtitle={t('dashboard.buyer.total')}
               icon={<ShoppingCartIcon />}
               color="#388e3c"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="Économies" 
+              label={t('dashboard.buyer.savings')}
               value={`${stats.averageSavings}%`}
-              subtitle="Budget sauvegardé"
+              subtitle={t('dashboard.buyer.budgetSaved')}
               icon={<TrendingDownIcon />}
               color="#f57c00"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="En Attente" 
+              label={t('dashboard.buyer.pending')}
               value={stats.pendingDecisions}
-              subtitle="Décisions requises"
+              subtitle={t('dashboard.buyer.decisionsRequired')}
               icon={<TimelineIcon />}
               color="#d32f2f"
             />
@@ -292,9 +299,9 @@ export default function BuyerDashboard() {
               }
             }}
           >
-            <Tab label="Mes Appels d'Offres" icon={<AssignmentIcon />} iconPosition="start" />
-            <Tab label="Offres Reçues" icon={<ShoppingCartIcon />} iconPosition="start" />
-            <Tab label="Analyse" icon={<AnalyticsIcon />} iconPosition="start" />
+            <Tab label={t('dashboard.buyer.myTenders')} icon={<AssignmentIcon />} iconPosition="start" />
+            <Tab label={t('dashboard.buyer.receivedOffers')} icon={<ShoppingCartIcon />} iconPosition="start" />
+            <Tab label={t('dashboard.buyer.analysis')} icon={<AnalyticsIcon />} iconPosition="start" />
           </Tabs>
 
           {/* Tab Content */}
@@ -303,7 +310,7 @@ export default function BuyerDashboard() {
               <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography sx={{ fontSize: '16px', fontWeight: 600 }}>
-                    Mes Appels d'Offres ({myTenders.length})
+                    {t('dashboard.buyer.myTenders')} ({myTenders.length})
                   </Typography>
                   <Button 
                     variant="contained" 
@@ -311,21 +318,21 @@ export default function BuyerDashboard() {
                     onClick={() => navigate('/procurement/create-tender')}
                     sx={{ textTransform: 'none' }}
                   >
-                    Nouvel Appel
+                    {t('dashboard.buyer.newCall')}
                   </Button>
                 </Box>
                 {myTenders.length === 0 ? (
-                  <Alert severity="info">Vous n'avez créé aucun appel d'offre</Alert>
+                  <Alert severity="info">{t('dashboard.buyer.noTenders')}</Alert>
                 ) : (
                   <Box sx={{ overflowX: 'auto' }}>
                     <Table size="small">
                       <TableHead>
                         <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Titre</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Budget</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Statut</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Offres</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Actions</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.title')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.budget')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.status')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.offers')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.actions')}</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -362,7 +369,7 @@ export default function BuyerDashboard() {
                                 }}
                                 sx={{ textTransform: 'none', fontSize: '12px' }}
                               >
-                                Détails
+                                {t('common.details')}
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -377,10 +384,10 @@ export default function BuyerDashboard() {
             {tabValue === 1 && (
               <Box>
                 <Typography sx={{ fontSize: '16px', fontWeight: 600, mb: 2 }}>
-                  Offres Récentes Reçues
+                  {t('dashboard.buyer.recentOffers')}
                 </Typography>
                 {recentOffers.length === 0 ? (
-                  <Alert severity="info">Aucune offre reçue</Alert>
+                  <Alert severity="info">{t('dashboard.buyer.noOffers')}</Alert>
                 ) : (
                   <Grid container spacing={2}>
                     {recentOffers.map((tender) => (
@@ -391,7 +398,7 @@ export default function BuyerDashboard() {
                               {tender.title}
                             </Typography>
                             <Typography sx={{ fontSize: '12px', color: '#616161', mb: 2 }}>
-                              {tender.offers_count || 0} offres reçues
+                              {tender.offers_count || 0} {t('dashboard.buyer.offersReceived')}
                             </Typography>
                             <Button
                               size="small"
@@ -401,7 +408,7 @@ export default function BuyerDashboard() {
                               onClick={() => navigate(`/procurement/tender/${tender.id}/offers`)}
                               sx={{ textTransform: 'none' }}
                             >
-                              Voir les Offres
+                              {t('dashboard.buyer.viewOffers')}
                             </Button>
                           </CardContent>
                         </Card>
@@ -419,24 +426,24 @@ export default function BuyerDashboard() {
                     <Card sx={{ border: '1px solid #e0e0e0' }}>
                       <CardContent>
                         <Typography sx={{ fontSize: '14px', fontWeight: 600, mb: 2 }}>
-                          Tendances d'Offres
+                          {t('dashboard.buyer.offerTrends')}
                         </Typography>
                         <List dense>
                           <ListItem>
                             <ListItemText 
-                              primary="Taux d'Offre Moyen"
+                              primary={t('dashboard.buyer.avgOfferRate')}
                               secondary={stats.totalOffers > 0 ? `${(stats.totalOffers / Math.max(stats.activeTenders, 1)).toFixed(1)} offres par appel` : 'N/A'}
                             />
                           </ListItem>
                           <ListItem>
                             <ListItemText 
-                              primary="Temps Moyen d'Offre"
+                              primary={t('dashboard.buyer.avgOfferTime')}
                               secondary="5.2 jours"
                             />
                           </ListItem>
                           <ListItem>
                             <ListItemText 
-                              primary="Fournisseurs Actifs"
+                              primary={t('dashboard.buyer.activeSuppliers')}
                               secondary="12 fournisseurs"
                             />
                           </ListItem>
@@ -448,24 +455,24 @@ export default function BuyerDashboard() {
                     <Card sx={{ border: '1px solid #e0e0e0' }}>
                       <CardContent>
                         <Typography sx={{ fontSize: '14px', fontWeight: 600, mb: 2 }}>
-                          Résumé Financier
+                          {t('dashboard.buyer.financialSummary')}
                         </Typography>
                         <List dense>
                           <ListItem>
                             <ListItemText 
-                              primary="Budget Total"
+                              primary={t('dashboard.buyer.totalBudget')}
                               secondary="250,000 TND"
                             />
                           </ListItem>
                           <ListItem>
                             <ListItemText 
-                              primary="Dépensé"
+                              primary={t('dashboard.buyer.spent')}
                               secondary="186,500 TND"
                             />
                           </ListItem>
                           <ListItem>
                             <ListItemText 
-                              primary="Économies"
+                              primary={t('dashboard.buyer.savings')}
                               secondary="63,500 TND (25.4%)"
                             />
                           </ListItem>
@@ -483,7 +490,7 @@ export default function BuyerDashboard() {
         <Card sx={{ border: '1px solid #e0e0e0' }}>
           <CardContent>
             <Typography sx={{ fontSize: '16px', fontWeight: 600, mb: 2 }}>
-              Actions Rapides
+              {t('dashboard.buyer.quickActions')}
             </Typography>
             <List>
               <ListItem 
@@ -495,8 +502,8 @@ export default function BuyerDashboard() {
                   <AddIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Créer un Nouvel Appel d'Offre"
-                  secondary="Lancez une nouvelle procédure d'achat"
+                  primary={t('dashboard.buyer.createNew')}
+                  secondary={t('dashboard.buyer.createNewDesc')}
                 />
               </ListItem>
               <ListItem 
@@ -508,8 +515,8 @@ export default function BuyerDashboard() {
                   <VisibilityIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Voir Tous les Appels"
-                  secondary="Gérez vos appels d'offres"
+                  primary={t('dashboard.buyer.viewAll')}
+                  secondary={t('dashboard.buyer.viewAllDesc')}
                 />
               </ListItem>
               <ListItem 
@@ -521,8 +528,8 @@ export default function BuyerDashboard() {
                   <FileDownloadIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Générer un Rapport"
-                  secondary="Téléchargez des rapports d'achat"
+                  primary={t('dashboard.buyer.generateReport')}
+                  secondary={t('dashboard.buyer.generateReportDesc')}
                 />
               </ListItem>
             </List>
@@ -531,19 +538,19 @@ export default function BuyerDashboard() {
 
         {/* Details Dialog */}
         <Dialog open={detailsOpen} onClose={() => setDetailsOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>Détails de l'Appel d'Offre</DialogTitle>
+          <DialogTitle>{t('dashboard.buyer.tenderDetails')}</DialogTitle>
           <DialogContent>
             {selectedTender && (
               <Box sx={{ mt: 2 }}>
-                <Typography sx={{ mb: 1 }}><strong>Titre:</strong> {selectedTender.title}</Typography>
-                <Typography sx={{ mb: 1 }}><strong>Budget:</strong> {selectedTender.budget_max?.toLocaleString('fr-TN', { style: 'currency', currency: 'TND' })}</Typography>
-                <Typography sx={{ mb: 1 }}><strong>Statut:</strong> {selectedTender.status}</Typography>
-                <Typography sx={{ mb: 1 }}><strong>Offres:</strong> {selectedTender.offers_count || 0}</Typography>
+                <Typography sx={{ mb: 1 }}><strong>{t('common.title')}:</strong> {selectedTender.title}</Typography>
+                <Typography sx={{ mb: 1 }}><strong>{t('common.budget')}:</strong> {selectedTender.budget_max?.toLocaleString('fr-TN', { style: 'currency', currency: 'TND' })}</Typography>
+                <Typography sx={{ mb: 1 }}><strong>{t('common.status')}:</strong> {selectedTender.status}</Typography>
+                <Typography sx={{ mb: 1 }}><strong>{t('common.offers')}:</strong> {selectedTender.offers_count || 0}</Typography>
               </Box>
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDetailsOpen(false)}>Fermer</Button>
+            <Button onClick={() => setDetailsOpen(false)}>{t('common.close')}</Button>
             {selectedTender?.status === 'draft' && (
               <Button 
                 variant="contained" 
@@ -552,7 +559,7 @@ export default function BuyerDashboard() {
                   setDetailsOpen(false);
                 }}
               >
-                Publier
+                {t('dashboard.buyer.publish')}
               </Button>
             )}
             {selectedTender?.status === 'open' && (
@@ -567,7 +574,7 @@ export default function BuyerDashboard() {
                   });
                 }}
               >
-                Fermer
+                {t('dashboard.buyer.close')}
               </Button>
             )}
           </DialogActions>
@@ -576,8 +583,8 @@ export default function BuyerDashboard() {
         {/* Confirmation Dialogs */}
         <ConfirmationDialog
           open={confirmDialog.open}
-          title="Confirmer la Fermeture"
-          message="Êtes-vous sûr de vouloir fermer cet appel d'offre? Cette action est irréversible."
+          title={t('dashboard.buyer.confirmClose')}
+          message={t('dashboard.buyer.confirmCloseMsg')}
           onConfirm={() => {
             if (confirmDialog.action === 'close') {
               handleCloseTender(confirmDialog.tenderId);
@@ -597,5 +604,14 @@ export default function BuyerDashboard() {
         />
       </Container>
     </Box>
+  );
+}
+
+// Wrap with Error Boundary
+export default function BuyerDashboard() {
+  return (
+    <EnhancedErrorBoundary>
+      <BuyerDashboardContent />
+    </EnhancedErrorBoundary>
   );
 }

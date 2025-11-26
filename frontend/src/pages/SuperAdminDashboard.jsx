@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import institutionalTheme from '../theme/theme';
 import {
   Container,
@@ -44,6 +45,7 @@ import AdminAnalytics from '../components/Admin/AdminAnalytics';
 import { setPageTitle } from '../utils/pageTitle';
 import { adminAPI } from '../api';
 import { logger } from '../utils/logger';
+import EnhancedErrorBoundary from '../components/EnhancedErrorBoundary';
 
 /**
  * Snackbar component لعرض الإشعارات
@@ -61,8 +63,13 @@ const SnackbarComponent = ({ open, message, severity, onClose }) => (
   </Snackbar>
 );
 
-export default function SuperAdminDashboard() {
+/**
+ * Dashboard Content - Super Admin Dashboard Implementation
+ */
+function SuperAdminDashboardContent() {
   const theme = institutionalTheme;
+  const { t } = useTranslation();
+  
   const [currentTab, setCurrentTab] = useState(0);
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -76,8 +83,8 @@ export default function SuperAdminDashboard() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   useEffect(() => {
-    setPageTitle('Centre de Contrôle Total - Super Admin');
-  }, []);
+    setPageTitle(t('dashboard.admin.title'));
+  }, [t]);
 
   useEffect(() => {
     fetchSystemStats();
@@ -97,10 +104,10 @@ export default function SuperAdminDashboard() {
       });
 
       setSystemStatus(data.system_health > 90 ? 'operational' : data.system_health > 70 ? 'degraded' : 'critical');
-      logger.info('Statistiques du système chargées avec succès');
+      logger.info('Statistiques du système chargées');
     } catch (error) {
-      logger.error('Erreur lors du chargement des statistiques du système', error);
-      setSnackbar({ open: true, message: 'Erreur lors du chargement des statistiques', severity: 'error' });
+      logger.error('Erreur lors du chargement des statistiques', error);
+      setSnackbar({ open: true, message: t('dashboard.admin.statsError'), severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -108,34 +115,34 @@ export default function SuperAdminDashboard() {
 
   const tabs = [
     { 
-      label: 'Gestion des Utilisateurs et Sécurité', 
+      label: t('dashboard.admin.usersMgmt'),
       icon: <SecurityIcon />, 
       component: <UserRoleManagement />,
-      description: 'Voir tous les utilisateurs, modifier les rôles, bloquer/débloquer les comptes'
+      description: t('dashboard.admin.usersMgmtDesc')
     },
     { 
-      label: 'Gestion du Contenu Dynamique', 
+      label: t('dashboard.admin.contentMgmt'),
       icon: <ArticleIcon />, 
       component: <ContentManager />,
-      description: 'Modifier les pages statiques, gérer les fichiers et documents'
+      description: t('dashboard.admin.contentMgmtDesc')
     },
     { 
-      label: 'Gestion des Services et Plans', 
+      label: t('dashboard.admin.servicesMgmt'),
       icon: <BuildIcon />, 
       component: <ServicesManager />,
-      description: 'Gérer les services généraux, les plans d\'abonnement'
+      description: t('dashboard.admin.servicesMgmtDesc')
     },
     { 
-      label: 'Paramètres Système', 
+      label: t('dashboard.admin.systemConfig'),
       icon: <SettingsIcon />, 
       component: <SystemConfig />,
-      description: 'Mode maintenance, Feature Toggles, Rate Limits'
+      description: t('dashboard.admin.systemConfigDesc')
     },
     { 
-      label: 'Surveillance et Analyse', 
+      label: t('dashboard.admin.monitoring'),
       icon: <AnalyticsIcon />, 
       component: <AdminAnalytics />,
-      description: 'Statistiques en direct, journaux d\'activité, surveillance'
+      description: t('dashboard.admin.monitoringDesc')
     }
   ];
 
@@ -188,7 +195,7 @@ export default function SuperAdminDashboard() {
                 marginBottom: '8px',
               }}
             >
-              Centre de Contrôle Total
+              {t('dashboard.admin.title')}
             </Typography>
             <Typography
               sx={{
@@ -197,7 +204,7 @@ export default function SuperAdminDashboard() {
                 marginBottom: '16px',
               }}
             >
-              Super Admin Uniquement - Vue d'ensemble système
+              {t('dashboard.admin.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -206,7 +213,7 @@ export default function SuperAdminDashboard() {
             variant="outlined"
             size="small"
           >
-            Rafraîchir
+            {t('common.refresh')}
           </Button>
         </Box>
           
@@ -221,9 +228,9 @@ export default function SuperAdminDashboard() {
         >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box>
-              <strong>Statut Système: {systemStatus === 'operational' ? 'Opérationnel' : systemStatus === 'degraded' ? 'Dégradé' : 'Critique'}</strong>
+              <strong>{t('dashboard.admin.systemStatus')}: {t(`dashboard.admin.status.${systemStatus}`)}</strong>
               <Typography sx={{ fontSize: '12px', mt: 0.5 }}>
-                Tous les changements ici affectent l'ensemble de la plateforme
+                {t('dashboard.admin.affectsAll')}
               </Typography>
             </Box>
             <Chip 
@@ -238,9 +245,9 @@ export default function SuperAdminDashboard() {
         <Grid container spacing={2} sx={{ marginBottom: '32px' }}>
           <Grid item xs={12} sm={6} md={2.4}>
             <StatCard 
-              label="Total Utilisateurs" 
+              label={t('dashboard.admin.totalUsers')}
               value={stats.totalUsers}
-              subtitle="Utilisateurs actifs"
+              subtitle={t('dashboard.admin.activeUsers')}
               icon={<PeopleIcon />}
               color="#1976d2"
               trend={5.2}
@@ -248,9 +255,9 @@ export default function SuperAdminDashboard() {
           </Grid>
           <Grid item xs={12} sm={6} md={2.4}>
             <StatCard 
-              label="Appels Actifs" 
+              label={t('dashboard.admin.activeCalls')}
               value={stats.activeTenders}
-              subtitle="En cours"
+              subtitle={t('dashboard.admin.inProgress')}
               icon={<ArticleIcon />}
               color="#388e3c"
               trend={3.1}
@@ -258,9 +265,9 @@ export default function SuperAdminDashboard() {
           </Grid>
           <Grid item xs={12} sm={6} md={2.4}>
             <StatCard 
-              label="Santé Système" 
+              label={t('dashboard.admin.systemHealth')}
               value={`${stats.systemHealth}%`}
-              subtitle="État général"
+              subtitle={t('dashboard.admin.generalState')}
               icon={<TrendingUpIcon />}
               color={stats.systemHealth > 90 ? '#388e3c' : stats.systemHealth > 70 ? '#f57c00' : '#d32f2f'}
               trend={-0.8}
@@ -268,9 +275,9 @@ export default function SuperAdminDashboard() {
           </Grid>
           <Grid item xs={12} sm={6} md={2.4}>
             <StatCard 
-              label="Taux d'Erreur" 
+              label={t('dashboard.admin.errorRate')}
               value={`${stats.errorRate}%`}
-              subtitle="Dernière heure"
+              subtitle={t('dashboard.admin.lastHour')}
               icon={<ErrorIcon />}
               color={stats.errorRate < 1 ? '#388e3c' : stats.errorRate < 5 ? '#f57c00' : '#d32f2f'}
               trend={-0.3}
@@ -278,9 +285,9 @@ export default function SuperAdminDashboard() {
           </Grid>
           <Grid item xs={12} sm={6} md={2.4}>
             <StatCard 
-              label="Temps de Réponse" 
+              label={t('dashboard.admin.responseTime')}
               value={`${stats.responseTime}ms`}
-              subtitle="Moyenne"
+              subtitle={t('dashboard.admin.average')}
               icon={<StorageIcon />}
               color="#7b1fa2"
               trend={-2.1}
@@ -337,7 +344,7 @@ export default function SuperAdminDashboard() {
         <Card sx={{ mt: 3, border: '1px solid #e0e0e0' }}>
           <CardContent>
             <Typography sx={{ fontSize: '16px', fontWeight: 600, mb: 2 }}>
-              Liens d'Accès Rapide
+              {t('dashboard.admin.quickLinks')}
             </Typography>
             <List>
               <ListItem>
@@ -345,8 +352,8 @@ export default function SuperAdminDashboard() {
                   <PeopleIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Gestion des Utilisateurs"
-                  secondary="Voir et gérer tous les utilisateurs du système"
+                  primary={t('dashboard.admin.userManagement')}
+                  secondary={t('dashboard.admin.manageAllUsers')}
                 />
               </ListItem>
               <ListItem>
@@ -354,8 +361,8 @@ export default function SuperAdminDashboard() {
                   <SecurityIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Logs de Sécurité"
-                  secondary="Consulter les journaux d'audit et d'accès"
+                  primary={t('dashboard.admin.securityLogs')}
+                  secondary={t('dashboard.admin.viewAuditLogs')}
                 />
               </ListItem>
               <ListItem>
@@ -363,8 +370,8 @@ export default function SuperAdminDashboard() {
                   <AnalyticsIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Rapports Analytics"
-                  secondary="Analyser les tendances et les performances"
+                  primary={t('dashboard.admin.analyticsReports')}
+                  secondary={t('dashboard.admin.analyzePerformance')}
                 />
               </ListItem>
               <ListItem>
@@ -372,8 +379,8 @@ export default function SuperAdminDashboard() {
                   <SettingsIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Configuration Système"
-                  secondary="Paramètres avancés et maintenance"
+                  primary={t('dashboard.admin.systemSettings')}
+                  secondary={t('dashboard.admin.advancedMaintenance')}
                 />
               </ListItem>
             </List>
@@ -386,30 +393,30 @@ export default function SuperAdminDashboard() {
             <Card sx={{ border: '1px solid #e0e0e0' }}>
               <CardContent>
                 <Typography sx={{ fontSize: '14px', fontWeight: 600, mb: 2 }}>
-                  Ressources Système
+                  {t('dashboard.admin.systemResources')}
                 </Typography>
                 <List dense>
                   <ListItem>
                     <ListItemText 
-                      primary="Utilisation CPU"
+                      primary={t('dashboard.admin.cpuUsage')}
                       secondary="45.2%"
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText 
-                      primary="Mémoire"
+                      primary={t('dashboard.admin.memory')}
                       secondary="62.8% (5.2GB / 8GB)"
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText 
-                      primary="Stockage"
-                      secondary="78.4% utilisé"
+                      primary={t('dashboard.admin.storage')}
+                      secondary="78.4% {t('dashboard.admin.used')}"
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText 
-                      primary="Connexions BD"
+                      primary={t('dashboard.admin.dbConnections')}
                       secondary="8/20 actives"
                     />
                   </ListItem>
@@ -421,35 +428,35 @@ export default function SuperAdminDashboard() {
             <Card sx={{ border: '1px solid #e0e0e0' }}>
               <CardContent>
                 <Typography sx={{ fontSize: '14px', fontWeight: 600, mb: 2 }}>
-                  Statut des Services
+                  {t('dashboard.admin.servicesStatus')}
                 </Typography>
                 <List dense>
                   <ListItem>
                     <ListItemIcon><Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#4caf50' }} /></ListItemIcon>
                     <ListItemText 
-                      primary="API Server"
-                      secondary="Opérationnel"
+                      primary={t('dashboard.admin.apiServer')}
+                      secondary={t('dashboard.admin.operational')}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemIcon><Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#4caf50' }} /></ListItemIcon>
                     <ListItemText 
-                      primary="Base de Données"
-                      secondary="Opérationnel"
+                      primary={t('dashboard.admin.database')}
+                      secondary={t('dashboard.admin.operational')}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemIcon><Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#4caf50' }} /></ListItemIcon>
                     <ListItemText 
-                      primary="Cache Redis"
-                      secondary="Opérationnel"
+                      primary={t('dashboard.admin.cacheRedis')}
+                      secondary={t('dashboard.admin.operational')}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemIcon><Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#4caf50' }} /></ListItemIcon>
                     <ListItemText 
-                      primary="Email Service"
-                      secondary="Opérationnel"
+                      primary={t('dashboard.admin.emailService')}
+                      secondary={t('dashboard.admin.operational')}
                     />
                   </ListItem>
                 </List>
@@ -467,5 +474,14 @@ export default function SuperAdminDashboard() {
         />
       </Container>
     </Box>
+  );
+}
+
+// Wrap with Error Boundary
+export default function SuperAdminDashboard() {
+  return (
+    <EnhancedErrorBoundary>
+      <SuperAdminDashboardContent />
+    </EnhancedErrorBoundary>
   );
 }

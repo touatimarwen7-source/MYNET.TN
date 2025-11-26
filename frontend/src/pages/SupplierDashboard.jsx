@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import institutionalTheme from '../theme/theme';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -43,6 +44,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
 import { logger } from '../utils/logger';
+import EnhancedErrorBoundary from '../components/EnhancedErrorBoundary';
 
 /**
  * Snackbar component لعرض الإشعارات
@@ -60,9 +62,14 @@ const SnackbarComponent = ({ open, message, severity, onClose }) => (
   </Snackbar>
 );
 
-export default function SupplierDashboard() {
+/**
+ * Dashboard Content - Supplier Dashboard Implementation
+ */
+function SupplierDashboardContent() {
   const theme = institutionalTheme;
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  
   const [stats, setStats] = useState({
     activeOffers: 0,
     totalRevenue: 0,
@@ -76,8 +83,8 @@ export default function SupplierDashboard() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   useEffect(() => {
-    setPageTitle('Tableau de Bord Fournisseur');
-  }, []);
+    setPageTitle(t('dashboard.supplier.title'));
+  }, [t]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -108,8 +115,8 @@ export default function SupplierDashboard() {
         completedDeals: offers.filter(o => o.status === 'won').length,
       });
     } catch (error) {
-      logger.error('Erreur lors du chargement des données du tableau de bord fournisseur', error);
-      setSnackbar({ open: true, message: 'Erreur lors du chargement des données', severity: 'error' });
+      logger.error(t('dashboard.supplier.loadError'), error);
+      setSnackbar({ open: true, message: t('dashboard.errors.loadingFailed'), severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -157,10 +164,10 @@ export default function SupplierDashboard() {
                 marginBottom: '8px',
               }}
             >
-              Tableau de Bord Fournisseur
+              {t('dashboard.supplier.title')}
             </Typography>
             <Typography sx={{ fontSize: '14px', color: '#616161', marginBottom: '16px' }}>
-              Gérez vos offres et suivez votre performance
+              {t('dashboard.supplier.subtitle')}
             </Typography>
           </Box>
           <Button
@@ -169,7 +176,7 @@ export default function SupplierDashboard() {
             variant="outlined"
             size="small"
           >
-            Actualiser
+            {t('common.refresh')}
           </Button>
         </Box>
 
@@ -177,36 +184,36 @@ export default function SupplierDashboard() {
         <Grid container spacing={2} sx={{ marginBottom: '32px' }}>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="Offres Actives" 
+              label={t('dashboard.supplier.activeOffers')}
               value={stats.activeOffers}
-              subtitle="En attente d'évaluation"
+              subtitle={t('dashboard.supplier.awaitingEval')}
               icon={<ShoppingCartIcon />}
               color="#1976d2"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="Revenus Gagnés" 
+              label={t('dashboard.supplier.earnedRevenue')}
               value={stats.totalRevenue}
-              subtitle="Du total remporté"
+              subtitle={t('dashboard.supplier.totalWon')}
               icon={<EarningsIcon />}
               color="#388e3c"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="Taux de Victoire" 
+              label={t('dashboard.supplier.winRate')}
               value={`${stats.winRate}%`}
-              subtitle="Offres gagnées"
+              subtitle={t('dashboard.supplier.offersWon')}
               icon={<TrendingUpIcon />}
               color="#f57c00"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <StatCard 
-              label="Contrats Complétés" 
+              label={t('dashboard.supplier.completed')}
               value={stats.completedDeals}
-              subtitle="Marchés remportés"
+              subtitle={t('dashboard.supplier.marketsWon')}
               icon={<VerifiedIcon />}
               color="#7b1fa2"
             />
@@ -228,8 +235,8 @@ export default function SupplierDashboard() {
               }
             }}
           >
-            <Tab label="Appels d'offres" icon={<AssignmentIcon />} iconPosition="start" />
-            <Tab label="Mes Offres" icon={<ShoppingCartIcon />} iconPosition="start" />
+            <Tab label={t('dashboard.supplier.tenders')} icon={<AssignmentIcon />} iconPosition="start" />
+            <Tab label={t('dashboard.supplier.myOffers')} icon={<ShoppingCartIcon />} iconPosition="start" />
           </Tabs>
 
           {/* Tab Content */}
@@ -237,19 +244,19 @@ export default function SupplierDashboard() {
             {tabValue === 0 && (
               <Box>
                 <Typography sx={{ fontSize: '16px', fontWeight: 600, mb: 2 }}>
-                  Appels d'Offres Actifs ({recentTenders.length})
+                  {t('dashboard.supplier.activeTenders')} ({recentTenders.length})
                 </Typography>
                 {recentTenders.length === 0 ? (
-                  <Alert severity="info">Aucun appel d'offre disponible</Alert>
+                  <Alert severity="info">{t('dashboard.supplier.noTenders')}</Alert>
                 ) : (
                   <Box sx={{ overflowX: 'auto' }}>
                     <Table size="small">
                       <TableHead>
                         <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Titre</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Budget</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Deadline</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Actions</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.title')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.budget')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.deadline')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.actions')}</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -272,7 +279,7 @@ export default function SupplierDashboard() {
                                 onClick={() => navigate(`/procurement/tender/${tender.id}`)}
                                 sx={{ textTransform: 'none', fontSize: '12px' }}
                               >
-                                Détails
+                                {t('common.details')}
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -288,7 +295,7 @@ export default function SupplierDashboard() {
               <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography sx={{ fontSize: '16px', fontWeight: 600 }}>
-                    Mes Offres ({myOffers.length})
+                    {t('dashboard.supplier.myOffers')} ({myOffers.length})
                   </Typography>
                   <Button 
                     variant="contained" 
@@ -296,20 +303,20 @@ export default function SupplierDashboard() {
                     onClick={() => navigate('/procurement/create-offer')}
                     sx={{ textTransform: 'none' }}
                   >
-                    Nouvelle Offre
+                    {t('dashboard.supplier.newOffer')}
                   </Button>
                 </Box>
                 {myOffers.length === 0 ? (
-                  <Alert severity="info">Vous n'avez soumis aucune offre</Alert>
+                  <Alert severity="info">{t('dashboard.supplier.noOffers')}</Alert>
                 ) : (
                   <Box sx={{ overflowX: 'auto' }}>
                     <Table size="small">
                       <TableHead>
                         <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Appel d'Offre</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Montant</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Statut</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>Actions</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('dashboard.supplier.tender')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.amount')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.status')}</TableCell>
+                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.actions')}</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -337,7 +344,7 @@ export default function SupplierDashboard() {
                                 onClick={() => navigate(`/procurement/offer/${offer.id}`)}
                                 sx={{ textTransform: 'none', fontSize: '12px' }}
                               >
-                                Voir
+                                {t('common.view')}
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -355,7 +362,7 @@ export default function SupplierDashboard() {
         <Card sx={{ mt: 3, border: '1px solid #e0e0e0' }}>
           <CardContent>
             <Typography sx={{ fontSize: '16px', fontWeight: 600, mb: 2 }}>
-              Actions Rapides
+              {t('dashboard.supplier.quickActions')}
             </Typography>
             <List>
               <ListItem 
@@ -367,8 +374,8 @@ export default function SupplierDashboard() {
                   <AssignmentIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Parcourir les Appels d'Offres"
-                  secondary="Trouvez de nouvelles opportunités"
+                  primary={t('dashboard.supplier.browseTenders')}
+                  secondary={t('dashboard.supplier.findOpportunities')}
                 />
               </ListItem>
               <ListItem 
@@ -380,8 +387,8 @@ export default function SupplierDashboard() {
                   <VerifiedIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Profil de l'Entreprise"
-                  secondary="Mettez à jour vos informations"
+                  primary={t('dashboard.supplier.companyProfile')}
+                  secondary={t('dashboard.supplier.updateInfo')}
                 />
               </ListItem>
               <ListItem 
@@ -393,8 +400,8 @@ export default function SupplierDashboard() {
                   <ShoppingCartIcon />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Messagerie"
-                  secondary="Communiquez avec les acheteurs"
+                  primary={t('dashboard.supplier.messaging')}
+                  secondary={t('dashboard.supplier.communicateBuyers')}
                 />
               </ListItem>
             </List>
@@ -410,5 +417,14 @@ export default function SupplierDashboard() {
         />
       </Container>
     </Box>
+  );
+}
+
+// Wrap with Error Boundary
+export default function SupplierDashboard() {
+  return (
+    <EnhancedErrorBoundary>
+      <SupplierDashboardContent />
+    </EnhancedErrorBoundary>
   );
 }
