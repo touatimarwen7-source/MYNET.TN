@@ -37,6 +37,8 @@ import {
   DialogContent,
   DialogActions,
   Snackbar,
+  TablePagination,
+  Skeleton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -108,6 +110,9 @@ function BuyerDashboardContent() {
   const [selectedTender, setSelectedTender] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [confirmDialog, setConfirmDialog] = useState({ open: false, action: null, tenderId: null });
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     setPageTitle(t('dashboard.buyer.title'));
@@ -155,6 +160,7 @@ function BuyerDashboardContent() {
       setRecentOffers(tenders.slice(0, 5));
     } catch (error) {
       logger.error('Erreur lors du chargement des données du tableau de bord', error);
+      setError(error.message);
       setSnackbar({ open: true, message: t('dashboard.errors.loadingFailed'), severity: 'error' });
     } finally {
       setLoading(false);
@@ -324,58 +330,81 @@ function BuyerDashboardContent() {
                 {myTenders.length === 0 ? (
                   <Alert severity="info">{t('dashboard.buyer.noTenders')}</Alert>
                 ) : (
-                  <Box sx={{ overflowX: 'auto' }}>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.title')}</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.budget')}</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.status')}</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.offers')}</TableCell>
-                          <TableCell sx={{ fontWeight: 600, fontSize: '12px' }}>{t('common.actions')}</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {myTenders.map((tender) => (
-                          <TableRow key={tender.id} sx={{ '&:hover': { backgroundColor: '#fafafa' } }}>
-                            <TableCell sx={{ fontSize: '13px' }}>
-                              <Typography sx={{ fontWeight: 500 }}>{tender.title}</Typography>
-                            </TableCell>
-                            <TableCell sx={{ fontSize: '13px' }}>
-                              {tender.budget_max?.toLocaleString('fr-TN', { style: 'currency', currency: 'TND' })}
-                            </TableCell>
-                            <TableCell sx={{ fontSize: '13px' }}>
-                              <Chip 
-                                label={tender.status} 
-                                size="small"
-                                color={tender.status === 'open' ? 'warning' : 'default'}
-                                variant="outlined"
-                              />
-                            </TableCell>
-                            <TableCell sx={{ fontSize: '13px' }}>
-                              <Chip 
-                                label={`${tender.offers_count || 0}`}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                size="small"
-                                variant="outlined"
-                                startIcon={<VisibilityIcon />}
-                                onClick={() => {
-                                  setSelectedTender(tender);
-                                  setDetailsOpen(true);
-                                }}
-                                sx={{ textTransform: 'none', fontSize: '12px' }}
-                              >
-                                {t('common.details')}
-                              </Button>
-                            </TableCell>
+                  <Box>
+                    {error && (
+                      <Alert severity="error" sx={{ mb: 2 }} role="alert">
+                        {error}
+                      </Alert>
+                    )}
+                    <Box sx={{ overflowX: 'auto' }}>
+                      <Table size="small" aria-label={t('dashboard.buyer.myTenders')}>
+                        <TableHead>
+                          <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                            <TableCell sx={{ fontWeight: 600, fontSize: '12px' }} scope="col">{t('common.title')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600, fontSize: '12px' }} scope="col">{t('common.budget')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600, fontSize: '12px' }} scope="col">{t('common.status')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600, fontSize: '12px' }} scope="col">{t('common.offers')}</TableCell>
+                            <TableCell sx={{ fontWeight: 600, fontSize: '12px' }} scope="col">{t('common.actions')}</TableCell>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHead>
+                        <TableBody>
+                          {myTenders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((tender) => (
+                            <TableRow key={tender.id} sx={{ '&:hover': { backgroundColor: '#fafafa' } }}>
+                              <TableCell sx={{ fontSize: '13px' }}>
+                                <Typography sx={{ fontWeight: 500 }}>{tender.title}</Typography>
+                              </TableCell>
+                              <TableCell sx={{ fontSize: '13px' }}>
+                                {tender.budget_max?.toLocaleString('fr-TN', { style: 'currency', currency: 'TND' })}
+                              </TableCell>
+                              <TableCell sx={{ fontSize: '13px' }}>
+                                <Chip 
+                                  label={tender.status} 
+                                  size="small"
+                                  color={tender.status === 'open' ? 'warning' : 'default'}
+                                  variant="outlined"
+                                  aria-label={`Statut: ${tender.status}`}
+                                />
+                              </TableCell>
+                              <TableCell sx={{ fontSize: '13px' }}>
+                                <Chip 
+                                  label={`${tender.offers_count || 0}`}
+                                  size="small"
+                                  aria-label={`${tender.offers_count || 0} offres`}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  size="small"
+                                  variant="outlined"
+                                  startIcon={<VisibilityIcon />}
+                                  onClick={() => {
+                                    setSelectedTender(tender);
+                                    setDetailsOpen(true);
+                                  }}
+                                  sx={{ textTransform: 'none', fontSize: '12px' }}
+                                  aria-label={`Voir détails de ${tender.title}`}
+                                >
+                                  {t('common.details')}
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </Box>
+                    <TablePagination
+                      rowsPerPageOptions={[5, 10, 25]}
+                      component="div"
+                      count={myTenders.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={(event, newPage) => setPage(newPage)}
+                      onRowsPerPageChange={(event) => {
+                        setRowsPerPage(parseInt(event.target.value, 10));
+                        setPage(0);
+                      }}
+                      labelRowsPerPage={t('common.rowsPerPage') || 'Lignes par page:'}
+                    />
                   </Box>
                 )}
               </Box>
