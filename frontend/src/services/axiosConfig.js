@@ -135,7 +135,7 @@ axiosInstance.interceptors.request.use(
  * - Handle 401 errors
  * - Automatically refresh token
  * - Retry failed requests
- * - Clear tokens on 403 (forbidden)
+ * - Normalize error responses to always include string error message
  */
 axiosInstance.interceptors.response.use(
   (response) => {
@@ -148,8 +148,19 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
+    // Normalize error response to always have a string error message
+    if (error.response?.data) {
+      if (typeof error.response.data !== 'object' || error.response.data === null) {
+        error.response.data = { error: String(error.response.data) };
+      } else if (!error.response.data.error || typeof error.response.data.error !== 'string') {
+        error.response.data.error = error.response.data.message || 
+                                     error.response.data.msg || 
+                                     'Une erreur serveur s\'est produite';
+      }
+    }
+    
     // Try to use cache on network error for GET requests
-    if (!error.response && originalRequest.method === 'get') {
+    if (!error.response && originalRequest?.method === 'get') {
       const cached = getCachedResponse(originalRequest);
       if (cached) {
         return Promise.resolve(cached);
@@ -157,7 +168,7 @@ axiosInstance.interceptors.response.use(
     }
 
     // Handle 401 Unauthorized
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest?._retry) {
       originalRequest._retry = true;
 
       if (isRefreshing) {
@@ -190,8 +201,7 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // Handle 403 Forbidden - Only clear tokens if it's truly a permission issue
-    // Don't clear on resource-specific 403 errors (e.g., user doesn't have permission to that specific resource)
+    // Handle 403 Forbidden
     if (error.response?.status === 403) {
       // Only log 403, don't immediately logout
       // Let components handle the 403 appropriately without clearing auth

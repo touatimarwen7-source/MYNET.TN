@@ -112,13 +112,16 @@ class UserService {
                 return {
                     user: userWithoutPassword,
                     accessToken,
-                    refreshToken
+                    refreshToken,
+                    expiresIn: 900
                 };
             } finally {
                 client.release();
             }
         } catch (error) {
-            throw new Error(`Authentication failed: ${error.message}`);
+            const errorMsg = error?.message || 'Authentication failed';
+            logger.error('Authentication error', { email, error: errorMsg });
+            throw new Error(errorMsg);
         }
     }
 

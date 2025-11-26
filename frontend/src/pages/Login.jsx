@@ -69,7 +69,7 @@ export default function Login() {
         
         navigate(redirectPath, { replace: true });
       } catch (err) {
-        const errorMsg = err.response?.data?.error || 'Erreur de connexion. Vérifiez vos identifiants.';
+        const errorMsg = String(err.response?.data?.error || 'Erreur de connexion. Vérifiez vos identifiants.');
         setApiError(errorMsg);
         addToast(errorMsg, 'error', 3000);
       }
