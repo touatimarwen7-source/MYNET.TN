@@ -1,3 +1,10 @@
+/**
+ * لوحة تحكم المزود - Supplier Dashboard
+ * عرض الأطراف المتاحة والعروض المقدمة والإحصائيات
+ * @component
+ * @returns {JSX.Element} عنصر لوحة تحكم المزود
+ */
+
 import { useState, useEffect } from 'react';
 import institutionalTheme from '../theme/theme';
 import { useNavigate } from 'react-router-dom';
@@ -14,9 +21,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Paper,
   CircularProgress,
-  LinearProgress,
   Chip,
   Tab,
   Tabs,
@@ -25,6 +30,7 @@ import {
   ListItemIcon,
   ListItemText,
   Alert,
+  Snackbar,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -33,8 +39,26 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import EarningsIcon from '@mui/icons-material/AttachMoney';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
+import { logger } from '../utils/logger';
+
+/**
+ * Snackbar component لعرض الإشعارات
+ */
+const SnackbarComponent = ({ open, message, severity, onClose }) => (
+  <Snackbar 
+    open={open} 
+    autoHideDuration={6000} 
+    onClose={onClose}
+    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+  >
+    <Alert onClose={onClose} severity={severity} sx={{ width: '100%' }}>
+      {message}
+    </Alert>
+  </Snackbar>
+);
 
 export default function SupplierDashboard() {
   const theme = institutionalTheme;
@@ -49,6 +73,7 @@ export default function SupplierDashboard() {
   const [recentTenders, setRecentTenders] = useState([]);
   const [myOffers, setMyOffers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   useEffect(() => {
     setPageTitle('Tableau de Bord Fournisseur');
@@ -83,7 +108,8 @@ export default function SupplierDashboard() {
         completedDeals: offers.filter(o => o.status === 'won').length,
       });
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      logger.error('Erreur lors du chargement des données du tableau de bord fournisseur', error);
+      setSnackbar({ open: true, message: 'Erreur lors du chargement des données', severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -120,21 +146,31 @@ export default function SupplierDashboard() {
     <Box sx={{ backgroundColor: '#fafafa', paddingY: '40px', minHeight: '100vh' }}>
       <Container maxWidth="lg">
         {/* Header */}
-        <Box sx={{ marginBottom: '32px' }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontSize: '32px',
-              fontWeight: 600,
-              color: theme.palette.primary.main,
-              marginBottom: '8px',
-            }}
+        <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box>
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: '32px',
+                fontWeight: 600,
+                color: theme.palette.primary.main,
+                marginBottom: '8px',
+              }}
+            >
+              Tableau de Bord Fournisseur
+            </Typography>
+            <Typography sx={{ fontSize: '14px', color: '#616161', marginBottom: '16px' }}>
+              Gérez vos offres et suivez votre performance
+            </Typography>
+          </Box>
+          <Button
+            startIcon={<RefreshIcon />}
+            onClick={fetchDashboardData}
+            variant="outlined"
+            size="small"
           >
-            Tableau de Bord Fournisseur
-          </Typography>
-          <Typography sx={{ fontSize: '14px', color: '#616161', marginBottom: '16px' }}>
-            Gérez vos offres et suivez votre performance
-          </Typography>
+            Actualiser
+          </Button>
         </Box>
 
         {/* Stats Grid */}
@@ -364,6 +400,14 @@ export default function SupplierDashboard() {
             </List>
           </CardContent>
         </Card>
+
+        {/* Snackbar */}
+        <SnackbarComponent
+          open={snackbar.open}
+          message={snackbar.message}
+          severity={snackbar.severity}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        />
       </Container>
     </Box>
   );

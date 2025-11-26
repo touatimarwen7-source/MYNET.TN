@@ -1,3 +1,10 @@
+/**
+ * لوحة تحكم المشتري - Buyer Dashboard
+ * عرض إحصائيات الأطراف والعروض والتحليلات المالية
+ * @component
+ * @returns {JSX.Element} عنصر لوحة تحكم المشتري
+ */
+
 import { useState, useEffect } from 'react';
 import institutionalTheme from '../theme/theme';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +21,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Paper,
   CircularProgress,
   LinearProgress,
   Chip,
@@ -29,6 +35,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Snackbar,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -38,8 +45,44 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { procurementAPI } from '../api';
 import { setPageTitle } from '../utils/pageTitle';
+import { logger } from '../utils/logger';
+
+/**
+ * Snackbar component لعرض الإشعارات
+ */
+const SnackbarComponent = ({ open, message, severity, onClose }) => (
+  <Snackbar 
+    open={open} 
+    autoHideDuration={6000} 
+    onClose={onClose}
+    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+  >
+    <Alert onClose={onClose} severity={severity} sx={{ width: '100%' }}>
+      {message}
+    </Alert>
+  </Snackbar>
+);
+
+/**
+ * Confirmation Dialog component
+ */
+const ConfirmationDialog = ({ open, title, message, onConfirm, onCancel }) => (
+  <Dialog open={open} onClose={onCancel} maxWidth="sm" fullWidth>
+    <DialogTitle>{title}</DialogTitle>
+    <DialogContent>
+      <Typography sx={{ mt: 2 }}>{message}</Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onCancel}>Annuler</Button>
+      <Button onClick={onConfirm} variant="contained" color="error">
+        Confirmer
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
 
 export default function BuyerDashboard() {
   const theme = institutionalTheme;
@@ -56,6 +99,8 @@ export default function BuyerDashboard() {
   const [loading, setLoading] = useState(true);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedTender, setSelectedTender] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, action: null, tenderId: null });
 
   useEffect(() => {
     setPageTitle('Tableau de Bord Acheteur');
@@ -67,12 +112,10 @@ export default function BuyerDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      // Fetch my tenders
       const tendersRes = await procurementAPI.getMyTenders();
       const tenders = tendersRes.data?.tenders || [];
       setMyTenders(tenders.slice(0, 8));
 
-      // Fetch offers for my tenders
       let totalOffers = 0;
       let totalBudget = 0;
       let totalSpent = 0;
@@ -86,8 +129,8 @@ export default function BuyerDashboard() {
           totalBudget += tender.budget_max || 0;
           totalSpent += offers.reduce((sum, o) => sum + (o.financial_proposal?.total || 0), 0);
           if (tender.status === 'open') pendingCount += 1;
-        } catch {
-          // Skip if error
+        } catch (error) {
+          logger.warn('Erreur lors du chargement des offres pour le tender', { tenderId: tender.id });
         }
       }
 
@@ -102,10 +145,10 @@ export default function BuyerDashboard() {
         pendingDecisions: pendingCount,
       });
 
-      // Fetch recent offers
       setRecentOffers(tenders.slice(0, 5));
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      logger.error('Erreur lors du chargement des données du tableau de bord', error);
+      setSnackbar({ open: true, message: 'Erreur lors du chargement des données', severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -114,22 +157,22 @@ export default function BuyerDashboard() {
   const handlePublishTender = async (tenderId) => {
     try {
       await procurementAPI.publishTender(tenderId);
-      alert('Appel d\'offre publié avec succès!');
+      setSnackbar({ open: true, message: 'Appel d\'offre publié avec succès!', severity: 'success' });
       fetchDashboardData();
     } catch (error) {
-      alert('Erreur lors de la publication');
+      logger.error('Erreur lors de la publication du tender', error);
+      setSnackbar({ open: true, message: 'Erreur lors de la publication', severity: 'error' });
     }
   };
 
   const handleCloseTender = async (tenderId) => {
-    if (window.confirm('Êtes-vous sûr de fermer cet appel d\'offre?')) {
-      try {
-        await procurementAPI.closeTender(tenderId);
-        alert('Appel d\'offre fermé avec succès!');
-        fetchDashboardData();
-      } catch (error) {
-        alert('Erreur lors de la fermeture');
-      }
+    try {
+      await procurementAPI.closeTender(tenderId);
+      setSnackbar({ open: true, message: 'Appel d\'offre fermé avec succès!', severity: 'success' });
+      fetchDashboardData();
+    } catch (error) {
+      logger.error('Erreur lors de la fermeture du tender', error);
+      setSnackbar({ open: true, message: 'Erreur lors de la fermeture', severity: 'error' });
     }
   };
 
@@ -167,21 +210,31 @@ export default function BuyerDashboard() {
     <Box sx={{ backgroundColor: '#fafafa', paddingY: '40px', minHeight: '100vh' }}>
       <Container maxWidth="lg">
         {/* Header */}
-        <Box sx={{ marginBottom: '32px' }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontSize: '32px',
-              fontWeight: 600,
-              color: theme.palette.primary.main,
-              marginBottom: '8px',
-            }}
+        <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box>
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: '32px',
+                fontWeight: 600,
+                color: theme.palette.primary.main,
+                marginBottom: '8px',
+              }}
+            >
+              Tableau de Bord Acheteur
+            </Typography>
+            <Typography sx={{ fontSize: '14px', color: '#616161', marginBottom: '16px' }}>
+              Gérez vos appels d'offres et analysez vos offres reçues
+            </Typography>
+          </Box>
+          <Button
+            startIcon={<RefreshIcon />}
+            onClick={fetchDashboardData}
+            variant="outlined"
+            size="small"
           >
-            Tableau de Bord Acheteur
-          </Typography>
-          <Typography sx={{ fontSize: '14px', color: '#616161', marginBottom: '16px' }}>
-            Gérez vos appels d'offres et analysez vos offres reçues
-          </Typography>
+            Actualiser
+          </Button>
         </Box>
 
         {/* Stats Grid */}
@@ -507,8 +560,11 @@ export default function BuyerDashboard() {
                 variant="contained" 
                 color="error"
                 onClick={() => {
-                  handleCloseTender(selectedTender.id);
-                  setDetailsOpen(false);
+                  setConfirmDialog({ 
+                    open: true, 
+                    action: 'close', 
+                    tenderId: selectedTender.id 
+                  });
                 }}
               >
                 Fermer
@@ -516,6 +572,29 @@ export default function BuyerDashboard() {
             )}
           </DialogActions>
         </Dialog>
+
+        {/* Confirmation Dialogs */}
+        <ConfirmationDialog
+          open={confirmDialog.open}
+          title="Confirmer la Fermeture"
+          message="Êtes-vous sûr de vouloir fermer cet appel d'offre? Cette action est irréversible."
+          onConfirm={() => {
+            if (confirmDialog.action === 'close') {
+              handleCloseTender(confirmDialog.tenderId);
+              setDetailsOpen(false);
+            }
+            setConfirmDialog({ open: false, action: null, tenderId: null });
+          }}
+          onCancel={() => setConfirmDialog({ open: false, action: null, tenderId: null })}
+        />
+
+        {/* Snackbar */}
+        <SnackbarComponent
+          open={snackbar.open}
+          message={snackbar.message}
+          severity={snackbar.severity}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        />
       </Container>
     </Box>
   );

@@ -1,3 +1,10 @@
+/**
+ * مركز التحكم الكامل - Super Admin Dashboard
+ * إدارة شاملة للنظام والمستخدمين والخدمات
+ * @component
+ * @returns {JSX.Element} عنصر لوحة تحكم سوبر أدمين
+ */
+
 import { useState, useEffect } from 'react';
 import institutionalTheme from '../theme/theme';
 import {
@@ -17,8 +24,7 @@ import {
   CircularProgress,
   Chip,
   Button,
-  LineChart,
-  BarChart,
+  Snackbar,
 } from '@mui/material';
 import SecurityIcon from '@mui/icons-material/Security';
 import ArticleIcon from '@mui/icons-material/Article';
@@ -29,6 +35,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import StorageIcon from '@mui/icons-material/Storage';
 import ErrorIcon from '@mui/icons-material/Error';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import UserRoleManagement from '../components/Admin/UserRoleManagement';
 import ContentManager from '../components/Admin/ContentManager';
 import ServicesManager from '../components/Admin/ServicesManager';
@@ -36,6 +43,23 @@ import SystemConfig from '../components/Admin/SystemConfig';
 import AdminAnalytics from '../components/Admin/AdminAnalytics';
 import { setPageTitle } from '../utils/pageTitle';
 import { adminAPI } from '../api';
+import { logger } from '../utils/logger';
+
+/**
+ * Snackbar component لعرض الإشعارات
+ */
+const SnackbarComponent = ({ open, message, severity, onClose }) => (
+  <Snackbar 
+    open={open} 
+    autoHideDuration={6000} 
+    onClose={onClose}
+    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+  >
+    <Alert onClose={onClose} severity={severity} sx={{ width: '100%' }}>
+      {message}
+    </Alert>
+  </Snackbar>
+);
 
 export default function SuperAdminDashboard() {
   const theme = institutionalTheme;
@@ -43,12 +67,13 @@ export default function SuperAdminDashboard() {
   const [stats, setStats] = useState({
     totalUsers: 0,
     activeTenders: 0,
-    systemHealth: 0,
-    errorRate: 0,
-    responseTime: 0,
+    systemHealth: 95,
+    errorRate: 0.2,
+    responseTime: 145,
   });
   const [loading, setLoading] = useState(true);
   const [systemStatus, setSystemStatus] = useState('operational');
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   useEffect(() => {
     setPageTitle('Centre de Contrôle Total - Super Admin');
@@ -72,8 +97,10 @@ export default function SuperAdminDashboard() {
       });
 
       setSystemStatus(data.system_health > 90 ? 'operational' : data.system_health > 70 ? 'degraded' : 'critical');
+      logger.info('Statistiques du système chargées avec succès');
     } catch (error) {
-      console.error('Error fetching system stats:', error);
+      logger.error('Erreur lors du chargement des statistiques du système', error);
+      setSnackbar({ open: true, message: 'Erreur lors du chargement des statistiques', severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -150,52 +177,62 @@ export default function SuperAdminDashboard() {
     <Box sx={{ backgroundColor: theme.palette.background.default, paddingY: '40px', minHeight: '100vh' }}>
       <Container maxWidth="lg">
         {/* Header */}
-        <Box sx={{ marginBottom: '32px' }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontSize: '32px',
-              fontWeight: 600,
-              color: theme.palette.primary.main,
-              marginBottom: '8px',
-            }}
+        <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box>
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: '32px',
+                fontWeight: 600,
+                color: theme.palette.primary.main,
+                marginBottom: '8px',
+              }}
+            >
+              Centre de Contrôle Total
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: '14px',
+                color: '#616161',
+                marginBottom: '16px',
+              }}
+            >
+              Super Admin Uniquement - Vue d'ensemble système
+            </Typography>
+          </Box>
+          <Button
+            startIcon={<RefreshIcon />}
+            onClick={fetchSystemStats}
+            variant="outlined"
+            size="small"
           >
-            Centre de Contrôle Total
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: '14px',
-              color: '#616161',
-              marginBottom: '16px',
-            }}
-          >
-            Super Admin Uniquement - Vue d'ensemble système
-          </Typography>
-          
-          <Alert 
-            severity={systemStatus === 'operational' ? 'success' : systemStatus === 'degraded' ? 'warning' : 'error'}
-            sx={{ 
-              marginBottom: '24px',
-              backgroundColor: systemStatus === 'operational' ? '#e8f5e9' : systemStatus === 'degraded' ? '#FFF3E0' : '#ffebee',
-              borderColor: systemStatus === 'operational' ? '#4caf50' : systemStatus === 'degraded' ? '#FFB74D' : '#f44336',
-              color: systemStatus === 'operational' ? '#1b5e20' : systemStatus === 'degraded' ? '#E65100' : '#c62828'
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box>
-                <strong>Statut Système: {systemStatus === 'operational' ? 'Opérationnel' : systemStatus === 'degraded' ? 'Dégradé' : 'Critique'}</strong>
-                <Typography sx={{ fontSize: '12px', mt: 0.5 }}>
-                  Tous les changements ici affectent l'ensemble de la plateforme
-                </Typography>
-              </Box>
-              <Chip 
-                label={systemStatus} 
-                color={systemStatus === 'operational' ? 'success' : systemStatus === 'degraded' ? 'warning' : 'error'}
-                variant="filled"
-              />
-            </Box>
-          </Alert>
+            Rafraîchir
+          </Button>
         </Box>
+          
+        <Alert 
+          severity={systemStatus === 'operational' ? 'success' : systemStatus === 'degraded' ? 'warning' : 'error'}
+          sx={{ 
+            marginBottom: '24px',
+            backgroundColor: systemStatus === 'operational' ? '#e8f5e9' : systemStatus === 'degraded' ? '#FFF3E0' : '#ffebee',
+            borderColor: systemStatus === 'operational' ? '#4caf50' : systemStatus === 'degraded' ? '#FFB74D' : '#f44336',
+            color: systemStatus === 'operational' ? '#1b5e20' : systemStatus === 'degraded' ? '#E65100' : '#c62828'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box>
+              <strong>Statut Système: {systemStatus === 'operational' ? 'Opérationnel' : systemStatus === 'degraded' ? 'Dégradé' : 'Critique'}</strong>
+              <Typography sx={{ fontSize: '12px', mt: 0.5 }}>
+                Tous les changements ici affectent l'ensemble de la plateforme
+              </Typography>
+            </Box>
+            <Chip 
+              label={systemStatus} 
+              color={systemStatus === 'operational' ? 'success' : systemStatus === 'degraded' ? 'warning' : 'error'}
+              variant="filled"
+            />
+          </Box>
+        </Alert>
 
         {/* System Stats Grid */}
         <Grid container spacing={2} sx={{ marginBottom: '32px' }}>
@@ -420,6 +457,14 @@ export default function SuperAdminDashboard() {
             </Card>
           </Grid>
         </Grid>
+
+        {/* Snackbar */}
+        <SnackbarComponent
+          open={snackbar.open}
+          message={snackbar.message}
+          severity={snackbar.severity}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        />
       </Container>
     </Box>
   );
