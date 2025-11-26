@@ -17,6 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_tenders_deadline ON tenders(deadline DESC);
 CREATE INDEX IF NOT EXISTS idx_tenders_created_at ON tenders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_tenders_is_public ON tenders(is_public);
 CREATE INDEX IF NOT EXISTS idx_tenders_category ON tenders(category);
+CREATE INDEX IF NOT EXISTS idx_tenders_is_deleted ON tenders(is_deleted);
 
 -- ============ USERS TABLE INDEXES ============
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -39,14 +40,34 @@ CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id);
 CREATE INDEX IF NOT EXISTS idx_messages_recipient_id ON messages(recipient_id);
 CREATE INDEX IF NOT EXISTS idx_messages_entity ON messages(entity_type, entity_id);
 
--- ============ COMPOSITE INDEXES (Most Important) ============
+-- ============ ADDENDA & INQUIRIES INDEXES ============
+CREATE INDEX IF NOT EXISTS idx_addenda_tender_id ON addenda(tender_id);
+CREATE INDEX IF NOT EXISTS idx_addenda_published_at ON addenda(published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_inquiries_tender_id ON tender_inquiries(tender_id);
+CREATE INDEX IF NOT EXISTS idx_inquiries_supplier_id ON tender_inquiries(supplier_id);
+CREATE INDEX IF NOT EXISTS idx_inquiries_status ON tender_inquiries(status);
+
+-- ============ AUDIT & REVIEWS INDEXES ============
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_reviews_supplier_id ON reviews(supplier_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_rating ON reviews(rating);
+
+-- ============ COMPOSITE INDEXES (Most Important for N+1 prevention) ============
 CREATE INDEX IF NOT EXISTS idx_offers_tender_status ON offers(tender_id, status);
 CREATE INDEX IF NOT EXISTS idx_tenders_buyer_status ON tenders(buyer_id, status);
 CREATE INDEX IF NOT EXISTS idx_offers_supplier_status ON offers(supplier_id, status);
+CREATE INDEX IF NOT EXISTS idx_offers_tender_deleted ON offers(tender_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_tenders_buyer_deleted ON tenders(buyer_id, is_deleted);
+
+-- ============ SOFT DELETE OPTIMIZATION ============
+CREATE INDEX IF NOT EXISTS idx_tenders_deleted_filter ON tenders(is_deleted, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_offers_deleted_filter ON offers(is_deleted, submitted_at DESC);
 
 -- Check index creation
 SELECT 
-  schemaname, tablename, indexname
-FROM pg_indexes 
+  schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch
+FROM pg_stat_user_indexes 
 WHERE schemaname = 'public'
-ORDER BY tablename, indexname;
+ORDER BY idx_scan DESC, tablename, indexname;
