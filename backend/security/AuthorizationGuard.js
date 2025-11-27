@@ -14,7 +14,12 @@ class AuthorizationGuard {
 
         try {
             const decoded = KeyManagementService.verifyAccessToken(token);
-            req.user = decoded;
+            // Ensure userId is always available (handle both 'id' and 'userId' fields)
+            req.user = {
+                ...decoded,
+                id: decoded.id || decoded.userId,
+                userId: decoded.userId || decoded.id
+            };
             next();
         } catch (error) {
             return res.status(403).json({ 

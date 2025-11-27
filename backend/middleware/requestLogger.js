@@ -12,8 +12,13 @@ const requestLogger = (req, res, next) => {
     id: requestId,
     method: req.method,
     path: req.path,
+    query: Object.keys(req.query).length > 0 ? req.query : undefined,
+    params: Object.keys(req.params).length > 0 ? req.params : undefined,
+    ip: req.ip || req.connection.remoteAddress,
+    userAgent: req.get('user-agent'),
+    userId: req.user?.id || req.user?.userId || undefined,
     timestamp: new Date().toISOString(),
-    ip: req.ip || req.connection.remoteAddress
+    body: req.body ? Object.keys(req.body) : undefined
   };
 
   // Track response
@@ -22,13 +27,9 @@ const requestLogger = (req, res, next) => {
     const duration = Date.now() - start;
     
     logData.statusCode = res.statusCode;
-    logData.duration = duration + 'ms';
+    logData.responseTime = duration + 'ms';
     logData.cached = res.getHeader('X-Cache') || 'N/A';
-
-    // Only log errors and slow requests
-    if (res.statusCode >= 400 || duration > 1000) {
-      // Request loggedId}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
-    }
+    logData.isError = res.statusCode >= 400;
 
     return originalSend.call(this, data);
   };
