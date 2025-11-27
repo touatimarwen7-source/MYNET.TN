@@ -249,7 +249,7 @@ export default function SuperAdminMenu() {
                 {groupedFunctions[category].map((func) => {
                   const IconComponent = func.icon;
                   return (
-                    <Grid xs={12} sm={6} md={4} key={func.id}>
+                    <Grid xs={12} lg={6} md={4} key={func.id}>
                       <Card
                         sx={{
                           border: '1px solid #e0e0e0',
@@ -352,7 +352,7 @@ export default function SuperAdminMenu() {
         {/* Summary Stats */}
         {filteredFunctions.length > 0 && (
           <Grid container spacing={2} sx={{ marginTop: '48px' }}>
-            <Grid xs={12} sm={4}>
+            <Grid xs={12} md={4}>
               <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
                 <CardContent>
                   <Typography sx={{ fontSize: '32px', fontWeight: 700, color: theme.palette.primary.main }}>
@@ -364,7 +364,7 @@ export default function SuperAdminMenu() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={4}>
+            <Grid xs={12} md={4}>
               <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
                 <CardContent>
                   <Typography sx={{ fontSize: '32px', fontWeight: 700, color: '#2e7d32' }}>
@@ -376,7 +376,7 @@ export default function SuperAdminMenu() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={4}>
+            <Grid xs={12} md={4}>
               <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
                 <CardContent>
                   <Typography sx={{ fontSize: '32px', fontWeight: 700, color: '#f57c00' }}>

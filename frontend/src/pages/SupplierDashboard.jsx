@@ -99,7 +99,7 @@ function SupplierDashboardContent() {
         {/* الإحصائيات الرئيسية */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
           {stats.map((stat, idx) => (
-            <Grid item xs={12} sm={6} md={3} key={idx}>
+            <Grid item xs={12} lg={6} lg={3} key={idx}>
               <InfoCard {...stat} />
             </Grid>
           ))}
@@ -204,7 +204,7 @@ function SupplierDashboardContent() {
 
             {tabValue === 2 && (
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} lg={6}>
                   <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                     <CardContent>
                       <Typography variant="body2" sx={{ fontWeight: 600, mb: 2 }}>معدل النجاح</Typography>
@@ -223,7 +223,7 @@ function SupplierDashboardContent() {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} lg={6}>
                   <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                     <CardContent>
                       <Typography variant="body2" sx={{ fontWeight: 600, mb: 2 }}>مؤشرات الأداء</Typography>

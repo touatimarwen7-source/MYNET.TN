@@ -51,23 +51,29 @@ router.get('/my-tenders',
     AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
     async (req, res) => {
       try {
-        const { page, limit } = getPaginationParams(req);
+        const { page = 1, limit = 10 } = req.query;
         const buyerId = req.user?.id;
         const pool = getPool();
         
-        // Optimized query with selective columns and pagination
-        let query = DataFetchingOptimizer.buildSelectQuery('tenders', 'tender_list');
-        query += ` WHERE buyer_id = $1 AND is_deleted = FALSE`;
+        if (!buyerId) {
+          return res.status(401).json({ error: 'User not authenticated' });
+        }
         
-        const totalResult = await pool.query(`SELECT COUNT(*) FROM tenders WHERE buyer_id = $1 AND is_deleted = FALSE`, [buyerId]);
+        // Simple direct query for tenders
+        const offset = (parseInt(page) - 1) * parseInt(limit);
+        const result = await pool.query(
+          `SELECT id, title, description, budget_min, budget_max, currency, status, is_public, created_at, updated_at 
+           FROM tenders WHERE (buyer_id = $1 OR is_public = TRUE) AND is_deleted = FALSE 
+           ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+          [buyerId, parseInt(limit), offset]
+        );
+        
+        const totalResult = await pool.query(`SELECT COUNT(*) FROM tenders WHERE (buyer_id = $1 OR is_public = TRUE) AND is_deleted = FALSE`, [buyerId]);
         const total = parseInt(totalResult.rows[0].count);
-        
-        query = DataFetchingOptimizer.addPagination(query, page, limit);
-        const result = await pool.query(query + ` ORDER BY created_at DESC`, [buyerId]);
         
         res.json({
           tenders: result.rows,
-          pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+          pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / parseInt(limit)) }
         });
       } catch (error) {
         res.status(500).json({ error: error.message });

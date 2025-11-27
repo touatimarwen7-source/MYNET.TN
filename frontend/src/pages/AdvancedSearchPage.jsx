@@ -33,7 +33,7 @@ const AdvancedSearchPage = () => {
       {/* Filters */}
       <Card sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2}>
-          <Grid xs={12} md={6}>
+          <Grid xs={12} lg={6}>
             <TextField
               fullWidth
               label="Search"
@@ -41,7 +41,7 @@ const AdvancedSearchPage = () => {
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
             />
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid xs={12} lg={6}>
             <Select
               fullWidth
               value={filters.category}
@@ -55,7 +55,7 @@ const AdvancedSearchPage = () => {
             </Select>
           </Grid>
           
-          <Grid xs={12} md={6}>
+          <Grid xs={12} lg={6}>
             <TextField
               fullWidth
               label="Budget Range"
@@ -65,7 +65,7 @@ const AdvancedSearchPage = () => {
             />
           </Grid>
 
-          <Grid xs={12} md={6}>
+          <Grid xs={12} lg={6}>
             <TextField
               fullWidth
               label="Location"
@@ -96,7 +96,7 @@ const AdvancedSearchPage = () => {
       {/* Results */}
       <Grid container spacing={2}>
         {results.map((item) => (
-          <Grid xs={12} md={6} key={item.id}>
+          <Grid xs={12} lg={6} key={item.id}>
             <Card sx={{ p: 2 }}>
               <Typography variant="h6">{item.title}</Typography>
               <Typography variant="body2">Budget: ${item.budget}</Typography>

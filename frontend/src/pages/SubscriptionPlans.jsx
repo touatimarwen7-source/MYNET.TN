@@ -188,7 +188,7 @@ export default function SubscriptionPlans() {
           </Typography>
 
           <Grid container spacing={3}>
-            <Grid xs={12} md={6}>
+            <Grid xs={12} lg={6}>
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent>
                   <Typography sx={{ fontWeight: 600, color: theme.palette.primary.main, marginBottom: '12px' }}>
@@ -201,7 +201,7 @@ export default function SubscriptionPlans() {
               </Card>
             </Grid>
 
-            <Grid xs={12} md={6}>
+            <Grid xs={12} lg={6}>
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent>
                   <Typography sx={{ fontWeight: 600, color: theme.palette.primary.main, marginBottom: '12px' }}>
@@ -214,7 +214,7 @@ export default function SubscriptionPlans() {
               </Card>
             </Grid>
 
-            <Grid xs={12} md={6}>
+            <Grid xs={12} lg={6}>
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent>
                   <Typography sx={{ fontWeight: 600, color: theme.palette.primary.main, marginBottom: '12px' }}>
@@ -227,7 +227,7 @@ export default function SubscriptionPlans() {
               </Card>
             </Grid>
 
-            <Grid xs={12} md={6}>
+            <Grid xs={12} lg={6}>
               <Card sx={{ border: '1px solid #e0e0e0' }}>
                 <CardContent>
                   <Typography sx={{ fontWeight: 600, color: theme.palette.primary.main, marginBottom: '12px' }}>

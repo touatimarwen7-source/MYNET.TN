@@ -42,7 +42,7 @@ export default function BackupRestore() {
 
           {/* إجراءات سريعة */}
           <Grid xs={12} spacing={2} container>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Stack spacing={2}>
@@ -54,7 +54,7 @@ export default function BackupRestore() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Stack spacing={2}>
@@ -66,7 +66,7 @@ export default function BackupRestore() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Stack spacing={2}>
@@ -78,7 +78,7 @@ export default function BackupRestore() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Stack spacing={2}>

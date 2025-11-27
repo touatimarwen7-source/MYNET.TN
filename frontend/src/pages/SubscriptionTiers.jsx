@@ -285,7 +285,7 @@ export default function SubscriptionTiers() {
             {tiers.map((tier) => {
               const tierServices = tier.services.map(id => services.find(s => s.id === id)).filter(Boolean);
               return (
-                <Grid xs={12} sm={6} md={4} key={tier.id}>
+                <Grid xs={12} lg={6} md={4} key={tier.id}>
                   <Card
                     sx={{
                       border: '1px solid #e0e0e0',

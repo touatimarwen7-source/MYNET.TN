@@ -37,7 +37,7 @@ export default function EmailNotificationCenter() {
 
           {/* الإحصائيات */}
           <Grid xs={12} spacing={2} container>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Typography color="textSecondary" variant="body2">الإخطارات المرسلة</Typography>
@@ -47,7 +47,7 @@ export default function EmailNotificationCenter() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Typography color="textSecondary" variant="body2">معدل الفتح</Typography>
@@ -55,7 +55,7 @@ export default function EmailNotificationCenter() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Typography color="textSecondary" variant="body2">معدل النقر</Typography>
@@ -63,7 +63,7 @@ export default function EmailNotificationCenter() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} sm={6} md={3}>
+            <Grid xs={12} lg={6} lg={3}>
               <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
                 <CardContent>
                   <Typography color="textSecondary" variant="body2">عدد الارتدادات</Typography>

@@ -280,7 +280,7 @@ function DraftsPageContent() {
 
             {/* عرض البطاقات */}
             {drafts.map((draft) => (
-              <Grid item xs={12} sm={6} md={4} key={draft.id}>
+              <Grid item xs={12} lg={6} md={4} key={draft.id}>
                 <Card sx={{
                   border: `2px solid ${draft.color}20`,
                   borderRadius: '12px',

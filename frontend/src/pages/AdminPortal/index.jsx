@@ -98,7 +98,7 @@ function AdvancedDashboard() {
     <Grid xs={12} spacing={3} container>
       {/* الإحصائيات الرئيسية */}
       {stats.map((stat, idx) => (
-        <Grid xs={12} sm={6} md={3} key={idx}>
+        <Grid xs={12} lg={6} lg={3} key={idx}>
           <AdvancedStatCard {...stat} loading={loading} />
         </Grid>
       ))}
@@ -396,7 +396,7 @@ function AdvancedSettings() {
 
   return (
     <Grid xs={12} spacing={3} container>
-      <Grid xs={12} md={6}>
+      <Grid xs={12} lg={6}>
         <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '12px' }}>
           <CardHeader title="إعدادات النظام" />
           <CardContent>
@@ -424,7 +424,7 @@ function AdvancedSettings() {
         </Card>
       </Grid>
 
-      <Grid xs={12} md={6}>
+      <Grid xs={12} lg={6}>
         <Card sx={{ backgroundColor: '#FFFFFF', border: '1px solid #e0e0e0', borderRadius: '12px' }}>
           <CardHeader title="الأمان المتقدم" />
           <CardContent>

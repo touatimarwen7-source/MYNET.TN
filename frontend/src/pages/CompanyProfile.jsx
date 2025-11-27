@@ -166,7 +166,7 @@ export default function CompanyProfile() {
       </Paper>
 
       <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
-        <Grid xs={12} sm={6}>
+        <Grid xs={12} lg={6}>
           <Card sx={{ border: '1px solid #e0e0e0' }}>
             <CardContent>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, color: institutionalTheme.palette.primary.main, marginBottom: '8px' }}>
@@ -178,7 +178,7 @@ export default function CompanyProfile() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sm={6}>
+        <Grid xs={12} lg={6}>
           <Card sx={{ border: '1px solid #e0e0e0' }}>
             <CardContent>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, color: institutionalTheme.palette.primary.main, marginBottom: '8px' }}>
@@ -214,7 +214,7 @@ export default function CompanyProfile() {
       </Typography>
       <Grid container spacing={2}>
         {companyData?.services.map((service) => (
-          <Grid xs={12} sm={6} md={4} key={service.id}>
+          <Grid xs={12} lg={6} md={4} key={service.id}>
             <Card sx={{ border: '1px solid #e0e0e0', height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, color: institutionalTheme.palette.primary.main, marginBottom: '8px' }}>
@@ -248,7 +248,7 @@ export default function CompanyProfile() {
       </Typography>
       <Grid container spacing={2}>
         {companyData?.stats && Object.entries(companyData.stats).slice(0, 4).map(([key, value], idx) => (
-          <Grid xs={12} sm={6} md={3} key={idx}>
+          <Grid xs={12} lg={6} lg={3} key={idx}>
             <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
               <CardContent>
                 <Typography variant="h4" sx={{ fontWeight: 600, color: institutionalTheme.palette.primary.main, marginBottom: '8px' }}>
@@ -285,7 +285,7 @@ export default function CompanyProfile() {
       
       <Paper sx={{ padding: '20px', marginBottom: '20px', backgroundColor: '#f9f9f9' }}>
         <Grid container spacing={2} alignItems="flex-end">
-          <Grid xs={12} sm={6}>
+          <Grid xs={12} lg={6}>
             <TextField
               fullWidth
               placeholder="Rechercher un fournisseur..."
@@ -294,7 +294,7 @@ export default function CompanyProfile() {
               sx={{ backgroundColor: '#ffffff' }}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={3}>
+          <Grid xs={12} lg={6} lg={3}>
             <FormControl fullWidth sx={{ backgroundColor: '#ffffff' }}>
               <InputLabel>Catégorie</InputLabel>
               <Select
@@ -309,7 +309,7 @@ export default function CompanyProfile() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid xs={12} sm={6} md={2}>
+          <Grid xs={12} lg={6} md={2}>
             <TextField
               fullWidth
               type="number"
@@ -319,7 +319,7 @@ export default function CompanyProfile() {
               sx={{ backgroundColor: '#ffffff' }}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={2}>
+          <Grid xs={12} lg={6} md={2}>
             <TextField
               fullWidth
               placeholder="Localité"
@@ -328,7 +328,7 @@ export default function CompanyProfile() {
               sx={{ backgroundColor: '#ffffff' }}
             />
           </Grid>
-          <Grid xs={12} sm={12} md={3}>
+          <Grid xs={12} md={12} lg={3}>
             <Button
               fullWidth
               variant="contained"
@@ -390,7 +390,7 @@ export default function CompanyProfile() {
         CONTACTER L'ENTREPRISE
       </Typography>
       <Grid container spacing={2}>
-        <Grid xs={12} sm={6}>
+        <Grid xs={12} lg={6}>
           <Card sx={{ border: '1px solid #e0e0e0' }}>
             <CardContent>
               <Stack spacing={2}>
@@ -425,7 +425,7 @@ export default function CompanyProfile() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sm={6}>
+        <Grid xs={12} lg={6}>
           <Card sx={{ border: '1px solid #e0e0e0' }}>
             <CardContent>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, color: institutionalTheme.palette.primary.main, marginBottom: '12px' }}>

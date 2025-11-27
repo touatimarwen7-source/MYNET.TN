@@ -189,7 +189,7 @@ export default function DirectSupplyRequest() {
                   onChange={(e) => handleInputChange('description', e.target.value)}
                 />
               </Grid>
-              <Grid xs={12} sm={6}>
+              <Grid xs={12} lg={6}>
                 <FormControl fullWidth>
                   <InputLabel>Catégorie</InputLabel>
                   <Select
@@ -204,7 +204,7 @@ export default function DirectSupplyRequest() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid xs={12} sm={6}>
+              <Grid xs={12} lg={6}>
                 <TextField
                   fullWidth
                   type="number"
@@ -213,7 +213,7 @@ export default function DirectSupplyRequest() {
                   onChange={(e) => handleInputChange('quantity', e.target.value)}
                 />
               </Grid>
-              <Grid xs={12} sm={6}>
+              <Grid xs={12} lg={6}>
                 <FormControl fullWidth>
                   <InputLabel>Unité</InputLabel>
                   <Select
@@ -272,31 +272,31 @@ export default function DirectSupplyRequest() {
             </Typography>
             <Paper sx={{ padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
               <Grid container spacing={2}>
-                <Grid xs={12} sm={6}>
+                <Grid xs={12} lg={6}>
                   <Typography variant="body2" sx={{ color: '#666' }}>Fournisseur:</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     {suppliers.find(s => s.id === parseInt(formData.supplier_id))?.company_name}
                   </Typography>
                 </Grid>
-                <Grid xs={12} sm={6}>
+                <Grid xs={12} lg={6}>
                   <Typography variant="body2" sx={{ color: '#666' }}>Produit:</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     {formData.title}
                   </Typography>
                 </Grid>
-                <Grid xs={12} sm={6}>
+                <Grid xs={12} lg={6}>
                   <Typography variant="body2" sx={{ color: '#666' }}>Catégorie:</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     {formData.category}
                   </Typography>
                 </Grid>
-                <Grid xs={12} sm={6}>
+                <Grid xs={12} lg={6}>
                   <Typography variant="body2" sx={{ color: '#666' }}>Quantité:</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     {formData.quantity} {formData.unit}
                   </Typography>
                 </Grid>
-                <Grid xs={12} sm={6}>
+                <Grid xs={12} lg={6}>
                   <Typography variant="body2" sx={{ color: '#666' }}>Budget:</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 600, color: institutionalTheme.palette.primary.main }}>
                     {parseFloat(formData.budget).toFixed(3)} DT

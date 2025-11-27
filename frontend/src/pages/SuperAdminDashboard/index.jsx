@@ -382,8 +382,8 @@ function SuperAdminDashboardContent() {
         )}
 
         {/* Statistics Section */}
-        <Grid xs={12} sm={6} md={3} spacing={3} sx={{ mb: 4 }} container>
-          <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} lg={6} lg={3} spacing={3} sx={{ mb: 4 }} container>
+          <Grid xs={12} lg={6} lg={3}>
             <StatCard
               title="Utilisateurs Totaux"
               value={stats.totalUsers}
@@ -393,7 +393,7 @@ function SuperAdminDashboardContent() {
               loading={loading}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={3}>
+          <Grid xs={12} lg={6} lg={3}>
             <StatCard
               title="Appels d'Offres Actifs"
               value={stats.activeTenders}
@@ -403,7 +403,7 @@ function SuperAdminDashboardContent() {
               loading={loading}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={3}>
+          <Grid xs={12} lg={6} lg={3}>
             <StatCard
               title="Offres Complétées"
               value={stats.completedOffers}
@@ -413,7 +413,7 @@ function SuperAdminDashboardContent() {
               loading={loading}
             />
           </Grid>
-          <Grid xs={12} sm={6} md={3}>
+          <Grid xs={12} lg={6} lg={3}>
             <StatCard
               title="Santé Système"
               value={`${stats.systemHealth}%`}
@@ -432,11 +432,11 @@ function SuperAdminDashboardContent() {
         </Grid>
 
         {/* Quick Actions and Recent Activity */}
-        <Grid xs={12} md={6} spacing={3} container>
-          <Grid xs={12} md={6}>
+        <Grid xs={12} lg={6} spacing={3} container>
+          <Grid xs={12} lg={6}>
             <QuickActions navigate={navigate} />
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid xs={12} lg={6}>
             <RecentActivity key={refreshKey} />
           </Grid>
         </Grid>
