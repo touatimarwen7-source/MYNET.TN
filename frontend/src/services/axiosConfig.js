@@ -20,6 +20,7 @@
 import axios from 'axios';
 import TokenManager from './tokenManager';
 import CSRFProtection from '../utils/csrfProtection';
+import { API_CONFIG, shouldCache, getCacheDuration, isPublicEndpoint } from '../config/apiConfig';
 
 const API_BASE_URL = '/api';
 
@@ -27,20 +28,25 @@ const API_BASE_URL = '/api';
 // Response Cache
 // ============================================
 const responseCache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes default
+const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes default (reduced from 5)
 
 const getCacheKey = (config) => {
   return `${config.method}:${config.url}`;
 };
 
-const isCacheValid = (cacheEntry) => {
-  return Date.now() - cacheEntry.timestamp < CACHE_DURATION;
+const isCacheValid = (cacheEntry, duration = CACHE_DURATION) => {
+  return Date.now() - cacheEntry.timestamp < duration;
 };
 
 const getCachedResponse = (config) => {
+  // Check if endpoint should be cached
+  if (!shouldCache(config.url)) {
+    return null;
+  }
   const key = getCacheKey(config);
   const cached = responseCache.get(key);
-  if (cached && isCacheValid(cached)) {
+  const duration = getCacheDuration(config.url) || CACHE_DURATION;
+  if (cached && isCacheValid(cached, duration)) {
     return cached.data;
   }
   return null;
@@ -88,22 +94,19 @@ const processQueue = (error, token = null) => {
  */
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Public endpoints that don't need token
-    const publicEndpoints = ['/auth/login', '/auth/register', '/auth/refresh-token'];
-    const isPublicEndpoint = publicEndpoints.some(endpoint => 
-      config.url === endpoint || config.url?.includes(endpoint)
-    );
+    // Check if endpoint is public (uses centralized config)
+    const isPublic = isPublicEndpoint(config.url);
 
     // Check if access token is expired (but not for public endpoints)
-    if (!isPublicEndpoint && !TokenManager.isTokenValid()) {
+    if (!isPublic && !TokenManager.isTokenValid()) {
       TokenManager.clearTokens();
       window.location.href = '/login';
       return Promise.reject(new Error('Token expired'));
     }
 
-    // Add access token only if available and not for login/register
+    // Add access token only if available and not for public endpoints
     const token = TokenManager.getAccessToken();
-    if (token && !isPublicEndpoint) {
+    if (token && !isPublic) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -148,8 +151,8 @@ axiosInstance.interceptors.request.use(
  */
 axiosInstance.interceptors.response.use(
   (response) => {
-    // Cache GET requests
-    if (response.config.method === 'get') {
+    // Cache GET requests that should be cached
+    if (response.config.method === 'get' && shouldCache(response.config.url)) {
       setCachedResponse(response.config, response);
     }
     return response;
