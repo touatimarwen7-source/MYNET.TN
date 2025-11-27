@@ -1,5 +1,5 @@
 entrypoint = "index.js"
-modules = ["nodejs-20", "bash", "web"]
+modules = ["nodejs-20", "web", "bash", "postgresql-16"]
 hidden = [".config", "package-lock.json"]
 
 [gitHubImport]
@@ -60,10 +60,6 @@ externalPort = 8000
 [[ports]]
 localPort = 45467
 externalPort = 6800
-
-[[ports]]
-localPort = 46677
-externalPort = 8008
 
 [workflows]
 runButton = "Project"

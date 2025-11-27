@@ -231,7 +231,7 @@ async function refreshAccessToken() {
   try {
     // Backend will send refresh token via httpOnly cookie automatically
     const response = await axios.post(
-      '/auth/refresh-token',
+      `${API_BASE_URL}/auth/refresh-token`,
       {}, // Empty body - refresh token is in cookie
       {
         baseURL: API_BASE_URL,
