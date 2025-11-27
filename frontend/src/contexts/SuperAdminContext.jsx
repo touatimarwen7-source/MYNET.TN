@@ -6,7 +6,7 @@ import superAdminService from '../services/superAdminService';
  * Global state management for super admin operations
  */
 
-export const SuperAdminContext = createContext();
+const SuperAdminContext = createContext();
 
 export function SuperAdminProvider({ children }) {
   const [pages, setPages] = useState([]);
