@@ -66,7 +66,9 @@ async function invalidateCacheForRoute(path) {
 const distributedCacheMiddleware = (req, res, next) => {
   // Handle write operations - invalidate cache
   if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
-    invalidateCacheForRoute(req.path);
+    invalidateCacheForRoute(req.path).catch(() => {
+      // Silently ignore cache invalidation errors
+    });
     return next();
   }
 

@@ -18,7 +18,7 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
-import StepSeven from './TenderSteps/StepSeven';
+import StepSeven from '../components/TenderSteps/StepSeven';
 import { autosaveDraft } from '../utils/draftStorageHelper';
 
 const STAGES = [

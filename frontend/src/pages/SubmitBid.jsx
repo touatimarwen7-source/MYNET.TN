@@ -245,7 +245,7 @@ export default function SubmitBid() {
                 📊 ملخص المناقصة
               </Typography>
               <Grid container spacing={2}>
-                <Grid xs={12} lg={6} lg={3}>
+                <Grid xs={12} lg={3}>
                   <Box>
                     <Typography
                       sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}
@@ -257,7 +257,7 @@ export default function SubmitBid() {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid xs={12} lg={6} lg={3}>
+                <Grid xs={12} lg={3}>
                   <Box>
                     <Typography
                       sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}
@@ -271,7 +271,7 @@ export default function SubmitBid() {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid xs={12} lg={6} lg={3}>
+                <Grid xs={12} lg={3}>
                   <Box>
                     <Typography
                       sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}

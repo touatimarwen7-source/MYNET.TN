@@ -52,7 +52,6 @@ const StepOne = ({ formData, setFormData, loading, errors }) => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-
       <TextField
         label="Nom de l'Entreprise"
         name="supplier_name"
@@ -164,7 +163,10 @@ const StepTwo = ({ formData, setFormData, tenderItems, loading, errors }) => {
     setFormData((prev) => ({
       ...prev,
       line_items: lineItems,
-      total_amount: lineItems.reduce((sum, item) => sum + (parseFloat(item.quantity) * parseFloat(item.unit_price)), 0),
+      total_amount: lineItems.reduce(
+        (sum, item) => sum + parseFloat(item.quantity) * parseFloat(item.unit_price),
+        0
+      ),
     }));
     setNewItem({ item_id: '', quantity: '', unit_price: '' });
   };
@@ -175,17 +177,25 @@ const StepTwo = ({ formData, setFormData, tenderItems, loading, errors }) => {
     setFormData((prev) => ({
       ...prev,
       line_items: lineItems,
-      total_amount: lineItems.reduce((sum, item) => sum + (parseFloat(item.quantity) * parseFloat(item.unit_price)), 0),
+      total_amount: lineItems.reduce(
+        (sum, item) => sum + parseFloat(item.quantity) * parseFloat(item.unit_price),
+        0
+      ),
     }));
   };
 
   const items = formData.line_items || [];
-  const totalAmount = items.reduce((sum, item) => sum + (parseFloat(item.quantity || 0) * parseFloat(item.unit_price || 0)), 0);
+  const totalAmount = items.reduce(
+    (sum, item) => sum + parseFloat(item.quantity || 0) * parseFloat(item.unit_price || 0),
+    0
+  );
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {errors.line_items && (
-        <Alert severity="error" sx={{ mt: 2 }}>{errors.line_items}</Alert>
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {errors.line_items}
+        </Alert>
       )}
 
       <Box sx={{ p: '16px', backgroundColor: '#F9F9F9', borderRadius: '4px' }}>
@@ -252,10 +262,18 @@ const StepTwo = ({ formData, setFormData, tenderItems, loading, errors }) => {
             <TableHead sx={{ backgroundColor: '#F9F9F9' }}>
               <TableRow>
                 <TableCell sx={{ fontSize: '12px', fontWeight: 600 }}>Article</TableCell>
-                <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600 }}>Quantité</TableCell>
-                <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600 }}>Prix Unitaire</TableCell>
-                <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600 }}>Sous-Total</TableCell>
-                <TableCell align="center" sx={{ fontSize: '12px', fontWeight: 600 }}>Action</TableCell>
+                <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600 }}>
+                  Quantité
+                </TableCell>
+                <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600 }}>
+                  Prix Unitaire
+                </TableCell>
+                <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600 }}>
+                  Sous-Total
+                </TableCell>
+                <TableCell align="center" sx={{ fontSize: '12px', fontWeight: 600 }}>
+                  Action
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -273,7 +291,10 @@ const StepTwo = ({ formData, setFormData, tenderItems, loading, errors }) => {
                     <TableCell align="right" sx={{ fontSize: '12px', color: '#212121' }}>
                       {parseFloat(item.unit_price).toFixed(2)} TND
                     </TableCell>
-                    <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600, color: '#0056B3' }}>
+                    <TableCell
+                      align="right"
+                      sx={{ fontSize: '12px', fontWeight: 600, color: '#0056B3' }}
+                    >
                       {subTotal.toFixed(2)} TND
                     </TableCell>
                     <TableCell align="center">
@@ -440,20 +461,36 @@ const StepFour = ({ formData, tenderItems, loading }) => {
         <Stack spacing={1}>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <Box>
-              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>Entreprise</Typography>
-              <Typography sx={{ fontSize: '13px', color: '#212121' }}>{formData.supplier_name || 'N/A'}</Typography>
+              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>
+                Entreprise
+              </Typography>
+              <Typography sx={{ fontSize: '13px', color: '#212121' }}>
+                {formData.supplier_name || 'N/A'}
+              </Typography>
             </Box>
             <Box>
-              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>Contact</Typography>
-              <Typography sx={{ fontSize: '13px', color: '#212121' }}>{formData.supplier_contact_person || 'N/A'}</Typography>
+              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>
+                Contact
+              </Typography>
+              <Typography sx={{ fontSize: '13px', color: '#212121' }}>
+                {formData.supplier_contact_person || 'N/A'}
+              </Typography>
             </Box>
             <Box>
-              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>Email</Typography>
-              <Typography sx={{ fontSize: '13px', color: '#212121' }}>{formData.supplier_email || 'N/A'}</Typography>
+              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>
+                Email
+              </Typography>
+              <Typography sx={{ fontSize: '13px', color: '#212121' }}>
+                {formData.supplier_email || 'N/A'}
+              </Typography>
             </Box>
             <Box>
-              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>Téléphone</Typography>
-              <Typography sx={{ fontSize: '13px', color: '#212121' }}>{formData.supplier_phone || 'N/A'}</Typography>
+              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>
+                Téléphone
+              </Typography>
+              <Typography sx={{ fontSize: '13px', color: '#212121' }}>
+                {formData.supplier_phone || 'N/A'}
+              </Typography>
             </Box>
           </Box>
         </Stack>
@@ -468,9 +505,15 @@ const StepFour = ({ formData, tenderItems, loading }) => {
             <TableHead sx={{ backgroundColor: '#fff' }}>
               <TableRow>
                 <TableCell sx={{ fontSize: '11px', fontWeight: 600 }}>Article</TableCell>
-                <TableCell align="right" sx={{ fontSize: '11px', fontWeight: 600 }}>Quantité</TableCell>
-                <TableCell align="right" sx={{ fontSize: '11px', fontWeight: 600 }}>Prix Unitaire</TableCell>
-                <TableCell align="right" sx={{ fontSize: '11px', fontWeight: 600 }}>Sous-Total</TableCell>
+                <TableCell align="right" sx={{ fontSize: '11px', fontWeight: 600 }}>
+                  Quantité
+                </TableCell>
+                <TableCell align="right" sx={{ fontSize: '11px', fontWeight: 600 }}>
+                  Prix Unitaire
+                </TableCell>
+                <TableCell align="right" sx={{ fontSize: '11px', fontWeight: 600 }}>
+                  Sous-Total
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -482,9 +525,16 @@ const StepFour = ({ formData, tenderItems, loading }) => {
                     <TableCell sx={{ fontSize: '12px', color: '#212121' }}>
                       {tenderItem?.description || 'N/A'}
                     </TableCell>
-                    <TableCell align="right" sx={{ fontSize: '12px' }}>{item.quantity}</TableCell>
-                    <TableCell align="right" sx={{ fontSize: '12px' }}>{parseFloat(item.unit_price).toFixed(2)} TND</TableCell>
-                    <TableCell align="right" sx={{ fontSize: '12px', fontWeight: 600, color: '#0056B3' }}>
+                    <TableCell align="right" sx={{ fontSize: '12px' }}>
+                      {item.quantity}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontSize: '12px' }}>
+                      {parseFloat(item.unit_price).toFixed(2)} TND
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{ fontSize: '12px', fontWeight: 600, color: '#0056B3' }}
+                    >
                       {subTotal.toFixed(2)} TND
                     </TableCell>
                   </TableRow>
@@ -506,12 +556,20 @@ const StepFour = ({ formData, tenderItems, loading }) => {
         </Typography>
         <Stack spacing={1}>
           <Box>
-            <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>Délai de Livraison</Typography>
-            <Typography sx={{ fontSize: '13px', color: '#212121' }}>{formData.delivery_time || 'N/A'} jours</Typography>
+            <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>
+              Délai de Livraison
+            </Typography>
+            <Typography sx={{ fontSize: '13px', color: '#212121' }}>
+              {formData.delivery_time || 'N/A'} jours
+            </Typography>
           </Box>
           <Box>
-            <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>Lieu de Livraison</Typography>
-            <Typography sx={{ fontSize: '13px', color: '#212121' }}>{formData.delivery_location || 'N/A'}</Typography>
+            <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#999999' }}>
+              Lieu de Livraison
+            </Typography>
+            <Typography sx={{ fontSize: '13px', color: '#212121' }}>
+              {formData.delivery_location || 'N/A'}
+            </Typography>
           </Box>
         </Stack>
       </Paper>
@@ -546,11 +604,33 @@ export default function CreateBid() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
-        return <StepOne formData={formData} setFormData={setFormData} loading={loading} errors={formErrors} />;
+        return (
+          <StepOne
+            formData={formData}
+            setFormData={setFormData}
+            loading={loading}
+            errors={formErrors}
+          />
+        );
       case 1:
-        return <StepTwo formData={formData} setFormData={setFormData} tenderItems={tenderItems} loading={loading} errors={formErrors} />;
+        return (
+          <StepTwo
+            formData={formData}
+            setFormData={setFormData}
+            tenderItems={tenderItems}
+            loading={loading}
+            errors={formErrors}
+          />
+        );
       case 2:
-        return <StepThree formData={formData} setFormData={setFormData} loading={loading} errors={formErrors} />;
+        return (
+          <StepThree
+            formData={formData}
+            setFormData={setFormData}
+            loading={loading}
+            errors={formErrors}
+          />
+        );
       case 3:
         return <StepFour formData={formData} tenderItems={tenderItems} loading={loading} />;
       default:
@@ -558,24 +638,23 @@ export default function CreateBid() {
     }
   };
 
-    // ✅ 3. استخدام المكون الجديد وتمرير الخصائص اللازمة
-    <FormStepper
-      title="Soumettre une Offre"
-      steps={STAGES}
-      activeStep={currentStep}
-      onNext={handleNext}
-      onPrevious={handlePrevious}
-      onSubmit={handleSubmit}
-      loading={loading}
-      error={formErrors.general}
-      onClearError={() => setFormErrors(prev => ({ ...prev, general: '' }))}
-      onBack={() => navigate(`/tender/${tenderId}`)}
-    >
-      {/* تمرير محتوى الخطوة الحالية كـ children */}
-      {renderStepContent()}
-    </FormStepper>
+  return (
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <FormStepper
+        title="Soumettre une Offre"
+        steps={STAGES}
+        activeStep={currentStep}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        onSubmit={handleSubmit}
+        loading={loading}
+        error={formErrors.general}
+        onClearError={() => setFormErrors((prev) => ({ ...prev, general: '' }))}
+        onBack={() => navigate(`/tender/${tenderId}`)}
+      >
+        {renderStepContent()}
+      </FormStepper>
 
-      {/* Success Dialog */}
       <Dialog open={successDialog} onClose={() => setSuccessDialog(false)}>
         <DialogTitle sx={{ color: institutionalTheme.palette.primary.main, fontWeight: 600 }}>
           ✅ Offre Soumise avec Succès
@@ -586,6 +665,6 @@ export default function CreateBid() {
           </Typography>
         </DialogContent>
       </Dialog>
-    </>
+    </Container>
   );
 }

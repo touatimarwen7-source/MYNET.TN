@@ -99,7 +99,7 @@ export default function TenderDetailOptimized({ tenderId }) {
         {/* Stats Grid */}
         {tenderStats && (
           <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <Typography variant="caption" sx={{ color: '#616161' }}>
                   الميزانية
@@ -107,7 +107,7 @@ export default function TenderDetailOptimized({ tenderId }) {
                 <Typography variant="h6">{tenderStats.budget}</Typography>
               </Paper>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <Typography variant="caption" sx={{ color: '#616161' }}>
                   آخر موعد
@@ -115,7 +115,7 @@ export default function TenderDetailOptimized({ tenderId }) {
                 <Typography variant="h6">{tenderStats.deadline}</Typography>
               </Paper>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <Typography variant="caption" sx={{ color: '#616161' }}>
                   العروض المستلمة
@@ -123,7 +123,7 @@ export default function TenderDetailOptimized({ tenderId }) {
                 <Typography variant="h6">{tenderStats.offers}</Typography>
               </Paper>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <Typography variant="caption" sx={{ color: '#616161' }}>
                   الحالة

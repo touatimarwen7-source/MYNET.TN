@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
@@ -11,12 +10,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'dist/', 'src/**/*.stories.js', '**/*.test.js', '**/*.spec.js'],
-    },
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '*.config.js',
+        'src/main.jsx',
+        'src/index.jsx',
+      ],
     },
   },
 });

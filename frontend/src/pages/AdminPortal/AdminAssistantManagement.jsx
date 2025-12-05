@@ -181,7 +181,7 @@ export default function AdminAssistantManagement() {
 
           {/* إحصائيات سريعة */}
           <Grid xs={12} spacing={2} container>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',
@@ -202,7 +202,7 @@ export default function AdminAssistantManagement() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',
@@ -220,7 +220,7 @@ export default function AdminAssistantManagement() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',
@@ -240,7 +240,7 @@ export default function AdminAssistantManagement() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',

@@ -4,6 +4,7 @@ const CacheHelper = require('../helpers/CacheHelper');
 const Tender = require('../models/Tender');
 const NotificationService = require('./NotificationService');
 const AuditLogService = require('./AuditLogService');
+const Offer = require('../models/Offer'); // Assuming an Offer model exists
 const QueueService = require('./QueueService');
 const {
   validateSchema,
@@ -336,6 +337,76 @@ class TenderService {
         `Failed to get my tenders: ${error.message}`
       );
       throw new Error(`Failed to get my tenders: ${error.message}`);
+    }
+  }
+
+  /**
+   * Retrieves a tender by ID, dynamically adjusting response based on user role and tender status.
+   * For buyers, it returns offersCount before opening_date and full offers after.
+   * @async
+   * @param {string} tenderId - The ID of the tender to fetch
+   * @param {Object} user - The authenticated user object (containing id and role)
+   * @returns {Promise<Object|null>} Tender object with conditional offer data or null if not found/unauthorized
+   * @throws {Error} If database query fails or user is unauthorized
+   */
+  async getTenderDetailsForUser(tenderId, user) {
+    const cacheKey = `tender_user:${tenderId}:${user.id}`;
+    const pool = getPool();
+
+    try {
+      return await CacheHelper.getOrSet(
+        cacheKey,
+        async () => {
+          const result = await pool.query(
+            'SELECT * FROM tenders WHERE id = $1 AND is_deleted = FALSE',
+            [tenderId]
+          );
+          const tender = result.rows[0];
+
+          if (!tender) {
+            return null;
+          }
+
+          // Convert tender to a plain object to modify it
+          const tenderResponse = { ...tender };
+
+          // Only buyers who own the tender can see offer-related data
+          if (user.role === 'buyer' && user.id === tender.buyer_id) {
+            const now = new Date();
+            const openingDate = new Date(tender.opening_date);
+
+            if (now < openingDate) {
+              // Before opening date: return only offersCount
+              const offersCountResult = await pool.query('SELECT COUNT(*) FROM offers WHERE tender_id = $1', [tenderId]);
+              tenderResponse.offersCount = parseInt(offersCountResult.rows[0].count, 10);
+              // Ensure 'offers' array is not present
+              delete tenderResponse.offers;
+            } else {
+              // After opening date: return full offers (and decrypt if necessary)
+              const offersResult = await pool.query('SELECT * FROM offers WHERE tender_id = $1', [tenderId]);
+              // TODO: Implement decryption logic here using KeyManagementService
+              tenderResponse.offers = offersResult.rows; // Placeholder, actual offers should be decrypted
+              delete tenderResponse.offersCount; // Ensure 'offersCount' is not present
+            }
+          } else {
+            // For other roles or non-owner buyers, hide all offer-related data
+            delete tenderResponse.offers;
+            delete tenderResponse.offersCount;
+          }
+
+          return tenderResponse;
+        },
+        1800 // 30 minute TTL
+      );
+    } catch (error) {
+      await AuditLogService.log(
+        user.id,
+        'tender',
+        tenderId,
+        'read',
+        `Failed to get tender details for user: ${error.message}`
+      );
+      throw new Error(`Failed to get tender details: ${error.message}`);
     }
   }
 

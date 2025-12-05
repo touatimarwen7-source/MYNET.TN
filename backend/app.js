@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const authRoutes = require('./routes/authRoutes');
 const procurementRoutes = require('./routes/procurementRoutes');
 const openingReportRoutes = require('./routes/openingReportRoutes');
@@ -84,6 +85,33 @@ const ServiceValidator = require('./utils/serviceValidator');
 const DatabaseErrorHandler = require('./utils/databaseErrorHandler');
 
 const app = express();
+
+// Use Helmet to set secure HTTP headers (including CSP, Frame-Options)
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'cdn.jsdelivr.net'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com', 'cdn.jsdelivr.net'],
+        fontSrc: ["'self'", 'fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: [
+          "'self'",
+          'http://localhost:3000',
+          'http://localhost:5000',
+          'ws://localhost:*',
+          'wss:',
+        ],
+        frameAncestors: ["'self'"],
+        formAction: ["'self'"],
+        baseUri: ["'self'"],
+        objectSrc: ["'none'"],
+      },
+    },
+    frameguard: { action: 'sameorigin' },
+  })
+);
 
 // Attach utility classes to app locals for use in routes
 app.locals.ErrorResponseFormatter = ErrorResponseFormatter;

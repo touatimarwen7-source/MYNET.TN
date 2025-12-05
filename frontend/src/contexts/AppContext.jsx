@@ -6,7 +6,6 @@ import {
   useEffect,
 } from 'react';
 import TokenManager from '../services/tokenManager';
-import { useToastContext } from './ToastContext';
 import { setupInactivityTimer } from '../utils/security';
 
 /**
@@ -27,7 +26,16 @@ export const AppProvider = ({ children }) => {
   // ===== App State =====
   const [appLoading, setAppLoading] = useState(false);
   const [appError, setAppError] = useState(null);
-  const { addToast } = useToastContext();
+
+  // Simple toast system (no dependency on ToastContext)
+  const [toasts, setToasts] = useState([]);
+  const addToast = useCallback((message, type = 'success') => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
+  }, []);
 
   // ===== App Settings =====
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -226,6 +234,8 @@ export const AppProvider = ({ children }) => {
     // App State
     appLoading,
     appError,
+    toasts,
+    addToast,
 
     // App Settings
     sidebarOpen,

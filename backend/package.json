@@ -6,8 +6,20 @@
   "type": "commonjs",
   "scripts": {
     "dev": "node server.js",
+    "dev:watch": "nodemon server.js",
     "start": "node server.js",
-    "test": "vitest"
+    "build": "echo 'Backend does not require build step'",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "format": "prettier --write \"**/*.{js,json}\"",
+    "format:check": "prettier --check \"**/*.{js,json}\"",
+    "migrate": "node scripts/initDb.js",
+    "seed": "node scripts/seedData.js",
+    "create-admin": "node scripts/createAdminUser.js",
+    "create-super-admin": "node scripts/createSuperAdminUser.js"
   },
   "dependencies": {
     "@sentry/node": "^7.100.0",

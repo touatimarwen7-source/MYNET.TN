@@ -398,7 +398,7 @@ export default function CompanyProfile() {
           Object.entries(companyData.stats)
             .slice(0, 4)
             .map(([key, value], idx) => (
-              <Grid xs={12} lg={6} lg={3} key={idx}>
+              <Grid xs={12} lg={3} key={idx}>
                 <Card sx={{ border: '1px solid #e0e0e0', textAlign: 'center' }}>
                   <CardContent>
                     <Typography
@@ -465,7 +465,7 @@ export default function CompanyProfile() {
               sx={{ backgroundColor: '#ffffff' }}
             />
           </Grid>
-          <Grid xs={12} lg={6} lg={3}>
+          <Grid xs={12} lg={3}>
             <FormControl fullWidth sx={{ backgroundColor: '#ffffff' }}>
               <InputLabel>Catégorie</InputLabel>
               <Select

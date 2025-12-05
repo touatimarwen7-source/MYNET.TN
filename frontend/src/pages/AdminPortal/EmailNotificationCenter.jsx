@@ -75,7 +75,7 @@ export default function EmailNotificationCenter() {
 
           {/* الإحصائيات */}
           <Grid xs={12} spacing={2} container>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',
@@ -96,7 +96,7 @@ export default function EmailNotificationCenter() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',
@@ -114,7 +114,7 @@ export default function EmailNotificationCenter() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',
@@ -132,7 +132,7 @@ export default function EmailNotificationCenter() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid xs={12} lg={6} lg={3}>
+            <Grid xs={12} lg={3}>
               <Card
                 sx={{
                   backgroundColor: '#FFFFFF',

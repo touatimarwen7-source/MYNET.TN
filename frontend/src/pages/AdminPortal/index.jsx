@@ -180,7 +180,7 @@ function AdvancedDashboard() {
     <Grid xs={12} spacing={3} container>
       {/* الإحصائيات الرئيسية */}
       {stats.map((stat, idx) => (
-        <Grid xs={12} lg={6} lg={3} key={idx}>
+        <Grid xs={12} lg={3} key={idx}>
           <AdvancedStatCard {...stat} loading={loading} />
         </Grid>
       ))}

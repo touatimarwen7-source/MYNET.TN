@@ -18,7 +18,7 @@
 
 ✅ 1. DataMapper Helper - 238 سطر من الكود الآمن
    📁 backend/helpers/DataMapper.js
-   
+
    Features:
    • mapData() - دالة عامة لتعيين البيانات
    • 12 متخصص mappers لكل entity:
@@ -37,7 +37,7 @@
    • filterSensitiveFields() - إزالة البيانات الحساسة
 
 ✅ 2. تطبيق في 10+ Services
-   
+
    TenderService ✅
    UserService ✅
    OfferService ✅
@@ -53,7 +53,7 @@
 ✅ 3. توثيق شامل
    📖 BACKEND_MAPPING_GUIDE.md - 300+ سطر
    📋 BACKEND_MAPPING_COMPLETE.txt - شرح مفصل
-   
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔐 الأمان المحقق (SECURITY ACHIEVED)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -86,7 +86,9 @@ Frontend sends:
   title: "...",
   publication_date: "2024-11-25",      ← publication_date
   consultation_number: "123",          ← EXTRA (ignored)
-  quantity_required: 100,              ← EXTRA (ignored)
+  type: "Limited",                     ← NEW (allowed)
+  invitees: ["supplier_id_1", "supplier_id_2"], ← NEW (allowed)
+  quantity_required: 100,              ← EXTRA (still ignored)
   unit: "kg",                          ← EXTRA (ignored)
   awardLevel: "lot",                   ← EXTRA (ignored)
   specification_documents: [...]       ← MERGED to attachments
@@ -97,8 +99,10 @@ Backend maps through DataMapper
 Database stores:
 {
   title: "...",
+  type: "Limited",                     ← Mapped ✅
   publish_date: "2024-11-25",          ← Renamed ✅
-  attachments: [...]                   ← Merged ✅
+  attachments: [...],                  ← Merged ✅
+  // invitees are handled by the service, not stored in Tender table
 }
 
 Case 2: إنشاء عرض (Offer)
@@ -161,7 +165,7 @@ User created as regular user ✅ (NOT admin!)
        // Map incoming data
        const mappedData = DataMapper.mapTender(tenderData);
        const tender = new Tender(mappedData);
-       
+
        // ... باقي الكود
        return result;
    }

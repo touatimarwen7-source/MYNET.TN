@@ -61,7 +61,7 @@ export default function FinancialReports() {
 
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {stats.map((stat, idx) => (
-            <Grid xs={12} lg={6} lg={3} key={idx}>
+            <Grid xs={12} lg={3} key={idx}>
               <Box
                 sx={{
                   backgroundColor: '#FFF',

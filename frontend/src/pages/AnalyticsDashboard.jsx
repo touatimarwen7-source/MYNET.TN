@@ -51,7 +51,7 @@ const AnalyticsDashboard = () => {
       {/* Stats Cards */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {stats && Object.entries(stats).map(([key, value]) => (
-          <Grid xs={12} lg={6} lg={3} key={key}>
+          <Grid xs={12} lg={3} key={key}>
             <Card sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="body2" sx={{ color: '#666', mb: 1 }}>
                 {key.replace(/_/g, ' ').toUpperCase()}

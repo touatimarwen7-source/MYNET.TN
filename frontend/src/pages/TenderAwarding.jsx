@@ -38,7 +38,7 @@ export default function TenderAwarding() {
   const theme = institutionalTheme;
   const { tenderId } = useParams();
   const navigate = useNavigate();
-  
+
   const [tender, setTender] = useState(null);
   const [offers, setOffers] = useState([]);
   const [winner, setWinner] = useState(null);
@@ -57,15 +57,15 @@ export default function TenderAwarding() {
       setLoading(true);
       const tenderRes = await procurementAPI.getTender(tenderId);
       const offersRes = await procurementAPI.getOffers(tenderId);
-      
+
       const tenderData = tenderRes.data.tender;
       const offersData = offersRes.data.offers || [];
-      
+
       setTender(tenderData);
       setOffers(offersData);
-      
+
       // إذا كان هناك فائز بالفعل، استرجعه
-      const winningOffer = offersData.find(o => o.is_winner);
+      const winningOffer = offersData.find((o) => o.is_winner);
       if (winningOffer) {
         setWinner(winningOffer);
       }
@@ -78,7 +78,7 @@ export default function TenderAwarding() {
 
   const handleAwardTender = async () => {
     if (!winner) {
-      setError("Veuillez sélectionner une offre gagnante.");
+      setError('Veuillez sélectionner une offre gagnante.');
       return;
     }
 
@@ -89,11 +89,11 @@ export default function TenderAwarding() {
         tender_id: tenderId,
         award_date: new Date().toISOString(),
       });
-      
+
       // تحديث البيانات
       setConfirmDialog(false);
       await loadData();
-      
+
       // عرض رسالة النجاح
       // In a real app, a toast notification would be better.
       alert('✅ Le gagnant a été annoncé avec succès !');
@@ -114,8 +114,8 @@ export default function TenderAwarding() {
     );
   }
 
-  const sortedOffers = [...offers].sort((a, b) => 
-    (b.evaluation_score || 0) - (a.evaluation_score || 0)
+  const sortedOffers = [...offers].sort(
+    (a, b) => (b.evaluation_score || 0) - (a.evaluation_score || 0)
   );
 
   return (
@@ -123,17 +123,27 @@ export default function TenderAwarding() {
       <Container maxWidth="lg">
         {/* Breadcrumb Navigation */}
         <Breadcrumbs sx={{ mb: '24px' }}>
-          <Link 
+          <Link
             component="button"
             onClick={() => navigate('/tenders')}
-            sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            sx={{
+              cursor: 'pointer',
+              color: theme.palette.primary.main,
+              textDecoration: 'none',
+              '&:hover': { textDecoration: 'underline' },
+            }}
           >
             Appels d'offres
           </Link>
           <Link
             component="button"
             onClick={() => navigate(`/tender/${tenderId}`)}
-            sx={{ cursor: 'pointer', color: theme.palette.primary.main, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            sx={{
+              cursor: 'pointer',
+              color: theme.palette.primary.main,
+              textDecoration: 'none',
+              '&:hover': { textDecoration: 'underline' },
+            }}
           >
             Appel d'offres
           </Link>
@@ -153,13 +163,13 @@ export default function TenderAwarding() {
               Retour
             </Button>
           </Box>
-          <Typography 
-            variant="h2" 
-            sx={{ 
-              fontSize: '32px', 
-              fontWeight: 600, 
-              color: theme.palette.primary.main, 
-              mb: '8px' 
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: '32px',
+              fontWeight: 600,
+              color: theme.palette.primary.main,
+              mb: '8px',
             }}
           >
             🏆 Annonce du Gagnant - Attribution de l'Appel d'Offres
@@ -189,11 +199,13 @@ export default function TenderAwarding() {
         {winner ? (
           <Stack spacing={3}>
             {/* Winner Card */}
-            <Card sx={{ 
-              border: '3px solid #4CAF50', 
-              backgroundColor: '#E8F5E9',
-              borderRadius: '8px'
-            }}>
+            <Card
+              sx={{
+                border: '3px solid #4CAF50',
+                backgroundColor: '#E8F5E9',
+                borderRadius: '8px',
+              }}
+            >
               <CardContent sx={{ padding: '24px' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', mb: '16px' }}>
                   <CheckCircleIcon sx={{ fontSize: 32, color: '#4CAF50' }} />
@@ -205,7 +217,9 @@ export default function TenderAwarding() {
                 <Paper sx={{ p: '16px', backgroundColor: '#fff', border: '1px solid #4CAF50' }}>
                   <Stack spacing={2}>
                     <Box>
-                      <Typography sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}>
+                      <Typography
+                        sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}
+                      >
                         Fournisseur Gagnant
                       </Typography>
                       <Typography sx={{ fontSize: '16px', fontWeight: 600, color: '#0056B3' }}>
@@ -213,20 +227,31 @@ export default function TenderAwarding() {
                       </Typography>
                     </Box>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <Box>
-                        <Typography sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}>
+                        <Typography
+                          sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}
+                        >
                           Montant Total
                         </Typography>
                         <Typography sx={{ fontSize: '18px', fontWeight: 600, color: '#0056B3' }}>
-                          {parseFloat(winner.total_amount || 0).toFixed(2)} {winner.currency || 'TND'}
+                          {parseFloat(winner.total_amount || 0).toFixed(2)}{' '}
+                          {winner.currency || 'TND'}
                         </Typography>
                       </Box>
                       <Box>
-                        <Typography sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}>
+                        <Typography
+                          sx={{ fontSize: '12px', color: '#666666', mb: '4px', fontWeight: 600 }}
+                        >
                           Score d'Évaluation
                         </Typography>
-                        <Chip 
+                        <Chip
                           label={`${winner.evaluation_score?.toFixed(1) || 0}/100`}
                           color="success"
                           sx={{ fontSize: '14px', fontWeight: 600 }}
@@ -286,21 +311,41 @@ export default function TenderAwarding() {
                   <Table>
                     <TableHead sx={{ backgroundColor: '#F5F5F5' }}>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>Fournisseur</TableCell>
-                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>Montant</TableCell>
-                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>Livraison</TableCell>
-                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>Score</TableCell>
-                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>Action</TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+                          Fournisseur
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+                          Montant
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+                          Livraison
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+                          Score
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+                          Action
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {sortedOffers.map((offer, idx) => (
                         <TableRow key={offer.id} sx={{ '&:hover': { backgroundColor: '#E3F2FD' } }}>
-                          <TableCell sx={{ fontSize: '13px', fontWeight: 600 }}>{offer.supplier_name || 'N/A'}</TableCell>
-                          <TableCell sx={{ fontSize: '13px', fontWeight: 600, color: theme.palette.primary.main }}>
+                          <TableCell sx={{ fontSize: '13px', fontWeight: 600 }}>
+                            {offer.supplier_name || 'N/A'}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              fontSize: '13px',
+                              fontWeight: 600,
+                              color: theme.palette.primary.main,
+                            }}
+                          >
                             {parseFloat(offer.total_amount || 0).toFixed(2)} TND
                           </TableCell>
-                          <TableCell sx={{ fontSize: '13px' }}>{offer.delivery_time || 'N/A'}</TableCell>
+                          <TableCell sx={{ fontSize: '13px' }}>
+                            {offer.delivery_time || 'N/A'}
+                          </TableCell>
                           <TableCell sx={{ fontSize: '13px', fontWeight: 600 }}>
                             <Chip
                               label={`${offer.evaluation_score?.toFixed(1) || 0}/100`}
@@ -338,7 +383,16 @@ export default function TenderAwarding() {
 
       {/* Confirmation Dialog */}
       <Dialog open={confirmDialog} onClose={() => setConfirmDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontSize: '18px', fontWeight: 600, color: '#D32F2F', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <DialogTitle
+          sx={{
+            fontSize: '18px',
+            fontWeight: 600,
+            color: '#D32F2F',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
           <WarningIcon /> Confirmation de l'Annonce du Gagnant
         </DialogTitle>
         <DialogContent sx={{ pt: '16px' }}>
@@ -347,7 +401,8 @@ export default function TenderAwarding() {
           </Alert>
           <Stack spacing={2}>
             <Typography sx={{ fontSize: '14px', color: '#212121' }}>
-              Voulez-vous annoncer <strong style={{ color: '#0056B3' }}>{winner?.supplier_name}</strong> comme gagnant ?
+              Voulez-vous annoncer{' '}
+              <strong style={{ color: '#0056B3' }}>{winner?.supplier_name}</strong> comme gagnant ?
             </Typography>
             <Paper sx={{ p: '12px', backgroundColor: '#E8F5E9', border: '1px solid #4CAF50' }}>
               <Stack spacing={1}>
@@ -365,7 +420,7 @@ export default function TenderAwarding() {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: '16px' }}>
-          <Button 
+          <Button
             onClick={() => setConfirmDialog(false)}
             disabled={submitting}
             sx={{ color: theme.palette.primary.main }}
@@ -382,7 +437,7 @@ export default function TenderAwarding() {
               '&:disabled': { backgroundColor: '#BDBDBD' },
             }}
           >
-            {submitting ? 'En cours...' : '✓ Confirmer l'Annonce'}
+            {submitting ? 'En cours...' : "✓ Confirmer l'Annonce"}
           </Button>
         </DialogActions>
       </Dialog>

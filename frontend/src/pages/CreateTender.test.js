@@ -3,10 +3,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import CreateTender from '../pages/CreateTender';
-import { procurementAPI } from '../api';
+import { procurementAPI } from '../api/procurementApi';
 
 // Mock dependencies
-jest.mock('../api');
+jest.mock('../api/procurementApi');
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
