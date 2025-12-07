@@ -115,7 +115,19 @@ export default function UserRoleManagement() {
   ];
 
   useEffect(() => {
-    fetchUsers();
+    let isMounted = true;
+    
+    const loadUsers = async () => {
+      if (isMounted) {
+        await fetchUsers();
+      }
+    };
+    
+    loadUsers();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const fetchUsers = async () => {

@@ -3,7 +3,7 @@
  * Displays WebSocket notifications with proper styling
  */
 import { THEME_COLORS } from './themeHelpers';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import {
   Box,
   Badge,
@@ -35,6 +35,43 @@ const NotificationCenter = ({ userId }) => {
   };
 
   const open = Boolean(anchorEl);
+
+  // Placeholder for actual fetching logic and isAuthenticated
+  // In a real scenario, this would come from context or props
+  const isAuthenticated = true; // Assuming user is authenticated for the purpose of this example
+  const fetchNotifications = async () => {
+    // This is a placeholder function. Replace with actual API call.
+    console.log('Fetching notifications...');
+  };
+
+
+  useEffect(() => {
+    let interval = null;
+    let isMounted = true;
+
+    const loadNotifications = async () => {
+      if (isMounted && isAuthenticated) {
+        await fetchNotifications();
+      }
+    };
+
+    if (isAuthenticated) {
+      loadNotifications();
+      interval = setInterval(() => {
+        if (isMounted) {
+          loadNotifications();
+        }
+      }, 30000);
+    }
+
+    return () => {
+      isMounted = false;
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isAuthenticated]);
+
 
   return (
     <Box>

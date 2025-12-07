@@ -1,5 +1,6 @@
 const TenderService = require('../../services/TenderService');
 const NotificationService = require('../../services/NotificationService');
+const logger = require('../../utils/logger'); // Assuming logger is configured
 
 class TenderController {
   async createTender(req, res) {
@@ -13,9 +14,9 @@ class TenderController {
         tender,
       });
     } catch (error) {
-      res.status(400).json({
-        error: error.message,
-      });
+      logger.error('Error creating tender:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error creating tender');
     }
   }
 
@@ -26,7 +27,8 @@ class TenderController {
 
       if (!tender) {
         return res.status(404).json({
-          error: 'Tender not found',
+          success: false,
+          message: 'Tender not found',
         });
       }
 
@@ -35,9 +37,9 @@ class TenderController {
         tender,
       });
     } catch (error) {
-      res.status(500).json({
-        error: error.message,
-      });
+      logger.error('Error fetching tender:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error fetching tender');
     }
   }
 
@@ -48,6 +50,7 @@ class TenderController {
         category: req.query.category,
         is_public: req.query.is_public,
         limit: req.query.limit ? parseInt(req.query.limit) : 50,
+        page: req.query.page ? parseInt(req.query.page) : 1, // Added for pagination validation
       };
 
       const tenders = await TenderService.getAllTenders(filters);
@@ -58,9 +61,9 @@ class TenderController {
         tenders,
       });
     } catch (error) {
-      res.status(500).json({
-        error: error.message,
-      });
+      logger.error('Error fetching tenders:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error fetching tenders');
     }
   }
 
@@ -70,6 +73,7 @@ class TenderController {
         status: req.query.status,
         category: req.query.category,
         limit: req.query.limit ? parseInt(req.query.limit) : 50,
+        page: req.query.page ? parseInt(req.query.page) : 1, // Added for pagination validation
       };
 
       const tenders = await TenderService.getMyTenders(req.user.id, filters);
@@ -80,9 +84,9 @@ class TenderController {
         tenders,
       });
     } catch (error) {
-      res.status(500).json({
-        error: error.message,
-      });
+      logger.error('Error fetching user tenders:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error fetching user tenders');
     }
   }
 
@@ -99,9 +103,9 @@ class TenderController {
         tender,
       });
     } catch (error) {
-      res.status(400).json({
-        error: error.message,
-      });
+      logger.error('Error updating tender:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error updating tender');
     }
   }
 
@@ -116,9 +120,9 @@ class TenderController {
         message: 'Tender deleted successfully',
       });
     } catch (error) {
-      res.status(400).json({
-        error: error.message,
-      });
+      logger.error('Error deleting tender:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error deleting tender');
     }
   }
 
@@ -147,9 +151,9 @@ class TenderController {
         tender,
       });
     } catch (error) {
-      res.status(400).json({
-        error: error.message,
-      });
+      logger.error('Error publishing tender:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error publishing tender');
     }
   }
 
@@ -165,9 +169,9 @@ class TenderController {
         tender,
       });
     } catch (error) {
-      res.status(400).json({
-        error: error.message,
-      });
+      logger.error('Error closing tender:', error);
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error closing tender');
     }
   }
 }

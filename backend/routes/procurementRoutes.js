@@ -17,6 +17,7 @@ const {
   ServerError,
 } = require('../utils/errorHandler');
 const { validateSchema, createTenderSchema } = require('../utils/validationSchemas');
+const { errorResponse } = require('../middleware/errorResponseFormatter'); // Added errorResponse formatter
 
 // Pagination helper
 const getPaginationParams = (req) => {
@@ -29,12 +30,22 @@ const getPaginationParams = (req) => {
 const handleError = (res, error, statusCode = 500) => {
   const message = error.message || 'An error occurred';
   const errorCode = error.code || 'ERROR';
-  return res.status(statusCode).json(ErrorResponseFormatter.error(message, statusCode));
+  // Using the new errorResponse formatter
+  return errorResponse(res, message, statusCode, errorCode);
 };
 
 // Unified success response helper
 const handleSuccess = (res, data, message = 'Success', statusCode = 200) => {
   return res.status(statusCode).json(ErrorResponseFormatter.success(data, message, statusCode));
+};
+
+// Middleware to validate pagination parameters
+const validatePagination = (req, res, next) => {
+  const { page, limit } = req.query;
+  if ((page && isNaN(parseInt(page))) || (limit && isNaN(parseInt(limit)))) {
+    return errorResponse(res, 'Invalid pagination parameters', 400);
+  }
+  next();
 };
 
 // Tenders - with validation
@@ -47,6 +58,7 @@ router.post(
       validateSchema(req.body, createTenderSchema);
       next();
     } catch (error) {
+      // Using the unified handleError which now uses errorResponse
       return handleError(res, error, 400);
     }
   },
@@ -63,14 +75,14 @@ router.get(
       const pool = getPool();
 
       if (!buyerId) {
-        return res.status(401).json({ error: 'User not authenticated' });
+        return errorResponse(res, 'User not authenticated', 401);
       }
 
       // Simple direct query for tenders
       const offset = (parseInt(page) - 1) * parseInt(limit);
       const result = await pool.query(
-        `SELECT id, title, description, budget_min, budget_max, currency, status, is_public, created_at, updated_at 
-           FROM tenders WHERE (buyer_id = $1 OR is_public = TRUE) AND is_deleted = FALSE 
+        `SELECT id, title, description, budget_min, budget_max, currency, status, is_public, created_at, updated_at
+           FROM tenders WHERE (buyer_id = $1 OR is_public = TRUE) AND is_deleted = FALSE
            ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
         [buyerId, parseInt(limit), offset]
       );
@@ -91,12 +103,14 @@ router.get(
         },
       });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      // Using the unified handleError which now uses errorResponse
+      handleError(res, error, 500);
     }
   }
 );
 
-router.get('/tenders', async (req, res) => {
+// GET /procurement/tenders - Get all tenders (with pagination)
+router.get('/tenders', validatePagination, async (req, res) => {
   try {
     const { page, limit } = getPaginationParams(req);
     const pool = getPool();
@@ -111,8 +125,8 @@ router.get('/tenders', async (req, res) => {
 
     // Get paginated results
     const result = await pool.query(
-      `SELECT id, tender_number, title, category, budget_min, budget_max, deadline, status, is_public, buyer_id, created_at 
-       FROM tenders 
+      `SELECT id, tender_number, title, category, budget_min, budget_max, deadline, status, is_public, buyer_id, created_at
+       FROM tenders
        WHERE is_deleted = FALSE AND is_public = TRUE
        ORDER BY created_at DESC
        LIMIT $1 OFFSET $2`,
@@ -125,7 +139,8 @@ router.get('/tenders', async (req, res) => {
       pagination: { page, limit, total, pages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    return handleError(res, error, 500);
+    // Using the unified handleError which now uses errorResponse
+    handleError(res, error, 500);
   }
 });
 
@@ -211,7 +226,8 @@ router.get(
         pagination: { page, limit, total, pages: Math.ceil(total / limit) },
       });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      // Using the unified handleError which now uses errorResponse
+      handleError(res, error, 500);
     }
   }
 );
@@ -226,14 +242,14 @@ router.get(
       const pool = getPool();
 
       if (!supplierId) {
-        return res.status(401).json({ error: 'User not authenticated' });
+        return errorResponse(res, 'User not authenticated', 401);
       }
 
       // Simple direct query for offers
       const offset = (parseInt(page) - 1) * parseInt(limit);
       const result = await pool.query(
-        `SELECT id, tender_id, supplier_id, price, currency, quantity, description, status, ranking, submitted_at, updated_at 
-           FROM offers WHERE supplier_id = $1 AND is_deleted = FALSE 
+        `SELECT id, tender_id, supplier_id, price, currency, quantity, description, status, ranking, submitted_at, updated_at
+           FROM offers WHERE supplier_id = $1 AND is_deleted = FALSE
            ORDER BY submitted_at DESC LIMIT $2 OFFSET $3`,
         [supplierId, parseInt(limit), offset]
       );
@@ -254,7 +270,8 @@ router.get(
         },
       });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      // Using the unified handleError which now uses errorResponse
+      handleError(res, error, 500);
     }
   }
 );
@@ -309,8 +326,8 @@ router.get(
 
       const offset = (page - 1) * limit;
       const result = await pool.query(
-        `SELECT id, invoice_number, po_id, amount, tax_amount, status, created_at 
-           FROM invoices 
+        `SELECT id, invoice_number, po_id, amount, tax_amount, status, created_at
+           FROM invoices
            WHERE (supplier_id = $1 OR buyer_id = $1) AND is_deleted = FALSE
            ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
         [userId, limit, offset]
@@ -321,7 +338,8 @@ router.get(
         pagination: { page, limit, total, pages: Math.ceil(total / limit) },
       });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      // Using the unified handleError which now uses errorResponse
+      handleError(res, error, 500);
     }
   }
 );

@@ -54,9 +54,8 @@ class AdminController {
         statistics: stats,
       });
     } catch (error) {
-      res.status(500).json({
-        error: error.message,
-      });
+      const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      errorResponse(res, error, 'Error fetching statistics');
     }
   }
 

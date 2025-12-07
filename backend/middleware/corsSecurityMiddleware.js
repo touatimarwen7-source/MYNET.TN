@@ -9,58 +9,20 @@ const cors = require('cors');
  * CORS configuration with security options
  */
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests from frontend
-    const allowedOrigins = [
-      process.env.FRONTEND_URL || 'http://localhost:5000',
-      'http://localhost:5000',
-      'http://localhost:3000',
-      process.env.REPLIT_ORIGIN || 'http://127.0.0.1:5000',
-    ];
-
-    // Add Replit domain if available
-    if (process.env.REPLIT_DOMAINS) {
-      const replitDomains = process.env.REPLIT_DOMAINS.split(',');
-      replitDomains.forEach((domain) => {
-        allowedOrigins.push(`https://${domain.trim()}`);
-        allowedOrigins.push(`http://${domain.trim()}`);
-      });
-    }
-
-    // Allow requests without origin (mobile apps, curl, etc)
-    if (!origin) {
-      callback(null, true);
-    } else if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else if (origin && origin.includes('.riker.replit.dev')) {
-      // Allow any Replit domain as fallback
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5000',
   credentials: true,
+  optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type',
     'Authorization',
-    'X-Requested-With',
     'X-CSRF-Token',
+    'X-Requested-With',
     'Accept',
-    'Accept-Language',
-    'Content-Language',
+    'Origin',
   ],
-  exposedHeaders: [
-    'X-Total-Count',
-    'X-Page-Count',
-    'X-Request-ID',
-    'Content-Range',
-    'X-RateLimit-Limit',
-    'X-RateLimit-Remaining',
-    'X-RateLimit-Reset',
-  ],
-  maxAge: 3600, // 1 hour
-  preflightContinue: false,
+  exposedHeaders: ['X-Total-Count', 'X-Page-Count'],
+  maxAge: 86400, // 24 hours
 };
 
 /**

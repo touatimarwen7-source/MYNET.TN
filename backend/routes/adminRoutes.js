@@ -3,6 +3,9 @@ const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const adminController = require('../controllers/adminController');
 const authMiddleware = require('../middleware/authMiddleware');
+const { errorResponse } = require('../middleware/errorResponseFormatter');
+const { validatePagination } = require('../middleware/paginationValidator');
+
 
 // جميع مسارات الإدارة محمية - super_admin فقط
 router.use(authMiddleware.verifyToken);
@@ -14,7 +17,7 @@ router.get('/dashboard', adminController.getDashboard);
 router.get('/audit-logs/export', adminController.exportAuditLogs);
 
 // ===== إدارة المستخدمين =====
-router.get('/users', adminController.getAllUsers);
+router.get('/users', validatePagination, adminController.getAllUsers);
 router.get('/users/:id', validateIdMiddleware('id'), adminController.getUserDetails);
 router.put('/users/:id/role', validateIdMiddleware('id'), adminController.updateUserRole);
 router.post('/users/:id/block', validateIdMiddleware('id'), adminController.blockUser);
