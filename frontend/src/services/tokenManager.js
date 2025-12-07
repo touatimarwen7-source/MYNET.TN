@@ -3,119 +3,57 @@
  * Handles JWT token storage and retrieval
  */
 
-const TOKEN_KEY = 'auth_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-const USER_KEY = 'user_data';
-
 class TokenManager {
-  /**
-   * Store access token
-   */
-  setToken(token) {
+  constructor() {
+    this.ACCESS_TOKEN_KEY = 'access_token';
+    this.REFRESH_TOKEN_KEY = 'refresh_token';
+    this.USER_KEY = 'user';
+  }
+
+  // Access Token
+  setAccessToken(token) {
     if (token) {
-      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
     }
   }
 
-  /**
-   * Get access token
-   */
-  getToken() {
-    return localStorage.getItem(TOKEN_KEY);
-  }
-
-  /**
-   * Alias for getToken (for backward compatibility)
-   */
   getAccessToken() {
-    return this.getToken();
+    return localStorage.getItem(this.ACCESS_TOKEN_KEY);
   }
 
-  /**
-   * Store refresh token
-   */
+  // Refresh Token
   setRefreshToken(token) {
     if (token) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, token);
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
     }
   }
 
-  /**
-   * Get refresh token
-   */
   getRefreshToken() {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
   }
 
-  /**
-   * Store user data
-   */
-  setUser(userData) {
-    if (userData) {
-      localStorage.setItem(USER_KEY, JSON.stringify(userData));
+  // User Data
+  setUser(user) {
+    if (user) {
+      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
     }
   }
 
-  /**
-   * Get user data
-   */
   getUser() {
-    const userData = localStorage.getItem(USER_KEY);
-    return userData ? JSON.parse(userData) : null;
+    const user = localStorage.getItem(this.USER_KEY);
+    return user ? JSON.parse(user) : null;
   }
 
-  /**
-   * Clear all tokens and user data
-   */
-  clearToken() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-  }
-
-  /**
-   * Check if user is authenticated
-   */
-  isAuthenticated() {
-    return !!this.getToken();
-  }
-
-  /**
-   * Manage tokens (set or clear)
-   */
-  manageTokens(token = null, refreshToken = null, userData = null) {
-    if (token) {
-      this.setToken(token);
-      if (refreshToken) {
-        this.setRefreshToken(refreshToken);
-      }
-      if (userData) {
-        this.setUser(userData);
-      }
-    } else {
-      this.clearToken();
-    }
-  }
-
-  /**
-   * Check if token is valid (exists)
-   */
-  isTokenValid() {
-    return !!this.getToken();
-  }
-
-  /**
-   * Get user info from stored user data
-   */
-  getUserFromToken() {
-    return this.getUser();
-  }
-
-  /**
-   * Clear all tokens (alias for clearToken)
-   */
+  // Clear All
   clearTokens() {
-    this.clearToken();
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+  }
+
+  // Check if authenticated
+  isAuthenticated() {
+    return !!this.getAccessToken();
   }
 }
 
@@ -123,6 +61,5 @@ class TokenManager {
 const tokenManager = new TokenManager();
 
 // Export both the instance and the class
-export { tokenManager, TokenManager };
-export default TokenManager;
-export const tokenManager = TokenManager;
+export { TokenManager };
+export default tokenManager;
