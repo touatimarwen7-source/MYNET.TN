@@ -1,4 +1,3 @@
-
 /**
  * Token Manager Service
  * Handles JWT token storage and retrieval
@@ -125,4 +124,5 @@ const tokenManager = new TokenManager();
 
 // Export both the instance and the class
 export { tokenManager, TokenManager };
-export default tokenManager;
+export default TokenManager;
+export const tokenManager = TokenManager;

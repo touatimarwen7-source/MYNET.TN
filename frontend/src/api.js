@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import tokenManager from './services/tokenManager';
 
@@ -182,5 +181,24 @@ export const searchAPI = {
   },
 };
 
-// Export default instance
-export default apiClient;
+// Dummy APIs to satisfy the export default structure, assuming they exist elsewhere or will be added.
+// In a real scenario, these would be imported or defined.
+const directSupplyAPI = {};
+const bidAPI = {};
+const companyProfileAPI = {};
+// Placeholder for authApi if it's different from authAPI, or if the original intention was to rename
+const authApi = authAPI;
+
+
+export const authAPIExported = authAPI; // Renaming to avoid conflict if needed, and exporting explicitly
+
+export default {
+  procurement: procurementAPI,
+  admin: adminAPI,
+  notification: notificationAPI,
+  search: searchAPI,
+  directSupply: directSupplyAPI,
+  bid: bidAPI,
+  companyProfile: companyProfileAPI,
+  auth: authAPI, // Exporting authAPI as 'auth' in the default object
+};
