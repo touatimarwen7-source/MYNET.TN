@@ -109,28 +109,40 @@ class AuthController {
         });
       }
 
-      let authData;
-      try {
-        // Try database authentication first
-        authData = await UserService.authenticateUser(email, password);
-      } catch (dbError) {
-        // Fallback to simple auth service
-        authData = await SimpleAuthService.authenticate(email, password);
+      // Use SimpleAuthService for authentication
+      const user = await SimpleAuthService.authenticate(email, password);
+
+      if (!user) {
+        return res.status(401).json({
+          error: 'Invalid email or password',
+        });
       }
+
+      // Generate tokens
+      const accessToken = KeyManagementService.generateAccessToken({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
+      const refreshToken = KeyManagementService.generateRefreshToken({
+        userId: user.id,
+      });
 
       res.status(200).json({
         success: true,
         message: 'Login successful',
-        accessToken: authData.accessToken,
-        refreshToken: authData.refreshToken,
-        refreshTokenId: authData.refreshToken,
-        expiresIn: authData.expiresIn || 900,
-        user: authData.user,
-        data: authData.user,
+        accessToken,
+        refreshToken,
+        refreshTokenId: refreshToken,
+        expiresIn: 900,
+        user,
+        data: user,
       });
     } catch (error) {
+      console.error('Login error:', error);
       res.status(401).json({
-        error: error.message,
+        error: 'Authentication failed',
       });
     }
   }
