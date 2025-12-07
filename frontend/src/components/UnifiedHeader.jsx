@@ -1,5 +1,5 @@
 import { THEME_COLORS } from './themeHelpers';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppBar,
