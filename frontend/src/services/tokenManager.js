@@ -77,14 +77,12 @@ class TokenManager {
   }
 }
 
-// Create and export singleton instance
+// Create singleton instance
 const tokenManagerInstance = new TokenManager();
 
-// Named export for compatibility
-export const tokenManager = tokenManagerInstance;
-
-// Default export
+// Default export (primary)
 export default tokenManagerInstance;
 
-// Export class for testing purposes
+// Named exports for different use cases
+export const tokenManager = tokenManagerInstance;
 export { TokenManager };
