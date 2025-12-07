@@ -1,26 +1,32 @@
 require('dotenv').config();
 const http = require('http');
 const app = require('./app');
-const logger = require('./utils/logger');
 
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-// Ensure database connection is handled properly
-let db;
+let logger;
 try {
-  db = require('./config/db');
+  logger = require('./utils/logger');
 } catch (error) {
-  logger.error('Database configuration error:', error);
-  // Continue without DB for testing
+  console.error('Logger initialization failed:', error);
+  logger = console;
 }
 
-const { initializeSchema } = require('./config/schema');
-const BackupScheduler = require('./services/backup/BackupScheduler');
-const { initializeWebSocket } = require('./config/websocket');
-const { errorTracker } = require('./services/ErrorTrackingService');
-const { initializeSentry } = require('./config/sentry');
+let initializeDb, getPool, initializeSchema, BackupScheduler, initializeWebSocket, errorTracker, initializeSentry;
 
+try {
+  const db = require('./config/db');
+  initializeDb = db.initializeDb;
+  getPool = db.getPool;
+  initializeSchema = require('./config/schema').initializeSchema;
+  BackupScheduler = require('./services/backup/BackupScheduler');
+  initializeWebSocket = require('./config/websocket').initializeWebSocket;
+  errorTracker = require('./services/ErrorTrackingService').errorTracker;
+  initializeSentry = require('./config/sentry').initializeSentry;
+} catch (error) {
+  logger.error('Failed to load dependencies:', error.message);
+}
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
@@ -51,10 +57,14 @@ async function startServer() {
       logger.warn('⚠️ Error tracking initialization failed:', sentryError.message);
     }
 
-    // Use the db object that was potentially initialized earlier
-    if (db) {
+    let dbConnected = false;
+    if (initializeDb) {
+      dbConnected = await initializeDb();
+    }
+
+    if (dbConnected && getPool && initializeSchema) {
       try {
-        const pool = db.getPool(); // Assuming getPool is exported from db
+        const pool = getPool();
         await initializeSchema(pool);
         logger.info('✅ Database initialized successfully');
 
