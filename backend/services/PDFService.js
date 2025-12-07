@@ -470,18 +470,18 @@ class PDFService {
         bufferPages: true,
       });
 
-      // رأس
-      this.addHeader(pdf, 'تقرير سجل المعاملات', `${startDate} إلى ${endDate}`);
+      // En-tête
+      this.addHeader(pdf, 'Rapport des Transactions', `${startDate} à ${endDate}`);
 
-      // ملخص
-      pdf.fontSize(11).font('Helvetica-Bold').text('ملخص المعاملات', { align: 'right' });
+      // Résumé
+      pdf.fontSize(11).font('Helvetica-Bold').text('Résumé des Transactions', { align: 'left' });
       pdf.moveDown(0.3);
       pdf.fontSize(10).font('Helvetica');
-      pdf.text(`إجمالي العروض: ${offersResult.rows.length}`, { align: 'right' });
-      pdf.text(`الفترة: من ${startDate} إلى ${endDate}`, { align: 'right' });
+      pdf.text(`Total des offres: ${offersResult.rows.length}`, { align: 'left' });
+      pdf.text(`Période: du ${startDate} au ${endDate}`, { align: 'left' });
       pdf.moveDown(1);
 
-      // جدول العروض
+      // Tableau des offres
       if (offersResult.rows.length > 0) {
         const tableData = offersResult.rows.map((row) => ({
           offer_number: row.offer_number,

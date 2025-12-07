@@ -33,8 +33,8 @@ router.post(
 router.post('/admin-helpers', adminController.createAdminHelper);
 router.put('/admin-helpers/:id/permissions', validateIdMiddleware('id'), adminController.updateAdminPermissions);
 
-// ===== إدارة المحتوى الثابت والصفحات والملفات =====
-// الصفحات الثابتة (تحرير كامل)
+// ===== Gestion du contenu statique, pages et fichiers =====
+// Pages statiques (édition complète)
 router.get('/content/pages', adminController.getAllPages);
 router.get('/content/pages/:id', validateIdMiddleware('id'), adminController.getPageById);
 router.post('/content/pages', adminController.createPage);
@@ -42,7 +42,7 @@ router.put('/content/pages/:id', validateIdMiddleware('id'), adminController.upd
 router.patch('/content/pages/:id', validateIdMiddleware('id'), adminController.updatePagePartial);
 router.delete('/content/pages/:id', validateIdMiddleware('id'), adminController.deletePage);
 
-// الملفات والصور والوثائق
+// Fichiers, images et documents
 router.get('/content/files', adminController.getAllFiles);
 router.get('/content/media', adminController.getAllMedia);
 router.post('/content/files', adminController.uploadFile);
@@ -51,7 +51,7 @@ router.put('/content/files/:id', validateIdMiddleware('id'), adminController.upd
 router.delete('/content/files/:id', validateIdMiddleware('id'), adminController.deleteFile);
 router.delete('/content/files/bulk', adminController.deleteBulkFiles);
 
-// الصور (محسّنة)
+// Images (optimisées)
 router.get('/content/images', adminController.getAllImages);
 router.post('/content/images', adminController.uploadImage);
 router.put('/content/images/:id', validateIdMiddleware('id'), adminController.updateImage);

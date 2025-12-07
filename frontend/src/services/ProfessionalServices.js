@@ -1,27 +1,27 @@
 /**
- * خدمات احترافية موحدة
- * مجموعة من الخدمات المساعدة بمواصفات عالمية
+ * Services professionnels unifiés
+ * Ensemble de services auxiliaires avec des spécifications mondiales
  */
 
 import axios from 'axios';
 import { logger } from '../utils/logger';
 
 /**
- * خدمة إدارة البيانات
+ * Service de gestion des données
  */
 export const DataService = {
   /**
-   * تنسيق العملة
+   * Formatage de la devise
    */
-  formatCurrency: (value, currency = 'د.ت') => {
-    return new Intl.NumberFormat('ar-TN').format(value) + ' ' + currency;
+  formatCurrency: (value, currency = 'TND') => {
+    return new Intl.NumberFormat('fr-TN').format(value) + ' ' + currency;
   },
 
   /**
-   * تنسيق التاريخ
+   * Formatage de la date
    */
   formatDate: (date) => {
-    return new Intl.DateTimeFormat('ar-TN', {
+    return new Intl.DateTimeFormat('fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -29,7 +29,7 @@ export const DataService = {
   },
 
   /**
-   * حساب الفرق الزمني
+   * Calcul de la différence temporelle
    */
   getTimeAgo: (date) => {
     const now = new Date();
@@ -38,29 +38,29 @@ export const DataService = {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 60) return `قبل ${minutes} دقيقة`;
-    if (hours < 24) return `قبل ${hours} ساعة`;
-    if (days < 30) return `قبل ${days} يوم`;
+    if (minutes < 60) return `Il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
+    if (hours < 24) return `Il y a ${hours} heure${hours > 1 ? 's' : ''}`;
+    if (days < 30) return `Il y a ${days} jour${days > 1 ? 's' : ''}`;
     return this.formatDate(date);
   },
 
   /**
-   * حساب النسبة المئوية
+   * Calcul du pourcentage
    */
   calculatePercentage: (value, total) => {
     return ((value / total) * 100).toFixed(1);
   },
 
   /**
-   * تنسيق الأرقام الكبيرة
+   * Formatage des grands nombres
    */
   formatNumber: (num) => {
-    return new Intl.NumberFormat('ar-TN').format(num);
+    return new Intl.NumberFormat('fr-FR').format(num);
   },
 };
 
 /**
- * خدمة التحقق من الصحة
+ * Service de validation
  */
 export const ValidationService = {
   /**

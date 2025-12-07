@@ -34,52 +34,52 @@ export const errorHandler = {
    * الحصول على رسالة خطأ مناسبة للمستخدم
    */
   getUserMessage(error) {
-    // خطأ من الخادم
+    // Erreur du serveur
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data;
 
-      // رسائل حسب كود الحالة
+      // Messages selon le code de statut
       switch (status) {
         case 400:
           return {
-            title: 'خطأ في البيانات المدخلة',
-            message: data?.message || 'يرجى التحقق من البيانات المدخلة',
+            title: 'Erreur de données',
+            message: data?.message || 'Veuillez vérifier les données saisies',
             code: ERROR_CODES.VALIDATION_ERROR
           };
 
         case 401:
           return {
-            title: 'غير مصرح',
-            message: 'يرجى تسجيل الدخول مرة أخرى',
+            title: 'Non autorisé',
+            message: 'Veuillez vous reconnecter',
             code: ERROR_CODES.UNAUTHORIZED
           };
 
         case 403:
           return {
-            title: 'ممنوع',
-            message: 'ليس لديك صلاحية للوصول إلى هذا المورد',
+            title: 'Interdit',
+            message: 'Vous n\'avez pas les permissions pour accéder à cette ressource',
             code: ERROR_CODES.FORBIDDEN
           };
 
         case 404:
           return {
-            title: 'غير موجود',
-            message: data?.message || 'المورد المطلوب غير موجود',
+            title: 'Non trouvé',
+            message: data?.message || 'La ressource demandée n\'existe pas',
             code: ERROR_CODES.NOT_FOUND
           };
 
         case 409:
           return {
-            title: 'تعارض',
-            message: data?.message || 'يوجد تعارض مع البيانات الحالية',
+            title: 'Conflit',
+            message: data?.message || 'Il y a un conflit avec les données existantes',
             code: ERROR_CODES.CONFLICT
           };
 
         case 429:
           return {
-            title: 'طلبات كثيرة',
-            message: 'لقد تجاوزت الحد المسموح من الطلبات. يرجى المحاولة لاحقاً',
+            title: 'Trop de requêtes',
+            message: 'Vous avez dépassé la limite de requêtes autoriséesبات. يرجى المحاولة لاحقاً',
             code: ERROR_CODES.RATE_LIMIT
           };
 

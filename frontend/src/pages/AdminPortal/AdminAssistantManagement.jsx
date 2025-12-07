@@ -78,9 +78,9 @@ const AVAILABLE_PERMISSIONS = [
   {
     category: '💼 إدارة الفواتير والعقود',
     permissions: [
-      { id: 'view_purchase_order', label: 'عرض أوامر الشراء' },
-      { id: 'create_purchase_order', label: 'إنشاء أوامر شراء' },
-      { id: 'manage_invoices', label: 'إدارة الفواتير' },
+      { id: 'view_purchase_order', label: 'Voir les bons de commande' },
+      { id: 'create_purchase_order', label: 'Créer des bons de commande' },
+      { id: 'manage_invoices', label: 'Gérer les facturesواتير' },
     ],
   },
   {
