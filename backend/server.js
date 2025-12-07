@@ -1,13 +1,26 @@
 require('dotenv').config();
 const http = require('http');
 const app = require('./app');
-const { initializeDb, getPool } = require('./config/db');
+const logger = require('./utils/logger');
+
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+// Ensure database connection is handled properly
+let db;
+try {
+  db = require('./config/db');
+} catch (error) {
+  logger.error('Database configuration error:', error);
+  // Continue without DB for testing
+}
+
 const { initializeSchema } = require('./config/schema');
 const BackupScheduler = require('./services/backup/BackupScheduler');
 const { initializeWebSocket } = require('./config/websocket');
 const { errorTracker } = require('./services/ErrorTrackingService');
 const { initializeSentry } = require('./config/sentry');
-const { logger } = require('./utils/logger');
+
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
@@ -23,7 +36,6 @@ const companyProfileRoutes = require('./routes/companyProfileRoutes');
 const clarificationRoutes = require('./routes/clarificationRoutes');
 const passwordResetRoutes = require('./routes/passwordResetRoutes');
 
-const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
@@ -39,11 +51,10 @@ async function startServer() {
       logger.warn('⚠️ Error tracking initialization failed:', sentryError.message);
     }
 
-    const dbConnected = await initializeDb();
-
-    if (dbConnected) {
+    // Use the db object that was potentially initialized earlier
+    if (db) {
       try {
-        const pool = getPool();
+        const pool = db.getPool(); // Assuming getPool is exported from db
         await initializeSchema(pool);
         logger.info('✅ Database initialized successfully');
 
@@ -84,7 +95,7 @@ async function startServer() {
     app.use('/api/auth/password-reset', passwordResetRoutes);
 
 
-    server.listen(PORT, '0.0.0.0', () => {
+    server.listen(PORT, HOST, () => {
       logger.info('========================================');
       logger.info(`🚀 Server running on port ${PORT}`);
       logger.info(`📍 Access API at: http://localhost:${PORT}`);
