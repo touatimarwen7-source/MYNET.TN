@@ -9,6 +9,20 @@ const { errorTracker } = require('./services/ErrorTrackingService');
 const { initializeSentry } = require('./config/sentry');
 const { logger } = require('./utils/logger');
 
+// Import routes
+const authRoutes = require('./routes/authRoutes');
+const procurementRoutes = require('./routes/procurementRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const superAdminRoutes = require('./routes/superAdminRoutes');
+const searchRoutes = require('./routes/searchRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const messagesRoutes = require('./routes/messagesRoutes');
+const reviewsRoutes = require('./routes/reviewsRoutes');
+const directSupplyRoutes = require('./routes/directSupplyRoutes');
+const companyProfileRoutes = require('./routes/companyProfileRoutes');
+const clarificationRoutes = require('./routes/clarificationRoutes');
+const passwordResetRoutes = require('./routes/passwordResetRoutes');
+
 const PORT = process.env.PORT || 3000;
 
 async function startServer() {
@@ -40,6 +54,21 @@ async function startServer() {
     // 🔌 Initialize WebSocket
     const io = initializeWebSocket(server);
     logger.info('✅ WebSocket initialized');
+
+    // Register routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/procurement', procurementRoutes);
+    app.use('/api/admin', adminRoutes);
+    app.use('/api/super-admin', superAdminRoutes);
+    app.use('/api/search', searchRoutes);
+    app.use('/api/notifications', notificationRoutes);
+    app.use('/api/messages', messagesRoutes);
+    app.use('/api/reviews', reviewsRoutes);
+    app.use('/api/direct-supply', directSupplyRoutes);
+    app.use('/api/company-profile', companyProfileRoutes);
+    app.use('/api/procurement', clarificationRoutes);
+    app.use('/api/auth/password-reset', passwordResetRoutes);
+
 
     server.listen(PORT, '0.0.0.0', () => {
       logger.info('========================================');

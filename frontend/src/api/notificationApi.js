@@ -1,20 +1,10 @@
-import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+import axiosInstance from '../services/axiosConfig';
 
-/**
- * Fetches notifications for the current user.
- * @param {string} token - The user's authentication token.
- * @returns {Promise<Array<Object>>} A promise that resolves to an array of notifications.
- */
-export const getNotifications = async (token) => {
-  try {
-    const response = await axios.get(`${API_URL}/notifications`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching notifications:', error.response?.data?.message || error.message);
-    throw error;
-  }
+export const notificationAPI = {
+  getNotifications: (params) => axiosInstance.get('/notifications', { params }),
+  markAsRead: (notificationId) => axiosInstance.put(`/notifications/${notificationId}/read`),
+  markAllAsRead: () => axiosInstance.put('/notifications/read-all'),
+  deleteNotification: (notificationId) => axiosInstance.delete(`/notifications/${notificationId}`),
+  getUnreadCount: () => axiosInstance.get('/notifications/count/unread')
 };
