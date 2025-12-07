@@ -22,7 +22,7 @@ import {
   Grid,
 } from '@mui/material';
 import axios from '../api/axiosConfig';
-import { theme } from '../theme/theme';
+import institutionalTheme from '../theme/theme';
 
 export default function TenderManagement({ tenderId }) {
   const [offers, setOffers] = useState([]);

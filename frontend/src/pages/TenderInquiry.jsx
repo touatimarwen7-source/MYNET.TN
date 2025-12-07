@@ -20,7 +20,7 @@ import {
   Alert,
 } from '@mui/material';
 import axios from '../api/axiosConfig'; // ✅ استخدام النسخة المُعدّة
-import { theme } from '../theme/theme';
+import institutionalTheme from '../theme/theme';
 
 export default function TenderInquiry({ tenderId }) {
   const [inquiries, setInquiries] = useState([]);

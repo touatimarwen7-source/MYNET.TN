@@ -4,7 +4,25 @@
  * Prevents hardcoded colors throughout the app
  */
 
-import { theme } from '../theme/theme';
+import institutionalTheme from '../theme/theme';
+
+// Re-export as theme for compatibility
+export const theme = institutionalTheme;
+
+// Export THEME_COLORS from theme palette
+export const THEME_COLORS = {
+  primary: institutionalTheme.palette.primary.main,
+  secondary: institutionalTheme.palette.secondary.main,
+  success: institutionalTheme.palette.success.main,
+  error: institutionalTheme.palette.error.main,
+  warning: institutionalTheme.palette.warning.main,
+  info: institutionalTheme.palette.info.main,
+  bgDefault: institutionalTheme.palette.background.default,
+  bgPaper: institutionalTheme.palette.background.paper,
+  textPrimary: institutionalTheme.palette.text.primary,
+  textSecondary: institutionalTheme.palette.text.secondary,
+  divider: institutionalTheme.palette.divider,
+};
 
 export const colors = {
   // Primary & Secondary
