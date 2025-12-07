@@ -72,6 +72,45 @@ export const buyerMenu = [
   },
 ];
 
+// قائمة المساعد الإداري (Admin)
+export const adminMenu = [
+  {
+    id: 'dashboard',
+    label: 'لوحة التحكم',
+    path: '/admin',
+    featureKey: 'dashboard',
+    subItems: [],
+  },
+  {
+    id: 'users',
+    label: 'إدارة المستخدمين',
+    path: '/admin/users',
+    featureKey: 'manage_users',
+    subItems: [],
+  },
+  {
+    id: 'content',
+    label: 'إدارة المحتوى',
+    path: '/admin/content',
+    featureKey: 'manage_content',
+    subItems: [],
+  },
+  {
+    id: 'reports',
+    label: 'التقارير',
+    path: '/admin/reports',
+    featureKey: 'view_reports',
+    subItems: [],
+  },
+  {
+    id: 'settings',
+    label: 'الإعدادات',
+    path: '/admin/settings',
+    featureKey: 'manage_settings',
+    subItems: [],
+  },
+];
+
 export const supplierMenu = [
   {
     id: 'dashboard',

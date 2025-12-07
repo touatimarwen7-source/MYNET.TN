@@ -9,7 +9,7 @@ class User extends BaseEntity {
     this.password_salt = data.password_salt || '';
     this.full_name = data.full_name || '';
     this.phone = data.phone || '';
-    this.role = data.role || 'viewer';
+    this.role = data.role || 'supplier'; // الدور الافتراضي: مزود
     this.company_name = data.company_name || '';
     this.company_registration = data.company_registration || '';
     this.is_verified = data.is_verified || false;

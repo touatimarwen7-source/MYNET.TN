@@ -25,6 +25,11 @@ router.post(
   adminController.resetUserPassword
 );
 
+// ===== إدارة المساعدين الإداريين (Admin Helpers) =====
+// يمكن فقط للـ super_admin
+router.post('/admin-helpers', adminController.createAdminHelper);
+router.put('/admin-helpers/:id/permissions', validateIdMiddleware('id'), adminController.updateAdminPermissions);
+
 // ===== إدارة المحتوى الثابت والصفحات والملفات =====
 // الصفحات الثابتة (تحرير كامل)
 router.get('/content/pages', adminController.getAllPages);

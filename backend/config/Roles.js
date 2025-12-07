@@ -1,10 +1,10 @@
 const Roles = {
-  SUPER_ADMIN: 'super_admin',
-  ADMIN_ASSISTANT: 'admin_assistant',
-  BUYER: 'buyer',
-  SUPPLIER: 'supplier',
-  ACCOUNTANT: 'accountant',
-  VIEWER: 'viewer',
+  SUPER_ADMIN: 'super_admin', // المدير الأعلى - كل الصلاحيات
+  ADMIN: 'admin', // مساعد إداري - يُنشأ بواسطة super_admin بصلاحيات محددة
+  BUYER: 'buyer', // المشتري - يُنشئ المناقصات
+  SUPPLIER: 'supplier', // المزود - يقدم العروض
+  ACCOUNTANT: 'accountant', // المحاسب (دور إضافي)
+  VIEWER: 'viewer', // مراقب (دور إضافي)
 };
 
 const Permissions = {
@@ -55,7 +55,7 @@ const Permissions = {
 
 const RolePermissions = {
   [Roles.SUPER_ADMIN]: Object.values(Permissions),
-  [Roles.ADMIN_ASSISTANT]: [], // Dynamic permissions set by super_admin
+  [Roles.ADMIN]: [], // Dynamic permissions set by super_admin
   [Roles.BUYER]: [
     Permissions.VIEW_DASHBOARD,
     Permissions.CREATE_TENDER,
@@ -93,7 +93,7 @@ const RolePermissions = {
 };
 
 function hasPermission(userRole, permission, customPermissions = null) {
-  // If custom permissions are provided (for admin_assistant), use them
+  // If custom permissions are provided (for admin), use them
   if (customPermissions && Array.isArray(customPermissions)) {
     return customPermissions.includes(permission);
   }

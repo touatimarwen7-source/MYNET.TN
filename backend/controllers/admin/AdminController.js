@@ -102,6 +102,85 @@ class AdminController {
       });
     }
   }
+
+  // إنشاء مساعد إداري (admin) - يمكن فقط للـ super_admin
+  async createAdminHelper(req, res) {
+    try {
+      const { email, full_name, phone, permissions } = req.body;
+      const pool = require('../../config/db').getPool();
+
+      // التحقق من أن المستخدم الحالي هو super_admin
+      if (req.user.role !== 'super_admin') {
+        return res.status(403).json({
+          error: 'Only super_admin can create admin helpers',
+        });
+      }
+
+      // إنشاء مساعد إداري جديد
+      const result = await pool.query(
+        `INSERT INTO users (email, full_name, phone, role, password_hash, password_salt, created_at)
+         VALUES ($1, $2, $3, 'admin', $4, $5, CURRENT_TIMESTAMP)
+         RETURNING id, email, full_name, role`,
+        [email, full_name, phone, 'temp_hash', 'temp_salt']
+      );
+
+      // حفظ الصلاحيات المخصصة
+      if (permissions && permissions.length > 0) {
+        const permissionValues = permissions.map(p => `(${result.rows[0].id}, '${p}')`).join(',');
+        await pool.query(`
+          INSERT INTO admin_permissions (user_id, permission_key)
+          VALUES ${permissionValues}
+        `);
+      }
+
+      res.status(201).json({
+        success: true,
+        admin: result.rows[0],
+        message: 'Admin helper created successfully',
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+      });
+    }
+  }
+
+  // تحديث صلاحيات المساعد الإداري
+  async updateAdminPermissions(req, res) {
+    try {
+      const { id } = req.params;
+      const { permissions } = req.body;
+      const pool = require('../../config/db').getPool();
+
+      // التحقق من أن المستخدم الحالي هو super_admin
+      if (req.user.role !== 'super_admin') {
+        return res.status(403).json({
+          error: 'Only super_admin can update admin permissions',
+        });
+      }
+
+      // حذف الصلاحيات القديمة
+      await pool.query('DELETE FROM admin_permissions WHERE user_id = $1', [id]);
+
+      // إضافة الصلاحيات الجديدة
+      if (permissions && permissions.length > 0) {
+        const permissionValues = permissions.map(p => `(${id}, '${p}')`).join(',');
+        await pool.query(`
+          INSERT INTO admin_permissions (user_id, permission_key)
+          VALUES ${permissionValues}
+        `);
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Admin permissions updated successfully',
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new AdminController();
