@@ -89,10 +89,9 @@ function buildAdminMenu(permissions) {
   return baseMenu;
 }
 
-// للتوافق مع الكود القديم
+// للتوافق مع الكود القديم - تصدير القوائم
 export const buyerMenu = getMenuByRole('buyer');
 export const supplierMenu = getMenuByRole('supplier');
-export const adminMenu = getMenuByRole('admin');
 export const superAdminMenu = getMenuByRole('super_admin');
 
 export const getMenuForRole = (role) => {

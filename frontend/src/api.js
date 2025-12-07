@@ -99,7 +99,14 @@ const searchAPI = {
 };
 
 // Export all APIs as named exports
-export { authAPI, procurementAPI, adminAPI, notificationAPI, searchAPI, apiClient };
+export { 
+  authAPI, 
+  procurementAPI, 
+  adminAPI, 
+  notificationAPI, 
+  searchAPI, 
+  apiClient 
+};
 
 // Export default apiClient for backward compatibility
 export default apiClient;
