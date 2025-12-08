@@ -66,7 +66,7 @@ const requestIdMiddleware = require('./middleware/requestIdMiddleware');
 const performanceMiddleware = require('./middleware/performanceMiddleware');
 const { versionMiddleware } = require('./config/apiVersion');
 const {
-  globalErrorHandler,
+  errorHandler: globalErrorHandler,
   notFoundHandler,
   asyncHandler,
 } = require('./middleware/errorHandlingMiddleware');
