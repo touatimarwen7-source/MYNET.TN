@@ -75,21 +75,14 @@ async function initializeDb() {
       // ✅ POOL EVENT HANDLERS - Better error handling
       pool.on('error', (err, client) => {
         poolMetrics.errors++;
-        // Pool error - safely logged via metrics system
-        // Do not attempt to log via services at this early stage
-
-        // Do NOT try to release the client - let the pool handle it
-        // Attempting to release can cause "already released" errors
-        if (client && !client._connected) {
-          try {
-            // Only release if client appears to be in a valid state
-            if (typeof client.release === 'function' && !client._releasing) {
-              client.release();
-            }
-          } catch (releaseErr) {
-            // Silently ignore release errors - pool will handle cleanup
-          }
-        }
+        console.error('🔴 Pool Error:', {
+          message: err.message,
+          code: err.code,
+          timestamp: new Date().toISOString()
+        });
+        
+        // لا تحاول تحرير العميل - دع المجموعة تتعامل معه
+        // Pool will automatically handle cleanup
       });
 
       pool.on('connect', () => {

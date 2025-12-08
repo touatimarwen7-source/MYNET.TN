@@ -61,7 +61,22 @@ class ErrorBoundary extends React.Component {
   };
 
   handleReload = () => {
+    // مسح الكاش قبل إعادة التحميل
+    if (window.caches) {
+      caches.keys().then(names => {
+        names.forEach(name => caches.delete(name));
+      });
+    }
     window.location.reload();
+  };
+
+  handleGoHome = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+    window.location.href = '/';
   };
 
   render() {
@@ -111,10 +126,11 @@ class ErrorBoundary extends React.Component {
               retourner à l'accueil.
             </Typography>
 
-            <Box sx={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Button
                 variant="contained"
                 onClick={this.handleReset}
+                startIcon={<RefreshIcon />}
                 sx={{
                   backgroundColor: THEME_COLORS.primary,
                   color: THEME_COLORS.bgPaper,
@@ -133,6 +149,7 @@ class ErrorBoundary extends React.Component {
               <Button
                 variant="outlined"
                 onClick={this.handleReload}
+                startIcon={<RefreshIcon />}
                 sx={{
                   color: THEME_COLORS.primary,
                   borderColor: THEME_COLORS.primary,
@@ -146,7 +163,27 @@ class ErrorBoundary extends React.Component {
                   },
                 }}
               >
-                Aller à l'accueil
+                Rafraîchir
+              </Button>
+
+              <Button
+                variant="outlined"
+                onClick={this.handleGoHome}
+                startIcon={<HomeIcon />}
+                sx={{
+                  color: THEME_COLORS.textSecondary,
+                  borderColor: THEME_COLORS.textSecondary,
+                  textTransform: 'none',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  minHeight: '40px',
+                  '&:hover': {
+                    borderColor: THEME_COLORS.textPrimary,
+                    backgroundColor: `${THEME_COLORS.textSecondary}10`,
+                  },
+                }}
+              >
+                Page d'accueil
               </Button>
             </Box>
           </Box>

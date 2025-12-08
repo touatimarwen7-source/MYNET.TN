@@ -5,7 +5,30 @@
  */
 
 const { getCacheManager } = require('../utils/redisCache');
-const { CACHE_STRATEGY } = require('../COMPREHENSIVE-CACHING-STRATEGY');
+
+// استراتيجية الكاش المحلية المحسّنة
+const CACHE_STRATEGY = {
+  USERS: {
+    TTL: 300, // 5 minutes
+    Routes: ['/api/auth/profile', '/api/admin/users', '/api/super-admin/users']
+  },
+  TENDERS: {
+    TTL: 180, // 3 minutes
+    Routes: ['/api/procurement/tenders', '/api/procurement/tenders/:id', '/api/procurement/my-tenders']
+  },
+  OFFERS: {
+    TTL: 120, // 2 minutes
+    Routes: ['/api/procurement/offers', '/api/procurement/my-offers', '/api/procurement/tenders/:id/offers']
+  },
+  ANALYTICS: {
+    TTL: 600, // 10 minutes
+    Routes: ['/api/analytics/*', '/api/admin/dashboard', '/api/admin/statistics']
+  },
+  STATIC: {
+    TTL: 3600, // 1 hour
+    Routes: ['/api/super-admin/pages', '/api/super-admin/files']
+  }
+};
 
 const cacheManager = getCacheManager();
 

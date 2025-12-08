@@ -150,9 +150,18 @@ axiosInstance.interceptors.request.use(
  */
 axiosInstance.interceptors.response.use(
   (response) => {
-    // Cache GET requests that should be cached
-    if (response.config.method === 'get' && shouldCache(response.config.url)) {
-      setCachedResponse(response.config, response);
+    // تخزين مؤقت للطلبات الناجحة GET فقط
+    if (response.config.method === 'get' && response.status === 200) {
+      try {
+        const cacheKey = `${response.config.url}?${JSON.stringify(response.config.params || {})}`;
+        responseCache.set(cacheKey, {
+          data: response.data,
+          timestamp: Date.now(),
+        });
+      } catch (cacheError) {
+        // تجاهل أخطاء التخزين المؤقت
+        console.warn('Cache error:', cacheError.message);
+      }
     }
     return response;
   },

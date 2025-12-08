@@ -194,7 +194,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ HEALTH CHECK ENDPOINT (Public - No auth required)
+// ✅ HEALTH CHECK ENDPOINTS (Public - No auth required)
+const healthRoutes = require('./routes/healthRoutes');
+app.use('/api/health', healthRoutes);
+
+// Legacy health endpoint (backwards compatibility)
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
