@@ -1,6 +1,6 @@
 // Export Features Routes - TURN 3 ENHANCEMENT
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken } = require('../middleware/authMiddleware');
 const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
@@ -8,7 +8,7 @@ const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 router.get(
   '/tender/:tenderId/json',
   validateIdMiddleware('tenderId'),
-  authMiddleware,
+  verifyToken,
   async (req, res) => {
     try {
       const { tenderId } = req.params;
@@ -41,7 +41,7 @@ router.get(
 router.get(
   '/offers/:tenderId/json',
   validateIdMiddleware('tenderId'),
-  authMiddleware,
+  verifyToken,
   async (req, res) => {
     try {
       const { tenderId } = req.params;
@@ -74,7 +74,7 @@ router.get(
 router.get(
   '/invoice/:invoiceId/json',
   validateIdMiddleware('invoiceId'),
-  authMiddleware,
+  verifyToken,
   async (req, res) => {
     try {
       const { invoiceId } = req.params;
@@ -104,7 +104,7 @@ router.get(
 );
 
 // Export CSV template for bulk import
-router.get('/template/tenders-csv', authMiddleware, async (req, res) => {
+router.get('/template/tenders-csv', verifyToken, async (req, res) => {
   try {
     const csv = `title,description,budget,category,deadline,required_qualifications
 Example Tender,Sample tender description,50000,Technology,2025-12-31,"ISO 9001, Experience"`;

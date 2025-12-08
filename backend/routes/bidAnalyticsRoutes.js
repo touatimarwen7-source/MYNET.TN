@@ -1,6 +1,6 @@
 // Bid Analytics - OPTIMIZED
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken } = require('../middleware/authMiddleware');
 const QueryOptimizer = require('../utils/queryOptimizer');
 const { cacheMiddleware } = require('../middleware/cacheMiddleware');
 const router = express.Router();

@@ -1,7 +1,7 @@
 // Two-Factor Authentication (MFA) Routes - TURN 3 ENHANCEMENT
 const crypto = require('crypto');
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken } = require('../middleware/authMiddleware');
 const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 

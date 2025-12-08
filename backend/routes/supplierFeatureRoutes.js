@@ -1,6 +1,6 @@
 const express = require('express');
 const SupplierFeatureController = require('../controllers/admin/SupplierFeatureController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken, checkRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
