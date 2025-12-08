@@ -38,13 +38,20 @@ class TokenManager {
       return;
     }
     
-    if (!user.userId) {
-      console.error('TokenManager: User data missing userId:', user);
+    // Normaliser userId et id
+    const normalizedUser = {
+      ...user,
+      userId: user.userId || user.id,
+      id: user.id || user.userId
+    };
+    
+    if (!normalizedUser.userId && !normalizedUser.id) {
+      console.error('TokenManager: User data missing both userId and id:', user);
       return;
     }
     
     try {
-      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+      localStorage.setItem(this.USER_KEY, JSON.stringify(normalizedUser));
       console.log('TokenManager: User data stored successfully');
     } catch (error) {
       console.error('TokenManager: Error storing user data:', error);

@@ -22,7 +22,14 @@ import TokenManager from './tokenManager';
 import CSRFProtection from '../utils/csrfProtection';
 import { API_CONFIG, shouldCache, getCacheDuration, isPublicEndpoint } from '../config/apiConfig';
 
-const API_BASE_URL = '/api';
+const baseURL = import.meta.env.VITE_API_URL || '/api';
+const axiosInstance = axios.create({
+  baseURL: baseURL.replace(/\/api\/api/, '/api'), // Éviter double /api/
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 // ============================================
 // Response Cache
@@ -61,14 +68,14 @@ const setCachedResponse = (config, response) => {
 };
 
 // Create axios instance
-const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // Enable cookies
-  timeout: 30000, // 30 second timeout
-});
+// const axiosInstance = axios.create({
+//   baseURL: API_BASE_URL,
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+//   withCredentials: true, // Enable cookies
+//   timeout: 30000, // 30 second timeout
+// });
 
 // Track if refresh is in progress to avoid multiple refresh calls
 let isRefreshing = false;

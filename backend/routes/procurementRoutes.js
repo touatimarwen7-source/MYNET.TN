@@ -49,6 +49,46 @@ const validatePagination = (req, res, next) => {
   next();
 };
 
+// Buyer Dashboard Stats
+router.get(
+  '/buyer/dashboard-stats',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  async (req, res) => {
+    try {
+      const buyerId = req.user?.id;
+      const pool = getPool();
+
+      if (!buyerId) {
+        return errorResponse(res, 'User not authenticated', 401);
+      }
+
+      const statsQuery = `
+        SELECT 
+          COUNT(DISTINCT t.id) FILTER (WHERE t.status IN ('open', 'published') AND t.is_deleted = FALSE) as active_tenders,
+          COUNT(DISTINCT o.id) FILTER (WHERE o.is_deleted = FALSE) as total_offers,
+          COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'closed' AND t.is_deleted = FALSE) as completed_tenders,
+          COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'pending' AND o.is_deleted = FALSE) as pending_evaluations
+        FROM tenders t
+        LEFT JOIN offers o ON t.id = o.tender_id
+        WHERE t.buyer_id = $1
+      `;
+
+      const result = await pool.query(statsQuery, [buyerId]);
+      const stats = result.rows[0];
+
+      res.json({
+        success: true,
+        activeTenders: parseInt(stats.active_tenders) || 0,
+        totalOffers: parseInt(stats.total_offers) || 0,
+        completedTenders: parseInt(stats.completed_tenders) || 0,
+        pendingEvaluations: parseInt(stats.pending_evaluations) || 0
+      });
+    } catch (error) {
+      handleError(res, error, 500);
+    }
+  }
+);
+
 // Tenders - with validation
 router.post(
   '/tenders',
