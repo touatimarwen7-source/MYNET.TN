@@ -117,6 +117,9 @@ const UnifiedDashboard = lazy(() => import('./pages/UnifiedDashboard'));
 // Added for AI Recommendations
 const LazyAIRecommendations = lazy(() => import('./pages/AIRecommendations'));
 
+// Added for Dynamic Configuration Management
+const DynamicConfigManager = lazy(() => import('./pages/DynamicConfigManager'));
+
 const LoadingFallback = () => (
   <Container
     maxWidth="lg"
@@ -324,7 +327,7 @@ function AppContent() {
                           path="/disputes"
                           element={user?.role === 'buyer' ? <DisputeManagement /> : <Navigate to="/dashboard" />}
                         />
-                        
+
                         <Route
                           path="/monitoring-submissions"
                           element={user?.role === 'buyer' ? <MonitoringSubmissions /> : <Navigate to="/dashboard" />}
@@ -467,6 +470,8 @@ function AppContent() {
                             <Route path="/email-notifications" element={<EmailNotifications />} />
                             {/* AI Recommendations Route */}
                             <Route path="/ai-recommendations" element={<LazyAIRecommendations />} />
+                            {/* Dynamic Configuration Management Route */}
+                            <Route path="/dynamic-config" element={<DynamicConfigManager />} />
                           </>
                         ) : (
                           <Route path="/super-admin/*" element={<Navigate to="/dashboard" replace />} />
