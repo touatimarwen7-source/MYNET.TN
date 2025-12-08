@@ -36,36 +36,32 @@ const NotificationCenter = ({ userId }) => {
 
   const open = Boolean(anchorEl);
 
-  // Placeholder for actual fetching logic and isAuthenticated
-  // In a real scenario, this would come from context or props
-  const isAuthenticated = true; // Assuming user is authenticated for the purpose of this example
-  const fetchNotifications = async () => {
-    // This is a placeholder function. Replace with actual API call.
-    console.log('Fetching notifications...');
-  };
-
+  // Check authentication status from userId prop
+  const isAuthenticated = !!userId;
 
   useEffect(() => {
     let interval = null;
     let isMounted = true;
 
-    const loadNotifications = async () => {
-      if (isMounted && isAuthenticated) {
-        try {
-          await fetchNotifications();
-        } catch (error) {
-          console.error('Error loading notifications:', error);
-        }
+    const fetchNotifications = async () => {
+      if (!isMounted || !isAuthenticated) return;
+      
+      try {
+        // Actual notification fetching would happen here
+        // For now, we rely on WebSocket notifications
+      } catch (error) {
+        console.error('Error loading notifications:', error);
       }
     };
 
     if (isAuthenticated) {
-      loadNotifications();
+      // Initial fetch is not needed since WebSocket handles real-time updates
+      // Only set up periodic refresh as backup
       interval = setInterval(() => {
         if (isMounted) {
-          loadNotifications();
+          fetchNotifications();
         }
-      }, 30000);
+      }, 60000); // Check every minute instead of 30 seconds
     }
 
     return () => {
@@ -74,7 +70,7 @@ const NotificationCenter = ({ userId }) => {
         clearInterval(interval);
       }
     };
-  }, [isAuthenticated, fetchNotifications]);
+  }, [isAuthenticated, userId]);
 
 
   return (
