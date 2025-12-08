@@ -40,19 +40,22 @@ const getCurrentHost = () => {
     : `${protocol}//${hostname}:3000`;
 };
 
-// ✅ استخدام window.location.hostname للحصول على الـ host الصحيح
+// ✅ استخدام الـ URL الصحيح لبيئة Replit
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
   
-  // في بيئة Replit، استخدم نفس الـ hostname
+  // في بيئة Replit، استخدم البورت الخارجي 3000 مباشرة
   if (typeof window !== 'undefined') {
+    const protocol = window.location.protocol;
     const hostname = window.location.hostname;
-    return `${window.location.protocol}//${hostname}:3000/api`;
+    
+    // في Replit، البورت 3000 متاح مباشرة
+    return `${protocol}//${hostname}:3000/api`;
   }
   
-  return 'http://0.0.0.0:3000/api';
+  return 'http://localhost:3000/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();

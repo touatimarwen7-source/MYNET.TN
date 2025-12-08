@@ -6,18 +6,19 @@ import axios from 'axios';
 import logger from '../utils/logger';
 import axiosInstance from './axiosConfig';
 
-// استخدام نفس الـ hostname للـ API
+// استخدام الـ URL الصحيح لبيئة Replit
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
 
   if (typeof window !== 'undefined') {
+    const protocol = window.location.protocol;
     const hostname = window.location.hostname;
-    return `${window.location.protocol}//${hostname}:3000/api`;
+    return `${protocol}//${hostname}:3000/api`;
   }
 
-  return 'http://0.0.0.0:3000/api';
+  return 'http://localhost:3000/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();
