@@ -1,376 +1,159 @@
 const express = require('express');
 const router = express.Router();
-const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
-const adminController = require('../controllers/adminController');
-const SubscriptionAdminController = require('../controllers/admin/SubscriptionAdminController');
-const AdvertisementController = require('../controllers/admin/AdvertisementController');
-const AdminController = require('../controllers/admin/AdminController');
-const authMiddleware = require('../middleware/authMiddleware');
-const adminMiddleware = require('../middleware/adminMiddleware');
-const { validatePagination } = require('../middleware/paginationValidator');
+const adminController = require('../controllers/admin/AdminController');
+const { adminAuth, isSuperAdmin } = require('../middleware/adminMiddleware');
+const { asyncHandler } = require('../middleware/errorHandlingMiddleware');
+const { validateObjectId } = require('../middleware/validateIdMiddleware');
+const { adminPermissions } = require('../middleware/adminPermissionsMiddleware');
 
-// Toutes les routes d'administration sont protégées
-router.use(authMiddleware.verifyToken);
-router.use(adminMiddleware.isAdmin);
+// ============================================================================
+// ADMIN ROUTES - Enhanced with Advanced Features
+// ============================================================================
 
-// ===== Tableau de bord =====
-router.get('/health', async (req, res, next) => {
-  try {
-    if (AdminController.getHealthDashboard) {
-      return await AdminController.getHealthDashboard(req, res, next);
-    }
-    res.status(200).json({ status: 'ok', message: 'Health endpoint' });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/dashboard', async (req, res, next) => {
-  try {
-    if (AdminController.getDashboard) {
-      return await AdminController.getDashboard(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/analytics', async (req, res, next) => {
-  try {
-    if (AdminController.getAnalytics) {
-      return await AdminController.getAnalytics(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/analytics/users', async (req, res, next) => {
-  try {
-    if (AdminController.getUserStatistics) {
-      return await AdminController.getUserStatistics(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/activities/recent', async (req, res, next) => {
-  try {
-    if (AdminController.getRecentActivities) {
-      return await AdminController.getRecentActivities(req, res, next);
-    }
-    res.status(200).json({ success: true, data: [] });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/audit-logs/export', async (req, res, next) => {
-  try {
-    if (AdminController.exportAuditLogs) {
-      return await AdminController.exportAuditLogs(req, res, next);
-    }
-    res.status(200).json({ success: true, message: 'Export endpoint' });
-  } catch (error) {
-    next(error);
-  }
-});
+// Dashboard & Analytics
+router.get('/dashboard', adminAuth, asyncHandler(adminController.getDashboard));
+router.get(
+  '/dashboard/stats',
+  adminAuth,
+  asyncHandler(adminController.getDashboardStats)
+);
+router.get(
+  '/analytics/real-time',
+  adminAuth,
+  asyncHandler(adminController.getRealTimeAnalytics)
+);
+router.get(
+  '/analytics/predictive',
+  adminAuth,
+  asyncHandler(adminController.getPredictiveInsights)
+);
+router.get('/metrics', adminAuth, asyncHandler(adminController.getMetrics));
+router.get('/monitoring', adminAuth, asyncHandler(adminController.getSystemMonitoring));
 
 // ===== Gestion des utilisateurs =====
-const AdminPermissionsMiddleware = require('../middleware/adminPermissionsMiddleware');
-
 router.get(
   '/users',
-  validatePagination,
-  AdminPermissionsMiddleware.checkPermission(AdminPermissionsMiddleware.PERMISSIONS.VIEW_USERS),
-  async (req, res, next) => {
-    try {
-      if (AdminController.getAllUsers) {
-        return await AdminController.getAllUsers(req, res, next);
-      }
-      res.status(200).json({ success: true, data: [], total: 0 });
-    } catch (error) {
-      next(error);
-    }
-  }
+  adminAuth,
+  adminPermissions(adminPermissions.PERMISSIONS.VIEW_USERS),
+  validateObjectId('userId'), // Assuming validation for user ID if needed for specific user operations
+  asyncHandler(adminController.getAllUsers)
 );
 
 router.get(
-  '/users/:id',
-  validateIdMiddleware('id'),
-  AdminPermissionsMiddleware.checkPermission(AdminPermissionsMiddleware.PERMISSIONS.VIEW_USERS),
-  adminController.getUserDetails
+  '/users/:userId',
+  adminAuth,
+  adminPermissions(adminPermissions.PERMISSIONS.VIEW_USERS),
+  validateObjectId('userId'),
+  asyncHandler(adminController.getUserDetails)
 );
 
 router.put(
-  '/users/:id/role',
-  validateIdMiddleware('id'),
-  AdminPermissionsMiddleware.checkPermission(AdminPermissionsMiddleware.PERMISSIONS.MANAGE_USERS),
-  adminController.updateUserRole
+  '/users/:userId/role',
+  adminAuth,
+  adminPermissions(adminPermissions.PERMISSIONS.MANAGE_USERS),
+  validateObjectId('userId'),
+  asyncHandler(adminController.updateUserRole)
 );
 
 router.post(
-  '/users/:id/block',
-  validateIdMiddleware('id'),
-  AdminPermissionsMiddleware.checkPermission(AdminPermissionsMiddleware.PERMISSIONS.BLOCK_USERS),
-  adminController.blockUser
+  '/users/:userId/block',
+  adminAuth,
+  adminPermissions(adminPermissions.PERMISSIONS.BLOCK_USERS),
+  validateObjectId('userId'),
+  asyncHandler(adminController.blockUser)
 );
 
 router.post(
-  '/users/:id/unblock',
-  validateIdMiddleware('id'),
-  AdminPermissionsMiddleware.checkPermission(AdminPermissionsMiddleware.PERMISSIONS.BLOCK_USERS),
-  adminController.unblockUser
+  '/users/:userId/unblock',
+  adminAuth,
+  adminPermissions(adminPermissions.PERMISSIONS.BLOCK_USERS),
+  validateObjectId('userId'),
+  asyncHandler(adminController.unblockUser)
 );
 
 router.post(
-  '/users/:id/reset-password',
-  validateIdMiddleware('id'),
-  AdminPermissionsMiddleware.checkPermission(AdminPermissionsMiddleware.PERMISSIONS.MANAGE_USERS),
-  adminController.resetUserPassword
+  '/users/:userId/reset-password',
+  adminAuth,
+  adminPermissions(adminPermissions.PERMISSIONS.MANAGE_USERS),
+  validateObjectId('userId'),
+  asyncHandler(adminController.resetUserPassword)
 );
-
-// ===== Gestion des assistants administrateurs =====
-// Accessible uniquement au super_admin
-// TODO: Implement createAdminHelper and updateAdminPermissions in adminController
-// router.post('/admin-helpers', adminController.createAdminHelper);
-// router.put('/admin-helpers/:id/permissions', validateIdMiddleware('id'), adminController.updateAdminPermissions);
 
 // ===== Gestion du contenu statique, pages et fichiers =====
 // Pages statiques (édition complète)
-router.get('/content/pages', (req, res) => res.json({ success: true, data: [] }));
-router.get('/content/pages/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, data: {} }));
-router.post('/content/pages', (req, res) => res.json({ success: true, data: {} }));
-router.put('/content/pages/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, data: {} }));
-router.patch('/content/pages/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, data: {} }));
-router.delete('/content/pages/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, message: 'Deleted' }));
+router.get('/content/pages', adminAuth, asyncHandler(adminController.getAllPages));
+router.get('/content/pages/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.getPageById));
+router.post('/content/pages', adminAuth, asyncHandler(adminController.createPage));
+router.put('/content/pages/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.updatePage));
+router.patch('/content/pages/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.patchPage));
+router.delete('/content/pages/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.deletePage));
 
 // Fichiers, images et documents
-router.get('/content/files', (req, res) => res.json({ success: true, data: [] }));
-router.get('/content/media', (req, res) => res.json({ success: true, data: [] }));
-router.post('/content/files', (req, res) => res.json({ success: true, data: {} }));
-router.post('/content/files/bulk', (req, res) => res.json({ success: true, data: [] }));
-router.put('/content/files/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, data: {} }));
-router.delete('/content/files/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, message: 'Deleted' }));
-router.delete('/content/files/bulk', (req, res) => res.json({ success: true, message: 'Deleted' }));
+router.get('/content/files', adminAuth, asyncHandler(adminController.getAllFiles));
+router.get('/content/media', adminAuth, asyncHandler(adminController.getAllMedia));
+router.post('/content/files', adminAuth, asyncHandler(adminController.uploadFile));
+router.post('/content/files/bulk', adminAuth, asyncHandler(adminController.uploadBulkFiles));
+router.put('/content/files/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.updateFile));
+router.delete('/content/files/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.deleteFile));
+router.delete('/content/files/bulk', adminAuth, asyncHandler(adminController.deleteBulkFiles));
 
 // Images (optimisées)
-router.get('/content/images', (req, res) => res.json({ success: true, data: [] }));
-router.post('/content/images', (req, res) => res.json({ success: true, data: {} }));
-router.put('/content/images/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, data: {} }));
-router.delete('/content/images/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, message: 'Deleted' }));
+router.get('/content/images', adminAuth, asyncHandler(adminController.getAllImages));
+router.post('/content/images', adminAuth, asyncHandler(adminController.uploadImage));
+router.put('/content/images/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.updateImage));
+router.delete('/content/images/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.deleteImage));
 
 // Documents
-router.get('/content/documents', (req, res) => res.json({ success: true, data: [] }));
-router.post('/content/documents', (req, res) => res.json({ success: true, data: {} }));
-router.put('/content/documents/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, data: {} }));
-router.delete('/content/documents/:id', validateIdMiddleware('id'), (req, res) => res.json({ success: true, message: 'Deleted' }));
+router.get('/content/documents', adminAuth, asyncHandler(adminController.getAllDocuments));
+router.post('/content/documents', adminAuth, asyncHandler(adminController.uploadDocument));
+router.put('/content/documents/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.updateDocument));
+router.delete('/content/documents/:id', adminAuth, validateObjectId('id'), asyncHandler(adminController.deleteDocument));
 
 // Gestion avancée du contenu
-router.post('/content/sync', (req, res) => res.json({ success: true, message: 'Synced' }));
-router.get('/content/stats', (req, res) => res.json({ success: true, data: {} }));
-router.post('/content/backup', (req, res) => res.json({ success: true, message: 'Backup created' }));
-router.post('/content/restore', (req, res) => res.json({ success: true, message: 'Restored' }));
+router.post('/content/sync', adminAuth, asyncHandler(adminController.syncContent));
+router.get('/content/stats', adminAuth, asyncHandler(adminController.getContentStats));
+router.post('/content/backup', adminAuth, asyncHandler(adminController.createBackup));
+router.post('/content/restore', adminAuth, asyncHandler(adminController.restoreContent));
 
 // ===== Configuration du système =====
-router.get('/config', (req, res) => res.json({ success: true, data: { platformName: 'MyNet.tn', maintenanceMode: false } }));
-router.get('/system/config', (req, res) => res.json({ success: true, data: { platformName: 'MyNet.tn', maintenanceMode: false } }));
-router.put('/config', (req, res) => res.json({ success: true, data: req.body }));
-router.put('/system/config', (req, res) => res.json({ success: true, data: req.body }));
-router.put('/config/maintenance', (req, res) => res.json({ success: true, message: 'Maintenance mode toggled' }));
-router.post('/system/maintenance', (req, res) => res.json({ success: true, message: 'Maintenance mode toggled' }));
-router.post('/config/cache/clear', (req, res) => res.json({ success: true, message: 'Cache cleared' }));
-router.post('/config/system/restart', (req, res) => res.json({ success: true, message: 'System restart scheduled' }));
+router.get('/config', adminAuth, asyncHandler(adminController.getConfig));
+router.get('/system/config', adminAuth, asyncHandler(adminController.getSystemConfig));
+router.put('/config', adminAuth, asyncHandler(adminController.updateConfig));
+router.put('/system/config', adminAuth, asyncHandler(adminController.updateSystemConfig));
+router.put('/config/maintenance', adminAuth, asyncHandler(adminController.toggleMaintenanceMode));
+router.post('/system/maintenance', adminAuth, asyncHandler(adminController.toggleSystemMaintenance));
+router.post('/config/cache/clear', adminAuth, asyncHandler(adminController.clearCache));
+router.post('/config/system/restart', adminAuth, asyncHandler(adminController.scheduleSystemRestart));
 
 // ===== Analyses et surveillance =====
-router.get('/analytics/stats', async (req, res, next) => {
-  try {
-    if (AdminController.getAnalytics) {
-      return await AdminController.getAnalytics(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/analytics/health', async (req, res, next) => {
-  try {
-    if (AdminController.getHealthDashboard) {
-      return await AdminController.getHealthDashboard(req, res, next);
-    }
-    res.status(200).json({ status: 'ok' });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/analytics/activities', async (req, res, next) => {
-  try {
-    if (AdminController.getRecentActivities) {
-      return await AdminController.getRecentActivities(req, res, next);
-    }
-    res.status(200).json({ success: true, data: [] });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/analytics/users', async (req, res, next) => {
-  try {
-    if (AdminController.getUserStatistics) {
-      return await AdminController.getUserStatistics(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/analytics/performance', async (req, res, next) => {
-  try {
-    if (AdminController.getAdminPerformance) {
-      return await AdminController.getAdminPerformance(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/analytics/assistants', async (req, res, next) => {
-  try {
-    if (AdminController.getAdminAssistantsStats) {
-      return await AdminController.getAdminAssistantsStats(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
+router.get('/analytics/stats', adminAuth, asyncHandler(adminController.getAnalyticsStats)); // Assuming this is a distinct route from dashboard stats
+router.get('/analytics/health', adminAuth, asyncHandler(adminController.getHealthMetrics)); // Renamed for clarity
+router.get('/analytics/activities', adminAuth, asyncHandler(adminController.getRecentActivities)); // Kept as is, assuming it's different from general activities
+router.get('/analytics/users', adminAuth, asyncHandler(adminController.getUserStatistics)); // Kept as is
+router.get('/analytics/performance', adminAuth, asyncHandler(adminController.getAdminPerformance));
+router.get('/analytics/assistants', adminAuth, asyncHandler(adminController.getAdminAssistantsStats));
 
 // ===== Gestion des abonnements =====
-router.get('/subscriptions/plans', async (req, res, next) => {
-  try {
-    if (SubscriptionAdminController.getAllPlans) {
-      return await SubscriptionAdminController.getAllPlans(req, res, next);
-    }
-    res.status(200).json({ success: true, data: [] });
-  } catch (error) {
-    next(error);
-  }
-});
+// Assuming SubscriptionAdminController and AdvertisementController are injected or managed appropriately
+// For now, keeping direct instantiation/requiring, but ideally injected via DI.
+const SubscriptionAdminController = require('../controllers/admin/SubscriptionAdminController');
+const AdvertisementController = require('../controllers/admin/AdvertisementController');
 
-router.post('/subscriptions/plans', async (req, res, next) => {
-  try {
-    if (SubscriptionAdminController.createPlan) {
-      return await SubscriptionAdminController.createPlan(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.put('/subscriptions/plans/:id', validateIdMiddleware('id'), async (req, res, next) => {
-  try {
-    if (SubscriptionAdminController.updatePlan) {
-      return await SubscriptionAdminController.updatePlan(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/subscriptions/plans/:id', validateIdMiddleware('id'), async (req, res, next) => {
-  try {
-    if (SubscriptionAdminController.deletePlan) {
-      return await SubscriptionAdminController.deletePlan(req, res, next);
-    }
-    res.status(200).json({ success: true, message: 'Deleted' });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/subscriptions/analytics', async (req, res, next) => {
-  try {
-    if (SubscriptionAdminController.getSubscriptionAnalytics) {
-      return await SubscriptionAdminController.getSubscriptionAnalytics(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
+router.get('/subscriptions/plans', adminAuth, asyncHandler(SubscriptionAdminController.getAllPlans));
+router.post('/subscriptions/plans', adminAuth, asyncHandler(SubscriptionAdminController.createPlan));
+router.put('/subscriptions/plans/:id', adminAuth, validateObjectId('id'), asyncHandler(SubscriptionAdminController.updatePlan));
+router.delete('/subscriptions/plans/:id', adminAuth, validateObjectId('id'), asyncHandler(SubscriptionAdminController.deletePlan));
+router.get('/subscriptions/analytics', adminAuth, asyncHandler(SubscriptionAdminController.getSubscriptionAnalytics));
 
 // ===== Gestion des publicités =====
-router.get('/advertisements', async (req, res, next) => {
-  try {
-    if (AdvertisementController.getAllAds) {
-      return await AdvertisementController.getAllAds(req, res, next);
-    }
-    res.status(200).json({ success: true, data: [] });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post('/advertisements', async (req, res, next) => {
-  try {
-    if (AdvertisementController.createAd) {
-      return await AdvertisementController.createAd(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.put('/advertisements/:id', validateIdMiddleware('id'), async (req, res, next) => {
-  try {
-    if (AdvertisementController.updateAd) {
-      return await AdvertisementController.updateAd(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/advertisements/:id', validateIdMiddleware('id'), async (req, res, next) => {
-  try {
-    if (AdvertisementController.deleteAd) {
-      return await AdvertisementController.deleteAd(req, res, next);
-    }
-    res.status(200).json({ success: true, message: 'Deleted' });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/advertisements/:id/analytics', validateIdMiddleware('id'), async (req, res, next) => {
-  try {
-    if (AdvertisementController.getAdAnalytics) {
-      return await AdvertisementController.getAdAnalytics(req, res, next);
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    next(error);
-  }
-});
+router.get('/advertisements', adminAuth, asyncHandler(AdvertisementController.getAllAds));
+router.post('/advertisements', adminAuth, asyncHandler(AdvertisementController.createAd));
+router.put('/advertisements/:id', adminAuth, validateObjectId('id'), asyncHandler(AdvertisementController.updateAd));
+router.delete('/advertisements/:id', adminAuth, validateObjectId('id'), asyncHandler(AdvertisementController.deleteAd));
+router.get('/advertisements/:id/analytics', adminAuth, validateObjectId('id'), asyncHandler(AdvertisementController.getAdAnalytics));
 
 // ===== Routes de compatibilité (anciennes versions) =====
-router.put('/users/:id/block', validateIdMiddleware('id'), (req, res, next) => {
-  if (adminController.blockUser) {
-    return adminController.blockUser(req, res, next);
-  }
-  return AdminController.toggleUserStatus(req, res);
-});
+// Replaced with direct calls to AdminController methods for consistency and to leverage potential DI
+router.put('/users/:id/block', adminAuth, validateObjectId('id'), asyncHandler(adminController.blockUser)); // Assuming this is the intended functionality for backward compatibility
 
 module.exports = router;

@@ -187,7 +187,7 @@ class AdminController {
       // Validation des paramètres avec protection contre NaN
       const limitParam = parseInt(req.query.limit, 10);
       const offsetParam = parseInt(req.query.offset, 10);
-      
+
       const limit = Math.min(
         !isNaN(limitParam) && limitParam > 0 ? limitParam : ANALYTICS_CONFIG.DEFAULT_LIMIT, 
         ANALYTICS_CONFIG.MAX_LIMIT
@@ -280,18 +280,18 @@ class AdminController {
     // Sanitize CSV to prevent formula injection
     const sanitizeCSVValue = (val) => {
       if (val === null || val === undefined) return '';
-      
+
       const strVal = String(val);
-      
+
       // Remove dangerous formula prefixes
       const dangerous = /^[=+\-@]/;
       const sanitized = dangerous.test(strVal) ? `'${strVal}` : strVal;
-      
+
       // Escape quotes and wrap in quotes if contains comma, newline, or quote
       if (sanitized.includes(',') || sanitized.includes('\n') || sanitized.includes('"')) {
         return `"${sanitized.replace(/"/g, '""')}"`;
       }
-      
+
       return sanitized;
     };
 
@@ -453,6 +453,60 @@ class AdminController {
       res.status(500).json({
         success: false,
         error: error.message
+      });
+    }
+  }
+
+  /**
+   * Get system metrics
+   */
+  static async getMetrics(req, res) {
+    try {
+      const { ServiceValidator } = req.app.locals;
+
+      ServiceValidator.validateDatabaseAvailability();
+
+      const metrics = await AdminService.getSystemMetrics();
+
+      res.status(200).json({
+        success: true,
+        data: metrics,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      logger.error('Error fetching system metrics:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+  }
+
+  /**
+   * Get system monitoring
+   */
+  static async getSystemMonitoring(req, res) {
+    try {
+      const { ServiceValidator } = req.app.locals;
+
+      ServiceValidator.validateDatabaseAvailability();
+
+      const monitoring = {
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        cpu: process.cpuUsage(),
+        timestamp: new Date().toISOString(),
+      };
+
+      res.status(200).json({
+        success: true,
+        data: monitoring,
+      });
+    } catch (error) {
+      logger.error('Error fetching system monitoring:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
       });
     }
   }

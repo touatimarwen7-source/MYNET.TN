@@ -11,6 +11,10 @@ async function startServer() {
     console.log('MyNet.tn Backend Server Starting...');
     console.log('========================================');
 
+    // Bootstrap DI Container and Modules
+    const { bootstrap } = require('./core/bootstrap');
+    await bootstrap();
+
     // Initialize database connection
     const { initializeDb } = require('./config/db');
     const { checkDatabaseHealth } = require('./utils/databaseHealthCheck');
