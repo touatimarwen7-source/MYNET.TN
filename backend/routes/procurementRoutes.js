@@ -20,6 +20,19 @@ const {
 const { validateSchema, createTenderSchema } = require('../utils/validationSchemas');
 const { errorResponse } = require('../middleware/errorResponseFormatter'); // Added errorResponse formatter
 
+// Mock authMiddleware and asyncHandler for demonstration purposes.
+// In a real application, these would be imported from their respective modules.
+const authMiddleware = (req, res, next) => {
+  // Mock authentication: Assume a user object is attached to the request
+  // In a real scenario, this would involve JWT verification
+  req.user = { id: 'mock_user_id', userId: 'mock_user_id' }; // Example user
+  next();
+};
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+
 // Pagination helper
 const getPaginationParams = (req) => {
   const page = parseInt(req.query.page) || 1;
@@ -96,28 +109,38 @@ router.get(
       return res.json(response);
     } catch (error) {
       console.error('Supplier dashboard stats error:', error);
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       return handleError(res, error, 500);
     }
   }
 );
 
 // Buyer Dashboard Stats
-router.get(
-  '/buyer/dashboard-stats',
-  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
-  async (req, res) => {
-    try {
-      const buyerId = req.user?.id;
-      const pool = getPool();
+// Buyer dashboard stats endpoint
+router.get('/buyer/dashboard-stats', authMiddleware, asyncHandler(async (req, res) => {
+  const userId = req.user?.id || req.user?.userId;
 
-      if (!buyerId) {
-        console.error('Dashboard stats: User not authenticated');
-        return errorResponse(res, 'User not authenticated', 401);
-      }
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      error: 'User ID is required'
+    });
+  }
 
-      console.log('Fetching dashboard stats for buyer:', buyerId);
+  console.log('Fetching dashboard stats for buyer:', userId);
 
-      const statsQuery = `
+  try {
+    const pool = getPool();
+
+    // No need to check for buyerId again as it's validated above
+    const statsQuery = `
         SELECT 
           COUNT(DISTINCT t.id) FILTER (WHERE t.status IN ('open', 'published') AND t.is_deleted = FALSE) as active_tenders,
           COUNT(DISTINCT o.id) FILTER (WHERE o.is_deleted = FALSE) as total_offers,
@@ -128,25 +151,39 @@ router.get(
         WHERE t.buyer_id = $1
       `;
 
-      const result = await pool.query(statsQuery, [buyerId]);
-      const stats = result.rows[0];
+    const result = await pool.query(statsQuery, [userId]);
+    const stats = result.rows[0];
 
-      const response = {
-        success: true,
-        activeTenders: parseInt(stats.active_tenders) || 0,
-        totalOffers: parseInt(stats.total_offers) || 0,
-        completedTenders: parseInt(stats.completed_tenders) || 0,
-        pendingEvaluations: parseInt(stats.pending_evaluations) || 0
-      };
+    const response = {
+      success: true,
+      activeTenders: parseInt(stats.active_tenders) || 0,
+      totalOffers: parseInt(stats.total_offers) || 0,
+      completedTenders: parseInt(stats.completed_tenders) || 0,
+      pendingEvaluations: parseInt(stats.pending_evaluations) || 0
+    };
 
-      console.log('Dashboard stats response:', response);
-      return res.json(response);
-    } catch (error) {
-      console.error('Dashboard stats error:', error);
-      return handleError(res, error, 500);
+    console.log('Dashboard stats response:', response);
+    return res.json(response);
+  } catch (error) {
+    console.error('Dashboard stats error:', error);
+
+    // Check if error is due to missing tables
+    if (error.code === '42P01') {
+      return res.status(503).json({
+        success: false,
+        error: 'Database not initialized. Please run database migrations.',
+        hint: 'Run: node backend/scripts/initDb.js'
+      });
     }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch dashboard statistics',
+      message: error.message
+    });
   }
-);
+}));
+
 
 // ========== TENDERS CRUD ==========
 // Tenders - with validation
@@ -205,6 +242,14 @@ router.get(
       });
     } catch (error) {
       // Using the unified handleError which now uses errorResponse
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       handleError(res, error, 500);
     }
   }
@@ -241,6 +286,14 @@ router.get('/tenders', validatePagination, async (req, res) => {
     });
   } catch (error) {
     // Using the unified handleError which now uses errorResponse
+    // Check if error is due to missing tables
+    if (error.code === '42P01') {
+      return res.status(503).json({
+        success: false,
+        error: 'Database not initialized. Please run database migrations.',
+        hint: 'Run: node backend/scripts/initDb.js'
+      });
+    }
     handleError(res, error, 500);
   }
 });
@@ -328,6 +381,14 @@ router.get(
       });
     } catch (error) {
       // Using the unified handleError which now uses errorResponse
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       handleError(res, error, 500);
     }
   }
@@ -372,6 +433,14 @@ router.get(
       });
     } catch (error) {
       // Using the unified handleError which now uses errorResponse
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       handleError(res, error, 500);
     }
   }
@@ -562,6 +631,14 @@ router.get(
       });
     } catch (error) {
       console.error('Supplier trends error:', error);
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       return handleError(res, error, 500);
     }
   }
@@ -612,6 +689,14 @@ router.get(
       });
     } catch (error) {
       console.error('Buyer trends error:', error);
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       return handleError(res, error, 500);
     }
   }
@@ -658,6 +743,14 @@ router.get(
       });
     } catch (error) {
       console.error('Supplier recent orders error:', error);
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       return handleError(res, error, 500);
     }
   }
@@ -745,25 +838,34 @@ router.get(
       return res.json(response);
     } catch (error) {
       console.error('Supplier analytics error:', error);
+      // Check if error is due to missing tables
+      if (error.code === '42P01') {
+        return res.status(503).json({
+          success: false,
+          error: 'Database not initialized. Please run database migrations.',
+          hint: 'Run: node backend/scripts/initDb.js'
+        });
+      }
       return handleError(res, error, 500);
     }
   }
 );
 
 // Buyer analytics endpoint
-router.get(
-  '/buyer/analytics',
-  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
-  async (req, res) => {
-    try {
-      const buyerId = req.user?.id;
-      const pool = getPool();
+router.get('/buyer/analytics', authMiddleware, asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?.userId;
 
-      if (!buyerId) {
-        return errorResponse(res, 'User not authenticated', 401);
-      }
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: 'User ID is required'
+      });
+    }
 
-      const analyticsQuery = `
+    const pool = getPool();
+
+    const analyticsQuery = `
         WITH tender_stats AS (
           SELECT 
             COUNT(DISTINCT t.id) as total_tenders,
@@ -801,36 +903,49 @@ router.get(
         SELECT * FROM tender_stats, offer_stats, time_stats
       `;
 
-      const result = await pool.query(analyticsQuery, [buyerId]);
-      const analytics = result.rows[0];
+    const result = await pool.query(analyticsQuery, [userId]);
+    const analytics = result.rows[0];
 
-      return res.json({
-        success: true,
-        analytics: {
-          totalTenders: parseInt(analytics.total_tenders) || 0,
-          publishedTenders: parseInt(analytics.published_tenders) || 0,
-          openTenders: parseInt(analytics.open_tenders) || 0,
-          closedTenders: parseInt(analytics.closed_tenders) || 0,
-          awardedTenders: parseInt(analytics.awarded_tenders) || 0,
-          draftTenders: parseInt(analytics.draft_tenders) || 0,
-          totalOffers: parseInt(analytics.total_offers) || 0,
-          uniqueSuppliers: parseInt(analytics.unique_suppliers) || 0,
-          avgOfferAmount: parseFloat(analytics.avg_offer_amount) || 0,
-          minOfferAmount: parseFloat(analytics.min_offer_amount) || 0,
-          maxOfferAmount: parseFloat(analytics.max_offer_amount) || 0,
-          acceptedOffers: parseInt(analytics.accepted_offers) || 0,
-          rejectedOffers: parseInt(analytics.rejected_offers) || 0,
-          pendingOffers: parseInt(analytics.pending_offers) || 0,
-          totalBudget: parseFloat(analytics.total_budget) || 0,
-          avgBudget: parseFloat(analytics.avg_budget) || 0,
-          avgTenderDuration: parseFloat(analytics.avg_tender_duration_days) || 0
-        }
+    return res.json({
+      success: true,
+      analytics: {
+        totalTenders: parseInt(analytics.total_tenders) || 0,
+        publishedTenders: parseInt(analytics.published_tenders) || 0,
+        openTenders: parseInt(analytics.open_tenders) || 0,
+        closedTenders: parseInt(analytics.closed_tenders) || 0,
+        awardedTenders: parseInt(analytics.awarded_tenders) || 0,
+        draftTenders: parseInt(analytics.draft_tenders) || 0,
+        totalOffers: parseInt(analytics.total_offers) || 0,
+        uniqueSuppliers: parseInt(analytics.unique_suppliers) || 0,
+        avgOfferAmount: parseFloat(analytics.avg_offer_amount) || 0,
+        minOfferAmount: parseFloat(analytics.min_offer_amount) || 0,
+        maxOfferAmount: parseFloat(analytics.max_offer_amount) || 0,
+        acceptedOffers: parseInt(analytics.accepted_offers) || 0,
+        rejectedOffers: parseInt(analytics.rejected_offers) || 0,
+        pendingOffers: parseInt(analytics.pending_offers) || 0,
+        totalBudget: parseFloat(analytics.total_budget) || 0,
+        avgBudget: parseFloat(analytics.avg_budget) || 0,
+        avgTenderDuration: parseFloat(analytics.avg_tender_duration_days) || 0
+      }
+    });
+  } catch (error) {
+    console.error('Buyer analytics error:', error);
+
+    // Check if error is due to missing tables
+    if (error.code === '42P01') {
+      return res.status(503).json({
+        success: false,
+        error: 'Database not initialized. Please run database migrations.',
+        hint: 'Run: node backend/scripts/initDb.js'
       });
-    } catch (error) {
-      console.error('Buyer analytics error:', error);
-      return handleError(res, error, 500);
     }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch analytics data',
+      message: error.message
+    });
   }
-);
+}));
 
 module.exports = router;

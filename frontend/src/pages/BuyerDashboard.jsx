@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import React from 'react'; // Import React for useMemo
 import {
   Container,
   Grid,
@@ -41,6 +41,9 @@ import {
 import institutionalTheme from '../theme/theme';
 import { setPageTitle } from '../utils/pageTitle';
 import { procurementAPI } from '../api/procurementApi';
+// Assuming useAuth is defined and imported from a context file
+import { useAuth } from '../context/AuthContext'; // Adjust the import path as needed
+
 
 const DRAWER_WIDTH = 240;
 
@@ -52,35 +55,52 @@ export default function BuyerDashboard() {
     completedTenders: 0,
     pendingEvaluations: 0,
   });
+  const [analytics, setAnalytics] = useState({}); // Added state for analytics
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Safely extract user ID with fallback
+  const { user } = useAuth();
+  const userId = React.useMemo(() => {
+    if (!user) return null;
+    return user.userId || user.id || user.user_id;
+  }, [user]);
+
+
   useEffect(() => {
     setPageTitle('Tableau de Bord Acheteur');
     fetchDashboardData();
-  }, []);
+  }, [userId]); // Dependency array includes userId
 
   const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    if (!userId) {
+      console.warn('⚠️ No userId available, skipping dashboard fetch');
+      setLoading(false);
+      return;
+    }
 
-      const [statsResponse, analyticsResponse] = await Promise.allSettled([
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log('📊 Fetching dashboard data for user:', userId);
+
+      const [statsRes, analyticsRes] = await Promise.allSettled([
         procurementAPI.buyer.getDashboardStats(),
         procurementAPI.buyer.getAnalytics()
       ]);
 
-      // معالجة استجابة الإحصائيات
-      if (statsResponse.status === 'fulfilled' && statsResponse.value?.data) {
+      // Handle stats response
+      if (statsRes.status === 'fulfilled' && statsRes.value?.data) {
         setStats({
-          activeTenders: parseInt(statsResponse.value.data.activeTenders) || 0,
-          totalOffers: parseInt(statsResponse.value.data.totalOffers) || 0,
-          completedTenders: parseInt(statsResponse.value.data.completedTenders) || 0,
-          pendingEvaluations: parseInt(statsResponse.value.data.pendingEvaluations) || 0,
+          activeTenders: parseInt(statsRes.value.data.activeTenders) || 0,
+          totalOffers: parseInt(statsRes.value.data.totalOffers) || 0,
+          completedTenders: parseInt(statsRes.value.data.completedTenders) || 0,
+          pendingEvaluations: parseInt(statsRes.value.data.pendingEvaluations) || 0,
         });
-      } else if (statsResponse.status === 'rejected') {
-        console.warn('فشل تحميل الإحصائيات:', statsResponse.reason);
+      } else if (statsRes.status === 'rejected') {
+        console.warn('فشل تحميل الإحصائيات:', statsRes.reason);
         // تعيين قيم افتراضية في حالة الفشل
         setStats({
           activeTenders: 0,
@@ -90,22 +110,29 @@ export default function BuyerDashboard() {
         });
       }
 
-      // معالجة استجابة التحليلات
-      if (analyticsResponse.status === 'fulfilled' && analyticsResponse.value?.data?.analytics) {
-        console.log('Analytics loaded successfully:', analyticsResponse.value.data.analytics);
-      } else if (analyticsResponse.status === 'rejected') {
-        console.warn('فشل تحميل التحليلات:', analyticsResponse.reason);
+      // Handle analytics response
+      if (analyticsRes.status === 'fulfilled' && analyticsRes.value?.data?.analytics) {
+        console.log('Analytics loaded successfully:', analyticsRes.value.data.analytics);
+        setAnalytics(analyticsRes.value.data.analytics); // Set analytics state
+      } else if (analyticsRes.status === 'rejected') {
+        console.warn('فشل تحميل التحليلات:', analyticsRes.reason);
+        setAnalytics({}); // Clear analytics on failure
+      }
+
+      // Only show error if BOTH requests failed
+      if (statsRes.status === 'rejected' && analyticsRes.status === 'rejected') {
+        const errorMsg = statsRes.reason?.response?.data?.error ||
+                        statsRes.reason?.message ||
+                        analyticsRes.reason?.response?.data?.error ||
+                        analyticsRes.reason?.message ||
+                        'Impossible de charger les données du tableau de bord';
+        setError(errorMsg);
       }
 
     } catch (err) {
-      console.error('Erreur lors du chargement des données du tableau de bord:', err);
-      setError('Échec du chargement des données. Veuillez réessayer.');
-      setStats({
-        activeTenders: 0,
-        totalOffers: 0,
-        completedTenders: 0,
-        pendingEvaluations: 0,
-      });
+      // This catch block might be redundant with Promise.allSettled but kept for safety
+      console.error('❌ Dashboard data fetch error:', err);
+      setError('Erreur lors du chargement des données');
     } finally {
       setLoading(false);
     }
