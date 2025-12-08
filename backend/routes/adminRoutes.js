@@ -90,6 +90,8 @@ router.get('/analytics/stats', AdminController.getAnalytics.bind(AdminController
 router.get('/analytics/health', AdminController.getHealthDashboard.bind(AdminController));
 router.get('/analytics/activities', AdminController.getRecentActivities.bind(AdminController));
 router.get('/analytics/users', AdminController.getUserStatistics.bind(AdminController));
+router.get('/analytics/performance', AdminController.getAdminPerformance.bind(AdminController));
+router.get('/analytics/assistants', AdminController.getAdminAssistantsStats.bind(AdminController));
 
 // ===== Gestion des abonnements =====
 router.get('/subscriptions/plans', SubscriptionAdminController.getAllPlans.bind(SubscriptionAdminController));

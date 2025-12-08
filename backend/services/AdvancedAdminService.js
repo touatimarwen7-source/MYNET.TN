@@ -168,6 +168,59 @@ class AdvancedAdminService {
   }
 
   /**
+   * Obtenir les métriques de performance admin
+   */
+  async getAdminPerformanceMetrics() {
+    const pool = getPool();
+    try {
+      const result = await pool.query(`
+        SELECT 
+          COUNT(DISTINCT al.user_id) FILTER (WHERE u.role IN ('admin', 'super_admin')) as active_admins,
+          COUNT(*) FILTER (WHERE al.created_at >= CURRENT_DATE - INTERVAL '24 hours') as actions_today,
+          COUNT(*) FILTER (WHERE al.created_at >= CURRENT_DATE - INTERVAL '7 days') as actions_week,
+          COUNT(DISTINCT al.action) as unique_actions
+        FROM audit_logs al
+        LEFT JOIN users u ON al.user_id = u.id
+        WHERE u.role IN ('admin', 'super_admin')
+      `);
+
+      return result.rows[0];
+    } catch (error) {
+      logger.error('Error fetching admin performance metrics:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtenir les statistiques des assistants admin
+   */
+  async getAdminAssistantsStats() {
+    const pool = getPool();
+    try {
+      const result = await pool.query(`
+        SELECT 
+          u.id,
+          u.email,
+          u.full_name,
+          COUNT(DISTINCT ap.permission_key) as permissions_count,
+          COUNT(al.id) FILTER (WHERE al.created_at >= CURRENT_DATE - INTERVAL '30 days') as recent_actions,
+          MAX(al.created_at) as last_active
+        FROM users u
+        LEFT JOIN admin_permissions ap ON u.id = ap.user_id
+        LEFT JOIN audit_logs al ON u.id = al.user_id
+        WHERE u.role = 'admin'
+        GROUP BY u.id, u.email, u.full_name
+        ORDER BY recent_actions DESC
+      `);
+
+      return result.rows;
+    } catch (error) {
+      logger.error('Error fetching admin assistants stats:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get predictive analytics
    */
   async getPredictiveAnalytics() {

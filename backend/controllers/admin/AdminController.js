@@ -387,6 +387,44 @@ class AdminController {
       });
     }
   }
+
+  /**
+   * Obtenir les métriques de performance admin
+   */
+  async getAdminPerformance(req, res) {
+    try {
+      const metrics = await AdvancedAdminService.getAdminPerformanceMetrics();
+
+      res.json({
+        success: true,
+        data: metrics
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  }
+
+  /**
+   * Obtenir les statistiques des assistants admin
+   */
+  async getAdminAssistantsStats(req, res) {
+    try {
+      const stats = await AdvancedAdminService.getAdminAssistantsStats();
+
+      res.json({
+        success: true,
+        data: stats
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  }
 }
 
 module.exports = new AdminController();

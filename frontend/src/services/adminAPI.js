@@ -1,4 +1,3 @@
-
 import axiosInstance from './axiosConfig';
 
 const adminAPI = {
@@ -30,6 +29,8 @@ const adminAPI = {
         params: { format, startDate, endDate },
         responseType: format === 'csv' ? 'blob' : 'json'
       }),
+    getAdminPerformance: () => axiosInstance.get('/admin/analytics/performance'),
+    getAdminAssistantsStats: () => axiosInstance.get('/admin/analytics/assistants'),
   },
 
   // Content
