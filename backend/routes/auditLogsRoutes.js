@@ -31,35 +31,34 @@ const logAction = async (db, userId, action, entityType, entityId, details = {})
 
 // Get audit logs (admin only)
 router.get('/', authMiddleware, asyncHandler(async (req, res) => {
-  try {
-    const { entity_type, user_id } = req.query;
-    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
-    const db = req.app.get('db');
+  const { entity_type, user_id } = req.query;
+  const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
+  const db = req.app.get('db');
 
-    // Check if super_admin only
-    const userResult = await db.query('SELECT role FROM users WHERE id = $1', [req.user.id]);
-    if (userResult.rows[0].role !== 'super_admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
+  // Check if super_admin only
+  const userResult = await db.query('SELECT role FROM users WHERE id = $1', [req.user.id]);
+  if (userResult.rows[0].role !== 'super_admin') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
 
-    let query = 'SELECT * FROM audit_logs WHERE 1=1';
-    const params = [];
+  let query = 'SELECT * FROM audit_logs WHERE 1=1';
+  const params = [];
 
-    if (entity_type) {
-      query += ` AND entity_type = $${params.length + 1}`;
-      params.push(entity_type);
-    }
+  if (entity_type) {
+    query += ` AND entity_type = $${params.length + 1}`;
+    params.push(entity_type);
+  }
 
-    if (user_id) {
-      query += ` AND user_id = $${params.length + 1}`;
-      params.push(user_id);
-    }
+  if (user_id) {
+    query += ` AND user_id = $${params.length + 1}`;
+    params.push(user_id);
+  }
 
-    query += ` ORDER BY created_at DESC ${sql}`;
-    params.push(limit, offset);
+  query += ` ORDER BY created_at DESC ${sql}`;
+  params.push(limit, offset);
 
-    const result = await db.query(query, params);
-    res.json(result.rows);
+  const result = await db.query(query, params);
+  res.json(result.rows);
 }));
 
 // Get user activity
