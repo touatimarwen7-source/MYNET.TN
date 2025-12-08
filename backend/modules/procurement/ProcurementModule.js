@@ -4,9 +4,6 @@
  * Modular Monolith - Procurement Domain
  */
 
-const { eventBus, DomainEvents } = require('../../core/EventBus');
-const { logger } = require('../../utils/logger');
-
 const { getPool } = require('../../config/db');
 const { logger } = require('../../utils/logger');
 const { DomainEvents } = require('../../core/EventBus');
@@ -15,6 +12,7 @@ class ProcurementModule {
   constructor(dependencies) {
     this.eventBus = dependencies.eventBus;
     this.notificationService = dependencies.notificationService;
+    this.pool = getPool();
   }
 
   /**
@@ -22,7 +20,15 @@ class ProcurementModule {
    */
   async createTender(tenderData, buyerId) {
     try {
-      const tender = await this.db.createTender({
+      const result = await this.pool.query(
+        `INSERT INTO tenders (title, description, buyer_id, created_at) 
+         VALUES ($1, $2, $3, $4) RETURNING *`,
+        [tenderData.title, tenderData.description, buyerId, new Date()]
+      );
+      const tender = result.rows[0];
+
+      // Original code for reference
+      // const tender = await this.db.createTender({
         ...tenderData,
         buyer_id: buyerId,
         created_at: new Date(),

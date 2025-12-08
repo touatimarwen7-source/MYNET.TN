@@ -1,50 +1,86 @@
 const express = require('express');
 const router = express.Router();
-const AdminController = require('../controllers/admin/AdminController');
 const { adminAuth, isSuperAdmin } = require('../middleware/adminMiddleware');
 const { asyncHandler } = require('../middleware/errorHandlingMiddleware');
 const { validateObjectId } = require('../middleware/validateIdMiddleware');
-const { adminPermissions } = require('../middleware/adminPermissionsMiddleware');
 
-// Create AdminController instance
-const adminController = new AdminController();
+// Resolve AdminController from DI Container
+const { container } = require('../core/Container');
 
 // ============================================================================
 // ADMIN ROUTES - Enhanced with Advanced Features
 // ============================================================================
 
 // Dashboard & Analytics
-router.get('/dashboard', adminAuth, asyncHandler(adminController.getDashboard.bind(adminController)));
-router.get('/dashboard/stats', adminAuth, asyncHandler(adminController.getHealthDashboard.bind(adminController)));
-router.get('/analytics', adminAuth, asyncHandler(adminController.getAnalytics.bind(adminController)));
-router.get('/metrics', adminAuth, asyncHandler(adminController.getAdminPerformance.bind(adminController)));
-router.get('/monitoring', adminAuth, asyncHandler(adminController.getHealthDashboard.bind(adminController)));
+router.get('/dashboard', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getDashboard(req, res);
+}));
+
+router.get('/dashboard/stats', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getHealthDashboard(req, res);
+}));
+
+router.get('/analytics', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getAnalytics(req, res);
+}));
+
+router.get('/metrics', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getAdminPerformance(req, res);
+}));
+
+router.get('/monitoring', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getHealthDashboard(req, res);
+}));
 
 // ===== Gestion des utilisateurs =====
-router.get(
-  '/users',
-  adminAuth,
-  asyncHandler(adminController.getAllUsers.bind(adminController))
-);
+router.get('/users', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getAllUsers(req, res);
+}));
 
-router.put(
-  '/users/:id/status',
-  adminAuth,
-  validateObjectId('id'),
-  asyncHandler(adminController.toggleUserStatus.bind(adminController))
-);
+router.put('/users/:id/status', adminAuth, validateObjectId('id'), asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.toggleUserStatus(req, res);
+}));
 
 // Content management routes removed - not implemented in AdminController
 
 // ===== Configuration du système =====
-router.get('/config', adminAuth, asyncHandler(adminController.getPlatformConfig.bind(adminController)));
-router.put('/config', adminAuth, asyncHandler(adminController.updatePlatformConfig.bind(adminController)));
+router.get('/config', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getPlatformConfig(req, res);
+}));
+
+router.put('/config', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.updatePlatformConfig(req, res);
+}));
 
 // ===== Analyses et surveillance =====
-router.get('/analytics/activities', adminAuth, asyncHandler((req, res) => adminController.getRecentActivities(req, res)));
-router.get('/analytics/users', adminAuth, asyncHandler((req, res) => adminController.getUserStatistics(req, res)));
-router.get('/analytics/performance', adminAuth, asyncHandler((req, res) => adminController.getAdminPerformance(req, res)));
-router.get('/analytics/assistants', adminAuth, asyncHandler((req, res) => adminController.getAdminAssistantsStats(req, res)));
+router.get('/analytics/activities', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getRecentActivities(req, res);
+}));
+
+router.get('/analytics/users', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getUserStatistics(req, res);
+}));
+
+router.get('/analytics/performance', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getAdminPerformance(req, res);
+}));
+
+router.get('/analytics/assistants', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.getAdminAssistantsStats(req, res);
+}));
 
 // ===== Gestion des abonnements =====
 // Assuming SubscriptionAdminController and AdvertisementController are injected or managed appropriately
@@ -66,6 +102,9 @@ router.delete('/advertisements/:id', adminAuth, validateObjectId('id'), asyncHan
 router.get('/advertisements/:id/analytics', adminAuth, validateObjectId('id'), asyncHandler(AdvertisementController.getAdAnalytics));
 
 // ===== Audit logs export =====
-router.get('/audit/export', adminAuth, asyncHandler(adminController.exportAuditLogs.bind(adminController)));
+router.get('/audit/export', adminAuth, asyncHandler(async (req, res) => {
+  const adminController = container.resolve('adminController');
+  return adminController.exportAuditLogs(req, res);
+}));
 
 module.exports = router;

@@ -4,9 +4,6 @@
  * Modular Monolith - Authentication Domain
  */
 
-const { eventBus, DomainEvents } = require('../../core/EventBus');
-const { logger } = require('../../utils/logger');
-
 const { getPool } = require('../../config/db');
 const { logger } = require('../../utils/logger');
 const { DomainEvents } = require('../../core/EventBus');
@@ -15,6 +12,7 @@ class AuthModule {
   constructor(dependencies) {
     this.jwtService = dependencies.jwtService;
     this.eventBus = dependencies.eventBus;
+    this.pool = getPool();
   }
 
   /**
@@ -23,7 +21,11 @@ class AuthModule {
   async register(userData) {
     try {
       // Business logic here
-      const user = await this.db.createUser(userData);
+      const result = await this.pool.query(
+        'INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *',
+        [userData.email, userData.password, userData.role || 'buyer']
+      );
+      const user = result.rows[0];
       
       // Publish event
       this.eventBus.publish(DomainEvents.USER_REGISTERED, {

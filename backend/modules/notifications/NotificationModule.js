@@ -4,9 +4,6 @@
  * Event-driven notifications
  */
 
-const { eventBus, DomainEvents } = require('../../core/EventBus');
-const { logger } = require('../../utils/logger');
-
 const { logger } = require('../../utils/logger');
 const { DomainEvents } = require('../../core/EventBus');
 
