@@ -4,15 +4,23 @@
  * All API calls should import from here
  */
 
-// Re-export from main api.js
-export { 
-  authAPI,
-  procurementAPI,
-  adminAPI,
-  searchAPI,
-  notificationAPI,
-  apiClient
-} from '../api.js';
+// Import API modules from their actual locations
+import axiosInstance from '../services/axiosConfig.js';
+import * as authApi from './authApi.js';
+import * as procurementApi from './procurementApi.js';
+import * as adminApi from './adminApi.js';
+import * as searchApi from './searchApi.js';
+import * as notificationApi from './notificationApi.js';
+
+// Export organized API namespaces
+export const authAPI = authApi;
+export const procurementAPI = procurementApi;
+export const adminAPI = adminApi;
+export const searchAPI = searchApi;
+export const notificationAPI = notificationApi;
+
+// Export axios instance as apiClient
+export const apiClient = axiosInstance;
 
 // Export default axios instance
-export { default } from '../api.js';
+export default axiosInstance;
