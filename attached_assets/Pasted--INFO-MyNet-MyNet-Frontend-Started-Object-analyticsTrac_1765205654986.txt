@@ -1,0 +1,39 @@
+[INFO] MyNet: MyNet Frontend Started Object
+analyticsTracking.js:11 ⚠️ Sentry not available for analytics
+(anonymous) @ analyticsTracking.js:11Understand this warning
+tokenManager.js:105 TokenManager: User data stored successfully
+6tokenManager.js:125 TokenManager: User data retrieved: 1
+client:536 WebSocket connection to 'ws://localhost:5000/?token=ONQGqR_xw81h' failed: 
+setupWebSocket @ client:536Understand this error
+client:560 [vite] server connection lost. Polling for restart...
+localhost:5000/:1  Failed to load resource: net::ERR_CONNECTION_REFUSEDUnderstand this error
+localhost:5000/:1  Failed to load resource: net::ERR_CONNECTION_REFUSEDUnderstand this error
+localhost:5000/:1  Failed to load resource: net::ERR_CONNECTION_REFUSEDUnderstand this error
+chunk-IAAWCIAB.js?v=32775a63:3738 You are loading @emotion/react when it is already loaded. Running multiple instances may cause problems. This can happen if multiple versions are used, or if multiple builds of the same version are used.
+../node_modules/@emotion/react/dist/emotion-react.browser.development.esm.js @ chunk-IAAWCIAB.js?v=32775a63:3738Understand this warning
+2BuyerDashboard.jsx:104 📊 Fetching dashboard data for user: 1
+6Connecting to '<URL>' violates the following Content Security Policy directive: "connect-src 'self' <URL> <URL> <URL> <URL> ws://localhost:* ws://*.replit.dev:* <URL> wss:". The action has been blocked.Understand this error
+logger.js:96 [ERROR] MyNet: Request Error Object
+logger.js:96 [ERROR] MyNet: Request Error Object
+BuyerDashboard.jsx:120 فشل تحميل الإحصائيات: AxiosError
+fetchDashboardData @ BuyerDashboard.jsx:120Understand this warning
+BuyerDashboard.jsx:135 فشل تحميل التحليلات: AxiosError
+fetchDashboardData @ BuyerDashboard.jsx:135Understand this warning
+logger.js:96 [ERROR] MyNet: Request Error Object
+logger.js:96 [ERROR] MyNet: Request Error Object
+BuyerDashboard.jsx:120 فشل تحميل الإحصائيات: AxiosError
+fetchDashboardData @ BuyerDashboard.jsx:120Understand this warning
+BuyerDashboard.jsx:135 فشل تحميل التحليلات: AxiosError
+fetchDashboardData @ BuyerDashboard.jsx:135Understand this warning
+localhost:5000/:1  Failed to load resource: net::ERR_CONNECTION_REFUSEDUnderstand this error
+logger.js:96 [ERROR] MyNet: Request Error Object
+logger.js:96 [ERROR] MyNet: Request Error Object
+localhost:5000/:1  Failed to load resource: net::ERR_CONNECTION_REFUSEDUnderstand this error
+localhost:5000/:1  Failed to load resource: net::ERR_CONNECTION_REFUSEDUnderstand this error
+localhost:5000/:1  Failed to load resource: net::ERR_CONNECTION_REFUSEDUnderstand this error
+client:736  GET http://localhost:5000/ net::ERR_CONNECTION_REFUSED
+ping @ client:736
+waitForSuccessfulPing @ client:755Understand this error
+client:736  GET http://localhost:5000/ net::ERR_CONNECTION_REFUSED
+ping @ client:736
+waitForSuccessfulPing @ client:755Understand this error
