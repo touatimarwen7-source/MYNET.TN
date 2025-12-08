@@ -5,7 +5,6 @@ const adminController = require('../controllers/adminController');
 const SubscriptionAdminController = require('../controllers/admin/SubscriptionAdminController');
 const AdvertisementController = require('../controllers/admin/AdvertisementController');
 const authMiddleware = require('../middleware/authMiddleware');
-const { errorResponse } = require('../middleware/errorResponseFormatter');
 const { validatePagination } = require('../middleware/paginationValidator');
 
 
@@ -92,18 +91,18 @@ router.get('/analytics/activities', adminController.getRecentActivities);
 router.get('/analytics/users', adminController.getUserStatistics);
 
 // ===== Gestion des abonnements =====
-router.get('/subscriptions/plans', (req, res) => SubscriptionAdminController.getAllPlans(req, res));
-router.post('/subscriptions/plans', (req, res) => SubscriptionAdminController.createPlan(req, res));
-router.put('/subscriptions/plans/:id', validateIdMiddleware('id'), (req, res) => SubscriptionAdminController.updatePlan(req, res));
-router.delete('/subscriptions/plans/:id', validateIdMiddleware('id'), (req, res) => SubscriptionAdminController.deletePlan(req, res));
-router.get('/subscriptions/analytics', (req, res) => SubscriptionAdminController.getSubscriptionAnalytics(req, res));
+router.get('/subscriptions/plans', SubscriptionAdminController.getAllPlans.bind(SubscriptionAdminController));
+router.post('/subscriptions/plans', SubscriptionAdminController.createPlan.bind(SubscriptionAdminController));
+router.put('/subscriptions/plans/:id', validateIdMiddleware('id'), SubscriptionAdminController.updatePlan.bind(SubscriptionAdminController));
+router.delete('/subscriptions/plans/:id', validateIdMiddleware('id'), SubscriptionAdminController.deletePlan.bind(SubscriptionAdminController));
+router.get('/subscriptions/analytics', SubscriptionAdminController.getSubscriptionAnalytics.bind(SubscriptionAdminController));
 
 // ===== Gestion des publicités =====
-router.get('/advertisements', (req, res) => AdvertisementController.getAllAds(req, res));
-router.post('/advertisements', (req, res) => AdvertisementController.createAd(req, res));
-router.put('/advertisements/:id', validateIdMiddleware('id'), (req, res) => AdvertisementController.updateAd(req, res));
-router.delete('/advertisements/:id', validateIdMiddleware('id'), (req, res) => AdvertisementController.deleteAd(req, res));
-router.get('/advertisements/:id/analytics', validateIdMiddleware('id'), (req, res) => AdvertisementController.getAdAnalytics(req, res));
+router.get('/advertisements', AdvertisementController.getAllAds.bind(AdvertisementController));
+router.post('/advertisements', AdvertisementController.createAd.bind(AdvertisementController));
+router.put('/advertisements/:id', validateIdMiddleware('id'), AdvertisementController.updateAd.bind(AdvertisementController));
+router.delete('/advertisements/:id', validateIdMiddleware('id'), AdvertisementController.deleteAd.bind(AdvertisementController));
+router.get('/advertisements/:id/analytics', validateIdMiddleware('id'), AdvertisementController.getAdAnalytics.bind(AdvertisementController));
 
 // ===== Routes de compatibilité (anciennes versions) =====
 router.put('/users/:id/block', validateIdMiddleware('id'), adminController.blockUser);
