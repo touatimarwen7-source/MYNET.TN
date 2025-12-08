@@ -40,7 +40,6 @@ const Profile = lazy(() => import('./pages/Profile'));
 const AuditLog = lazy(() => import('./pages/AuditLog'));
 const PartialAward = lazy(() => import('./pages/PartialAward'));
 const OfferAnalysis = lazy(() => import('./pages/OfferAnalysis'));
-const BuyerDashboard = lazy(() => import('./pages/BuyerDashboard'));
 const BuyerActiveTenders = lazy(() => import('./pages/BuyerActiveTenders'));
 const BidComparison = lazy(() => import('./pages/BidComparison'));
 const InvoiceManagement = lazy(() => import('./pages/InvoiceManagement'));
