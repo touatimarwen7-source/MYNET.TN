@@ -45,12 +45,25 @@ class ProfileController {
 
       const user = result.rows[0];
       
-      // Parse JSON fields
-      if (user.preferred_categories) {
-        user.preferred_categories = JSON.parse(user.preferred_categories);
+      // Parse JSON fields safely
+      try {
+        if (user.preferred_categories && typeof user.preferred_categories === 'string') {
+          user.preferred_categories = JSON.parse(user.preferred_categories);
+        } else if (!user.preferred_categories) {
+          user.preferred_categories = [];
+        }
+      } catch (e) {
+        user.preferred_categories = [];
       }
-      if (user.service_locations) {
-        user.service_locations = JSON.parse(user.service_locations);
+
+      try {
+        if (user.service_locations && typeof user.service_locations === 'string') {
+          user.service_locations = JSON.parse(user.service_locations);
+        } else if (!user.service_locations) {
+          user.service_locations = [];
+        }
+      } catch (e) {
+        user.service_locations = [];
       }
 
       return sendOk(res, user, 'Profile retrieved successfully');

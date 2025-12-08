@@ -30,7 +30,15 @@ const logAction = async (db, userId, action, entityType, entityId, details = {})
 };
 
 // Get audit logs (admin only)
-router.get('/', authMiddleware, asyncHandler(async (req, res) => {
+/**
+ * @route   GET /api/audit-logs
+ * @desc    Get all audit logs (admin only)
+ * @access  Private/Admin
+ */
+router.get(
+  '/',
+  asyncHandler(authMiddleware),
+  asyncHandler(async (req, res) => {
   const { entity_type, user_id } = req.query;
   const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
   const db = req.app.get('db');

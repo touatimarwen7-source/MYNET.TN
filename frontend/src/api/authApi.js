@@ -8,8 +8,8 @@ export const authAPI = {
   login: (credentials) => axiosInstance.post('/auth/login', credentials),
   register: (userData) => axiosInstance.post('/auth/register', userData),
   logout: () => axiosInstance.post('/auth/logout'),
-  getProfile: () => axiosInstance.get('/auth/profile'),
-  updateProfile: (data) => axiosInstance.put('/auth/profile', data),
+  getProfile: () => axiosInstance.get('/profile'),
+  updateProfile: (data) => axiosInstance.put('/profile', data),
   requestPasswordReset: (data) => axiosInstance.post('/auth/request-password-reset', data),
   verifyResetToken: (data) => axiosInstance.post('/auth/verify-reset-token', data),
   resetPassword: (data) => axiosInstance.post('/auth/reset-password', data),
@@ -18,6 +18,6 @@ export const authAPI = {
   getActivity: () => axiosInstance.get('/auth/activity'),
 
   // Supplier preferences
-  getSupplierPreferences: () => axiosInstance.get('/auth/profile/supplier/preferences'),
-  updateSupplierPreferences: (preferences) => axiosInstance.put('/auth/profile/supplier/preferences', preferences),
+  getSupplierPreferences: () => axiosInstance.get('/profile/supplier/preferences'),
+  updateSupplierPreferences: (preferences) => axiosInstance.put('/profile/supplier/preferences', preferences),
 };
