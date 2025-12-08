@@ -1,9 +1,11 @@
 const AuthorizationGuard = require('../security/AuthorizationGuard');
 
-// Espone i metodi come middleware
-module.exports = AuthorizationGuard.authenticateToken.bind(AuthorizationGuard);
+// Main middleware export
+const authMiddleware = AuthorizationGuard.authenticateToken.bind(AuthorizationGuard);
 
-// Export anche funzioni specifiche
+// Export as default and named
+module.exports = authMiddleware;
+module.exports.authMiddleware = authMiddleware;
 module.exports.verifyToken = AuthorizationGuard.authenticateToken.bind(AuthorizationGuard);
 module.exports.checkRole = (roles) => AuthorizationGuard.requireRole(roles);
 module.exports.checkPermission = (permission) => AuthorizationGuard.requirePermission(permission);

@@ -1,7 +1,8 @@
+
 const express = require('express');
 const router = express.Router();
-const { authMiddleware } = require('../middleware/authMiddleware');
-const { adminMiddleware } = require('../middleware/adminMiddleware');
+const AuthorizationGuard = require('../security/AuthorizationGuard');
+const { isAdmin } = require('../middleware/adminMiddleware');
 
 // Placeholder controller functions
 const getAdminDashboard = async (req, res) => {
@@ -17,8 +18,8 @@ const getAnalytics = async (req, res) => {
 };
 
 // Apply middleware to all routes
-router.use(authMiddleware);
-router.use(adminMiddleware);
+router.use(AuthorizationGuard.authenticateToken.bind(AuthorizationGuard));
+router.use(isAdmin);
 
 // Admin routes
 router.get('/dashboard', getAdminDashboard);
