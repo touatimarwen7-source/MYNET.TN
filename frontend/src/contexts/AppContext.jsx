@@ -60,28 +60,21 @@ export const AppProvider = ({ children }) => {
     setAuthLoading(true);
     setAuthError(null);
     try {
-      // Restore tokens from storage
-      TokenManager.restoreFromStorage();
-
       const token = TokenManager.getAccessToken();
+      const storedUser = TokenManager.getUser();
 
-      if (token) {
-        const userData = TokenManager.getUserFromToken();
-
-        if (userData && userData.userId) {
-          setUser(userData);
-          setIsAuthenticated(true);
-        } else {
-          TokenManager.clearTokens();
-          setUser(null);
-          setIsAuthenticated(false);
-        }
+      if (token && storedUser) {
+        setUser(storedUser);
+        setIsAuthenticated(true);
       } else {
+        TokenManager.clearTokens();
         setUser(null);
         setIsAuthenticated(false);
       }
     } catch (error) {
+      console.error('Auth check error:', error);
       setAuthError(error.message);
+      TokenManager.clearTokens();
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -216,17 +209,15 @@ export const AppProvider = ({ children }) => {
   // ===== Listen for auth changes from other tabs =====
 
   useEffect(() => {
-    const storedUser = TokenManager.getUser();
-    if (storedUser) {
-      setUser(storedUser);
-    }
-    setAuthLoading(false);
-
     // Listen for auth changes from login
     const handleAuthChange = (event) => {
       const userData = event.detail;
       if (userData) {
         setUser(userData);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
       }
     };
 

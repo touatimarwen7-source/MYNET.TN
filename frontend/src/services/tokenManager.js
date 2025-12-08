@@ -50,6 +50,11 @@ class TokenManager {
     if (userData) this.setUser(userData);
   }
 
+  // Alias for compatibility
+  setUserData(userData) {
+    this.setUser(userData);
+  }
+
   // Nettoyage complet
   clearTokens() {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
