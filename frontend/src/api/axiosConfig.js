@@ -1,8 +1,22 @@
-
 import axios from 'axios';
 
+// Base URL configuration
+const getBaseURL = () => {
+  // Use environment variable if set, otherwise auto-detect
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  if (import.meta.env.DEV) {
+    return 'http://localhost:3000';
+  }
+
+  // In production on Replit, use current origin
+  return window.location.origin.replace(':5000', ':3000').replace(':80', ':3000');
+};
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+  baseURL: getBaseURL(),
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json'

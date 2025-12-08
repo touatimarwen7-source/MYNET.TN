@@ -78,7 +78,7 @@ localPort = 45467
 externalPort = 6800
 
 [workflows]
-runButton = "Clean Start"
+runButton = "Production Start"
 
 [[workflows.workflow]]
 name = "Project"
@@ -182,6 +182,19 @@ mode = "parallel"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd backend && pkill -f \"node server.js\" 2>/dev/null || true && sleep 1 && npm run dev"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd frontend && npm run dev"
+
+[[workflows.workflow]]
+name = "Production Start"
+author = 49972067
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"node.*server.js\" 2>/dev/null || true && sleep 2 && cd backend && npm run dev"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

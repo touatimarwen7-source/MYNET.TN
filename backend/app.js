@@ -136,8 +136,16 @@ const rateLimit = require('express-rate-limit');
 // CORS configuration - Allow all origins in development
 const allowedOrigins = [
   'http://localhost:5000',
-  'http://0.0.0.0:5000',
-  process.env.FRONTEND_URL,
+  'http://localhost:3000',
+  'http://127.0.0.1:5000',
+  'http://127.0.0.1:3000',
+  /https:\/\/.*\.replit\.dev$/,
+  /https:\/\/.*\.replit\.dev:\d+$/,
+  /http:\/\/.*\.repl\.co$/,
+  /http:\/\/.*\.repl\.co:\d+$/,
+  /https:\/\/.*\.repl\.co$/,
+  /https:\/\/.*\.repl\.co:\d+$/,
+  /http:\/\/localhost:\d+$/,
 ];
 
 // Add Replit domains dynamically
@@ -151,16 +159,16 @@ const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
-    
+
     // Allow all origins in development
     if (process.env.NODE_ENV === 'development') return callback(null, true);
-    
+
     // Check if origin matches Replit patterns
     const isReplitDomain = /\.replit\.dev$/.test(origin) || 
                           /\.repl\.co$/.test(origin) ||
                           origin.includes('localhost') ||
                           origin.includes('0.0.0.0');
-    
+
     if (isReplitDomain || allowedOrigins.some(allowed => {
       if (allowed instanceof RegExp) return allowed.test(origin);
       return allowed === origin;
@@ -399,7 +407,7 @@ app.use(slowEndpointMonitor());
 const clarificationRoutes = require('./routes/clarificationRoutes');
 safeUseRoute('/api/clarifications', clarificationRoutes, 'Clarifications');
 
-// 🏅 PARTIAL AWARD ROUTES (مسارات الترسية الجزئية)
+// 🏅 PARTIAL AWARDROUTES (مسارات الترسية الجزئية)
 const partialAwardRoutes = require('./routes/partialAwardRoutes');
 safeUseRoute('/api/partial-awards', partialAwardRoutes, 'Partial Awards');
 
