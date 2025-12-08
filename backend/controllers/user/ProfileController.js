@@ -206,6 +206,94 @@ class ProfileController {
   }
 
   /**
+   * Update buyer preferences
+   * @route PUT /api/profile/buyer/preferences
+   */
+  async updateBuyerPreferences(req, res) {
+    try {
+      const userId = req.user.id;
+      const userRole = req.user.role;
+
+      // Check if user is a buyer
+      if (userRole !== 'buyer') {
+        return sendForbidden(res, 'Only buyers can update preferences');
+      }
+
+      const { preferred_categories, minimum_budget } = req.body;
+
+      const pool = getPool();
+
+      const result = await pool.query(
+        `UPDATE users 
+         SET preferred_categories = $1, 
+             minimum_budget = $2,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $3 AND role = 'buyer'
+         RETURNING id, preferred_categories, minimum_budget`,
+        [
+          JSON.stringify(preferred_categories || []),
+          minimum_budget || 0,
+          userId,
+        ]
+      );
+
+      if (result.rows.length === 0) {
+        return sendNotFound(res, 'Buyer');
+      }
+
+      return sendOk(res, {
+        preferred_categories: JSON.parse(result.rows[0].preferred_categories),
+        minimum_budget: result.rows[0].minimum_budget,
+      }, 'Buyer preferences updated successfully');
+    } catch (error) {
+      logger.error('Error updating buyer preferences:', { 
+        error: error.message, 
+        userId: req.user.id 
+      });
+      return sendInternalError(res, 'Failed to update buyer preferences');
+    }
+  }
+
+  /**
+   * Get buyer preferences
+   * @route GET /api/profile/buyer/preferences
+   */
+  async getBuyerPreferences(req, res) {
+    try {
+      const userId = req.user.id;
+      const userRole = req.user.role;
+
+      // Check if user is a buyer
+      if (userRole !== 'buyer') {
+        return sendForbidden(res, 'Only buyers can view preferences');
+      }
+
+      const pool = getPool();
+
+      const result = await pool.query(
+        `SELECT preferred_categories, minimum_budget 
+         FROM users WHERE id = $1 AND role = 'buyer'`,
+        [userId]
+      );
+
+      if (result.rows.length === 0) {
+        return sendNotFound(res, 'Buyer');
+      }
+
+      return sendOk(res, {
+        preferred_categories: JSON.parse(result.rows[0].preferred_categories || '[]'),
+        minimum_budget: result.rows[0].minimum_budget || 0,
+      }, 'Buyer preferences retrieved successfully');
+    } catch (error) {
+      logger.error('Error getting buyer preferences:', { 
+        error: error.message, 
+        userId: req.user.id 
+      });
+      return sendInternalError(res, 'Failed to retrieve buyer preferences');
+    }
+  }
+
+  /**
    * Get supplier preferences
    * @route GET /api/profile/supplier/preferences
    */

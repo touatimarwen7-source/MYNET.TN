@@ -7,6 +7,38 @@ const { sendOk, sendValidationError } = require('../utils/responseHelper');
 const router = express.Router();
 
 // ============================================================================
+// BUYER PREFERENCES ROUTES
+// ============================================================================
+
+/**
+ * @route   PUT /api/profile/buyer/preferences
+ * @desc    Update buyer preferences (categories, budget)
+ * @access  Private (Buyer only)
+ */
+router.put(
+  '/buyer/preferences',
+  verifyToken,
+  asyncHandler(async (req, res) => {
+    const controller = new ProfileController();
+    return controller.updateBuyerPreferences(req, res);
+  })
+);
+
+/**
+ * @route   GET /api/profile/buyer/preferences
+ * @desc    Get buyer preferences
+ * @access  Private (Buyer only)
+ */
+router.get(
+  '/buyer/preferences',
+  verifyToken,
+  asyncHandler(async (req, res) => {
+    const controller = new ProfileController();
+    return controller.getBuyerPreferences(req, res);
+  })
+);
+
+// ============================================================================
 // SUPPLIER PREFERENCES ROUTES
 // ============================================================================
 

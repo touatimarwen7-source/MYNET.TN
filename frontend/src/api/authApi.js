@@ -17,7 +17,11 @@ export const authAPI = {
   resendVerificationEmail: (data) => axiosInstance.post('/auth/resend-verification', data),
   getActivity: () => axiosInstance.get('/auth/activity'),
 
+  // Buyer preferences
+  updateBuyerPreferences: (data) => axiosInstance.put('/profile/buyer/preferences', data),
+  getBuyerPreferences: () => axiosInstance.get('/profile/buyer/preferences'),
+
   // Supplier preferences
+  updateSupplierPreferences: (data) => axiosInstance.put('/profile/supplier/preferences', data),
   getSupplierPreferences: () => axiosInstance.get('/profile/supplier/preferences'),
-  updateSupplierPreferences: (preferences) => axiosInstance.put('/profile/supplier/preferences', preferences),
 };

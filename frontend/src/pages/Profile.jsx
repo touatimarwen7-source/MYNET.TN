@@ -142,11 +142,18 @@ export default function Profile({ user }) {
     setSuccess('');
 
     try {
-      await authAPI.updateSupplierPreferences({
-        preferred_categories: preferredCategories,
-        service_locations: serviceLocations,
-        minimum_budget: minimumBudget,
-      });
+      if (profile.role === 'buyer') {
+        await authAPI.updateBuyerPreferences({
+          preferred_categories: preferredCategories,
+          minimum_budget: minimumBudget,
+        });
+      } else if (profile.role === 'supplier') {
+        await authAPI.updateSupplierPreferences({
+          preferred_categories: preferredCategories,
+          service_locations: serviceLocations,
+          minimum_budget: minimumBudget,
+        });
+      }
       setSuccess('Préférences mises à jour avec succès');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -241,6 +248,7 @@ export default function Profile({ user }) {
           <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
             <Tab label="Informations Générales" />
             {profile.role === 'supplier' && <Tab label="Préférences Fournisseur" />}
+            {profile.role === 'buyer' && <Tab label="Préférences Acheteur" />}
           </Tabs>
         </Box>
 
@@ -351,8 +359,142 @@ export default function Profile({ user }) {
           </Card>
         )}
 
-        {/* Tab 1: Supplier Preferences */}
-        {tabValue === 1 && profile.role === 'supplier' && (
+        {/* Tab 1: Buyer Preferences */}
+        {tabValue === 1 && profile.role === 'buyer' && (
+          <Card sx={{ border: '1px solid #e0e0e0' }}>
+            <CardContent sx={{ padding: '32px' }}>
+              <Typography variant="h4" sx={{ fontSize: '20px', fontWeight: 600, color: theme.palette.text.primary, marginBottom: '24px' }}>
+                Préférences d'Acheteur
+              </Typography>
+
+              <Divider sx={{ marginBottom: '24px' }} />
+
+              {/* Buyer Statistics */}
+              <Box sx={{ marginBottom: '32px' }}>
+                <Typography sx={{ fontSize: '16px', fontWeight: 600, color: theme.palette.text.primary, marginBottom: '16px' }}>
+                  Statistiques
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={4}>
+                    <Paper sx={{ padding: '16px', backgroundColor: '#e3f2fd', textAlign: 'center' }}>
+                      <Typography sx={{ fontSize: '32px', fontWeight: 700, color: theme.palette.primary.main }}>
+                        0
+                      </Typography>
+                      <Typography sx={{ fontSize: '14px', color: '#616161' }}>
+                        Appels d'Offres Actifs
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <Paper sx={{ padding: '16px', backgroundColor: '#fff3e0', textAlign: 'center' }}>
+                      <Typography sx={{ fontSize: '32px', fontWeight: 700, color: '#f57c00' }}>
+                        0 DT
+                      </Typography>
+                      <Typography sx={{ fontSize: '14px', color: '#616161' }}>
+                        Budget Total
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <Paper sx={{ padding: '16px', backgroundColor: '#e8f5e9', textAlign: 'center' }}>
+                      <Typography sx={{ fontSize: '32px', fontWeight: 700, color: '#2e7d32' }}>
+                        0
+                      </Typography>
+                      <Typography sx={{ fontSize: '14px', color: '#616161' }}>
+                        Fournisseurs Actifs
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider sx={{ marginBottom: '24px' }} />
+
+              {/* Preferred Categories */}
+              <Box sx={{ marginBottom: '32px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <CategoryIcon sx={{ color: theme.palette.primary.main }} />
+                  <Typography sx={{ fontSize: '16px', fontWeight: 600, color: theme.palette.text.primary }}>
+                    Catégories d'Achat Préférées
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
+                  {preferredCategories.length === 0 ? (
+                    <Typography sx={{ color: '#999', fontStyle: 'italic' }}>Aucune catégorie définie</Typography>
+                  ) : (
+                    preferredCategories.map((category, idx) => (
+                      <Chip
+                        key={idx}
+                        label={category}
+                        onDelete={() => removeCategory(idx)}
+                        sx={{ backgroundColor: '#e3f2fd', color: theme.palette.primary.main }}
+                      />
+                    ))
+                  )}
+                </Box>
+                <Box sx={{ display: 'flex', gap: '8px' }}>
+                  <TextField
+                    size="small"
+                    placeholder="Ajouter une catégorie..."
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
+                    fullWidth
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={addCategory}
+                    startIcon={<AddIcon />}
+                    sx={{ backgroundColor: theme.palette.primary.main, textTransform: 'none', fontWeight: 600, minWidth: '120px' }}
+                  >
+                    Ajouter
+                  </Button>
+                </Box>
+              </Box>
+
+              <Divider sx={{ marginBottom: '24px' }} />
+
+              {/* Budget Range */}
+              <Box sx={{ marginBottom: '24px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <AttachMoneyIcon sx={{ color: theme.palette.primary.main }} />
+                  <Typography sx={{ fontSize: '16px', fontWeight: 600, color: theme.palette.text.primary }}>
+                    Plage de Budget Typique
+                  </Typography>
+                </Box>
+                <TextField
+                  type="number"
+                  size="small"
+                  placeholder="0"
+                  value={minimumBudget}
+                  onChange={(e) => setMinimumBudget(parseFloat(e.target.value) || 0)}
+                  InputProps={{ inputProps: { min: 0 } }}
+                  fullWidth
+                  helperText="Budget moyen pour vos appels d'offres"
+                />
+              </Box>
+
+              <Button
+                variant="contained"
+                onClick={saveSupplierPreferences}
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+                sx={{
+                  backgroundColor: '#2e7d32',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': { backgroundColor: '#1b5e20' },
+                  width: '100%',
+                }}
+              >
+                Enregistrer les Préférences
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Tab 2: Supplier Preferences */}
+        {tabValue === 2 && profile.role === 'supplier' && (
           <Card sx={{ border: '1px solid #e0e0e0' }}>
             <CardContent sx={{ padding: '32px' }}>
               <Typography variant="h4" sx={{ fontSize: '20px', fontWeight: 600, color: theme.palette.text.primary, marginBottom: '24px' }}>
