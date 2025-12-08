@@ -94,7 +94,49 @@ const CreateTenderWizard = () => {
   }, []);
 
   const handleNext = () => {
-    // Vous pouvez ajouter la validation de l'étape ici
+    // Validate current step before proceeding
+    setError('');
+    
+    // Step 0: Basic info validation
+    if (currentStep === 0) {
+      if (!formData.title || formData.title.trim().length < 5) {
+        setError('Le titre doit contenir au moins 5 caractères');
+        return;
+      }
+      if (!formData.description || formData.description.trim().length < 20) {
+        setError('La description doit contenir au moins 20 caractères');
+        return;
+      }
+      if (!formData.category) {
+        setError('Veuillez sélectionner une catégorie');
+        return;
+      }
+    }
+    
+    // Step 1: Dates validation
+    if (currentStep === 1) {
+      if (formData.deadline && formData.publication_date) {
+        const deadline = new Date(formData.deadline);
+        const pubDate = new Date(formData.publication_date);
+        if (deadline <= pubDate) {
+          setError('La date limite doit être après la date de publication');
+          return;
+        }
+      }
+    }
+    
+    // Step 4: Evaluation criteria validation
+    if (currentStep === 4) {
+      const total = Object.values(formData.evaluation_criteria || {}).reduce(
+        (sum, val) => sum + (Number(val) || 0),
+        0
+      );
+      if (total !== 100 && total > 0) {
+        setError('Le total des critères d\'évaluation doit être égal à 100%');
+        return;
+      }
+    }
+    
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -115,21 +157,63 @@ const CreateTenderWizard = () => {
         throw new Error('Veuillez remplir tous les champs obligatoires');
       }
 
+      // Map and clean data for backend
+      const payload = {
+        ...formData,
+        // Ensure dates are ISO strings or null
+        publication_date: formData.publication_date || null,
+        deadline: formData.deadline || null,
+        opening_date: formData.opening_date || null,
+        queries_start_date: formData.queries_start_date || null,
+        queries_end_date: formData.queries_end_date || null,
+        
+        // Ensure numeric fields
+        budget_min: formData.budget_min ? Number(formData.budget_min) : null,
+        budget_max: formData.budget_max ? Number(formData.budget_max) : null,
+        quantity_required: formData.quantity_required ? Number(formData.quantity_required) : null,
+        offer_validity_days: formData.offer_validity_days ? Number(formData.offer_validity_days) : 90,
+        
+        // Ensure arrays
+        lots: Array.isArray(formData.lots) ? formData.lots : [],
+        requirements: Array.isArray(formData.requirements) ? formData.requirements : [],
+        mandatory_documents: Array.isArray(formData.mandatory_documents) ? formData.mandatory_documents : [],
+        specification_documents: Array.isArray(formData.specification_documents) ? formData.specification_documents : [],
+        attachments: Array.isArray(formData.attachments) ? formData.attachments : [],
+        
+        // Ensure evaluation_criteria is object
+        evaluation_criteria: formData.evaluation_criteria || {},
+        
+        // Set status as draft initially
+        status: 'draft'
+      };
+
+      console.log('📤 Submitting tender:', payload);
+
       // Send data to backend
-      const response = await procurementAPI.createTender(formData);
+      const response = await procurementAPI.createTender(payload);
+
+      console.log('✅ Tender created:', response);
 
       // Clear draft after successful submission
       clearDraft(DRAFT_KEY);
 
+      // Extract tender ID from response
+      const tenderId = response?.data?.tender?.id || response?.tender?.id;
+
       // Redirect to success page or dashboard
-      navigate('/tenders', { 
+      navigate('/buyer/tenders', { 
         state: { 
           message: 'Appel d\'offres créé avec succès!',
-          tenderId: response.data?.tender?.id
+          tenderId
         } 
       });
     } catch (err) {
-      setError(err.response?.data?.error || err.message || 'Échec de la création de l\'appel d\'offres');
+      console.error('❌ Create tender error:', err);
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data?.message || 
+                          err.message || 
+                          'Échec de la création de l\'appel d\'offres';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

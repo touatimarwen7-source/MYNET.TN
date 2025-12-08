@@ -14,6 +14,29 @@ class TenderController {
       }
 
       const tenderData = req.body;
+      
+      // Additional validation
+      if (!tenderData.title || tenderData.title.trim().length < 5) {
+        return res.status(400).json({
+          success: false,
+          error: 'Le titre doit contenir au moins 5 caractères',
+        });
+      }
+      
+      if (!tenderData.description || tenderData.description.trim().length < 20) {
+        return res.status(400).json({
+          success: false,
+          error: 'La description doit contenir au moins 20 caractères',
+        });
+      }
+      
+      if (!tenderData.category) {
+        return res.status(400).json({
+          success: false,
+          error: 'La catégorie est obligatoire',
+        });
+      }
+
       const tender = await TenderService.createTender(tenderData, req.user.id);
 
       res.status(201).json({
@@ -24,6 +47,16 @@ class TenderController {
     } catch (error) {
       logger.error('Error creating tender:', error);
       const { errorResponse } = require('../../middleware/errorResponseFormatter');
+      
+      // Handle validation errors specifically
+      if (error.statusCode === 400 || error.details) {
+        return res.status(400).json({
+          success: false,
+          error: error.message || 'Validation failed',
+          details: error.details,
+        });
+      }
+      
       errorResponse(res, error, 'Error creating tender');
     }
   }
