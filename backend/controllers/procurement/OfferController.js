@@ -142,6 +142,30 @@ class OfferController {
     }
   }
 
+  /**
+   * Get all offers submitted by current supplier
+   * @async
+   * @param {Object} req - Express request object
+   * @param {Object} req.user - Authenticated supplier user
+   * @param {Object} res - Express response object
+   * @returns {void} Returns supplier's offers with statistics
+   * @throws {500} If database error occurs
+   * @example
+   * GET /procurement/my-offers
+   * Response: {
+   *   success: true,
+   *   count: 3,
+   *   offers: [
+   *     {
+   *       id: 1,
+   *       tender_id: 5,
+   *       total_amount: 45000,
+   *       status: 'submitted',
+   *       award_status: 'pending'
+   *     }
+   *   ]
+   * }
+   */
   async getMyOffers(req, res) {
     try {
       const offers = await OfferService.getOffersBySupplier(req.user.id);
@@ -204,6 +228,24 @@ class OfferController {
     }
   }
 
+  /**
+   * Select an offer as winner for the tender
+   * @async
+   * @param {Object} req - Express request object
+   * @param {Object} req.params - Request parameters
+   * @param {number} req.params.id - Offer ID to select as winner
+   * @param {Object} req.user - Authenticated buyer
+   * @param {Object} res - Express response object
+   * @returns {void} Returns selected offer with award notification sent
+   * @throws {400} If offer selection fails or unauthorized
+   * @example
+   * POST /procurement/offers/:id/select-winner
+   * Response: {
+   *   success: true,
+   *   message: 'Winning offer selected successfully',
+   *   offer: { id: 1, award_status: 'awarded' }
+   * }
+   */
   async selectWinner(req, res) {
     try {
       const { id } = req.params;
@@ -222,6 +264,24 @@ class OfferController {
     }
   }
 
+  /**
+   * Reject an offer
+   * @async
+   * @param {Object} req - Express request object
+   * @param {Object} req.params - Request parameters
+   * @param {number} req.params.id - Offer ID to reject
+   * @param {Object} req.user - Authenticated buyer
+   * @param {Object} res - Express response object
+   * @returns {void} Returns rejected offer with notification sent
+   * @throws {400} If rejection fails or unauthorized
+   * @example
+   * POST /procurement/offers/:id/reject
+   * Response: {
+   *   success: true,
+   *   message: 'Offer rejected successfully',
+   *   offer: { id: 1, award_status: 'rejected' }
+   * }
+   */
   async rejectOffer(req, res) {
     try {
       const { id } = req.params;

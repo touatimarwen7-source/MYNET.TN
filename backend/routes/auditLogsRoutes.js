@@ -61,24 +61,34 @@ router.get('/', authMiddleware, asyncHandler(async (req, res) => {
   res.json(result.rows);
 }));
 
-// Get user activity
-router.get('/user/:userId', validateIdMiddleware('userId'), authMiddleware, asyncHandler(async (req, res) => {
-  const { userId } = req.params;
-  const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
-  const db = req.app.get('db');
+/**
+ * Get user activity logs
+ * @route GET /audit-logs/user/:userId
+ * @param {string} userId - User ID to get activity for
+ * @returns {Object[]} Array of audit log entries
+ */
+router.get(
+  '/user/:userId',
+  validateIdMiddleware('userId'),
+  authMiddleware,
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { limit, offset, sql } = buildPaginationQuery(req.query.limit, req.query.offset);
+    const db = req.app.get('db');
 
-  const result = await db.query(
-    `
-    SELECT * FROM audit_logs 
-    WHERE user_id = $1
-    ORDER BY created_at DESC
-    ${sql}
-  `,
-    [userId, limit, offset]
-  );
+    const result = await db.query(
+      `
+      SELECT * FROM audit_logs 
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      ${sql}
+    `,
+      [userId, limit, offset]
+    );
 
-  res.json(result.rows);
-}));
+    res.json(result.rows);
+  })
+);
 
 // Export logs helper
 router.logAction = logAction;
