@@ -40,5 +40,26 @@ export const procurementAPI = {
   updateSupplyRequest: (id, data) => axiosInstance.put(`/procurement/supply-requests/${id}`, data),
   getMySupplyRequests: () => axiosInstance.get('/procurement/my-supply-requests'),
 
-  // Invoices et Purchase Orders gérés via workflow direct entre buyer et supplier
+  // Purchase Orders (Buyer creates for winning suppliers)
+  createPurchaseOrder: (data) => axiosInstance.post('/procurement/purchase-orders', data),
+  getMyPurchaseOrders: () => axiosInstance.get('/procurement/my-purchase-orders'),
+  getReceivedPurchaseOrders: () => axiosInstance.get('/procurement/received-purchase-orders'),
+  getPurchaseOrder: (id) => axiosInstance.get(`/procurement/purchase-orders/${id}`),
+  updatePurchaseOrderStatus: (id, status) =>
+    axiosInstance.put(`/procurement/purchase-orders/${id}/status`, { status }),
+
+  // Invoices (Supplier creates after delivery)
+  createInvoice: (data) => axiosInstance.post('/procurement/invoices', data),
+  getMyInvoices: () => axiosInstance.get('/procurement/my-invoices'),
+  getReceivedInvoices: () => axiosInstance.get('/procurement/received-invoices'),
+  getInvoice: (id) => axiosInstance.get(`/procurement/invoices/${id}`),
+  updateInvoiceStatus: (id, status, paymentDate) =>
+    axiosInstance.put(`/procurement/invoices/${id}/status`, { status, payment_date: paymentDate }),
+  uploadInvoiceDocument: (id, file) => {
+    const formData = new FormData();
+    formData.append('invoice', file);
+    return axiosInstance.post(`/procurement/invoices/${id}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 };

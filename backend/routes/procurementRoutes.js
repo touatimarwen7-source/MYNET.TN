@@ -3,6 +3,7 @@ const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const TenderController = require('../controllers/procurement/TenderController');
 const OfferController = require('../controllers/procurement/OfferController');
+const PurchaseOrderController = require('../controllers/procurement/PurchaseOrderController');
 const InvoiceController = require('../controllers/procurement/InvoiceController');
 const ReviewController = require('../controllers/procurement/ReviewController');
 const TenderAwardController = require('../controllers/procurement/TenderAwardController');
@@ -300,7 +301,84 @@ router.post(
   OfferController.rejectOffer.bind(OfferController)
 );
 
-// Purchase Orders et Invoices sont gérés dans le workflow direct entre buyers et suppliers
+// Purchase Orders - Buyer sends to winning supplier(s)
+router.post(
+  '/purchase-orders',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  AuthorizationGuard.requirePermission(Permissions.CREATE_PURCHASE_ORDER).bind(AuthorizationGuard),
+  PurchaseOrderController.createPurchaseOrder.bind(PurchaseOrderController)
+);
+
+router.get(
+  '/purchase-orders/:id',
+  validateIdMiddleware('id'),
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  PurchaseOrderController.getPurchaseOrder.bind(PurchaseOrderController)
+);
+
+router.get(
+  '/my-purchase-orders',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  AuthorizationGuard.requirePermission(Permissions.VIEW_PURCHASE_ORDER).bind(AuthorizationGuard),
+  PurchaseOrderController.getMyPurchaseOrders.bind(PurchaseOrderController)
+);
+
+router.get(
+  '/received-purchase-orders',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  AuthorizationGuard.requirePermission(Permissions.VIEW_PURCHASE_ORDER).bind(AuthorizationGuard),
+  PurchaseOrderController.getReceivedPurchaseOrders.bind(PurchaseOrderController)
+);
+
+router.put(
+  '/purchase-orders/:id/status',
+  validateIdMiddleware('id'),
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  PurchaseOrderController.updatePurchaseOrderStatus.bind(PurchaseOrderController)
+);
+
+// Invoices - Supplier creates after delivery
+router.post(
+  '/invoices',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  AuthorizationGuard.requirePermission(Permissions.SUBMIT_OFFER).bind(AuthorizationGuard),
+  InvoiceController.createInvoice.bind(InvoiceController)
+);
+
+router.get(
+  '/invoices/:id',
+  validateIdMiddleware('id'),
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  InvoiceController.getInvoice.bind(InvoiceController)
+);
+
+router.get(
+  '/my-invoices',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  InvoiceController.getMyInvoices.bind(InvoiceController)
+);
+
+router.get(
+  '/received-invoices',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  AuthorizationGuard.requirePermission(Permissions.VIEW_PURCHASE_ORDER).bind(AuthorizationGuard),
+  InvoiceController.getReceivedInvoices.bind(InvoiceController)
+);
+
+router.put(
+  '/invoices/:id/status',
+  validateIdMiddleware('id'),
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  AuthorizationGuard.requirePermission(Permissions.VIEW_PURCHASE_ORDER).bind(AuthorizationGuard),
+  InvoiceController.updateInvoiceStatus.bind(InvoiceController)
+);
+
+router.post(
+  '/invoices/:id/upload',
+  validateIdMiddleware('id'),
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  InvoiceController.uploadInvoiceDocument.bind(InvoiceController)
+);
 
 // Tender Award - Partial/Multi-Supplier Award
 router.post(
