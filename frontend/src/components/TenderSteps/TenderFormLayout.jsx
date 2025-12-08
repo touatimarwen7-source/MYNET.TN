@@ -3,32 +3,28 @@ import institutionalTheme from '../../theme/theme';
 import {
   Container,
   Box,
-  Card,
-  CardContent,
+  Paper,
   Button,
   Typography,
   Alert,
   CircularProgress,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Stepper,
+  Step,
+  StepLabel,
 } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
-import SaveIcon from '@mui/icons-material/Save';
-import StepSeven from './StepSeven';
-import { autosaveDraft } from '../../utils/draftStorageHelper';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import PublishIcon from '@mui/icons-material/Publish';
 
-// 1. تعريف أسماء الخطوات التي ستظهر في شريط التقدم
+// Définition des étapes du processus
 const steps = [
-  'المعلومات الأساسية',
-  'الجدولة والتواريخ',
-  'بنود المناقصة',
-  'شروط الأهلية',
-  'التقييم والوثائق',
-  'المراجعة والنشر',
+  'Informations de Base',
+  'Calendrier',
+  'Lots',
+  'Exigences',
+  'Évaluation',
+  'Documents',
+  'Révision',
 ];
 
 const TenderFormLayout = ({

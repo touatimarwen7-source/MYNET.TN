@@ -47,11 +47,11 @@ const CreateTenderWizard = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [showExit, setShowExit] = useState(false);
 
-  // تحميل المسودة عند بدء تشغيل المكون
+  // Charger le brouillon au démarrage du composant
   useEffect(() => {
-    const savedDraft = recoverDraft(DRAFT_KEY); // ✅ استخدام الدالة الصحيحة
+    const savedDraft = recoverDraft(DRAFT_KEY);
     if (savedDraft && Object.keys(savedDraft).length > 0) {
-      if (window.confirm('تم العثور على مسودة غير مكتملة. هل تريد متابعتها؟')) {
+      if (window.confirm('Un brouillon incomplet a été trouvé. Voulez-vous le continuer ?')) {
         setFormData(savedDraft);
       } else {
         clearDraft(DRAFT_KEY);
@@ -59,13 +59,13 @@ const CreateTenderWizard = () => {
     }
   }, []);
 
-  // **تطبيق الحفظ التلقائي**
+  // Application de la sauvegarde automatique
   useEffect(() => {
     const timer = setInterval(() => {
-      // لا تقم بالحفظ إذا كان النموذج فارغًا
+      // Ne pas sauvegarder si le formulaire est vide
       if (Object.keys(formData).length > 0) {
-        autosaveDraft(DRAFT_KEY, formData); // ✅ استخدام الدالة الصحيحة
-        console.log('Autosaved draft at', new Date().toLocaleTimeString());
+        autosaveDraft(DRAFT_KEY, formData);
+        console.log('Brouillon sauvegardé automatiquement à', new Date().toLocaleTimeString());
       }
     }, AUTOSAVE_INTERVAL);
 
@@ -94,7 +94,7 @@ const CreateTenderWizard = () => {
   }, []);
 
   const handleNext = () => {
-    // يمكنك إضافة منطق التحقق من صحة الخطوة هنا
+    // Vous pouvez ajouter la validation de l'étape ici
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -148,7 +148,12 @@ const CreateTenderWizard = () => {
       showExit={showExit}
       setShowExit={setShowExit}
       formData={formData}
-      totalCriteria={100} // قيمة وهمية حاليًا
+      totalCriteria={
+        Object.values(formData.evaluation_criteria || {}).reduce(
+          (sum, val) => sum + (Number(val) || 0),
+          0
+        )
+      }
       navigate={navigate}
     >
       <TenderStepRenderer

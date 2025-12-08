@@ -8,35 +8,40 @@ import StepDocuments from './StepDocuments';
 import StepSeven from './StepSeven';
 
 /**
- * يعرض مكون الخطوة المناسب بناءً على الخطوة الحالية في المعالج.
- * @param {object} props - الخصائص الممررة من المكون الأب (CreateTenderWizard)
+ * Affiche le composant d'étape approprié en fonction de l'étape actuelle
+ * @param {object} props - Les propriétés passées depuis CreateTenderWizard
  */
 const TenderStepRenderer = (props) => {
   const { currentStep } = props;
 
-  // استخدام switch لتحديد المكون الذي سيتم عرضه
   switch (currentStep) {
     case 0:
-      // الخطوة الأولى: المعلومات الأساسية
+      // Étape 1: Informations de base
       return <StepOne {...props} />;
     case 1:
-      // الخطوة الثانية: الجدولة والتواريخ
+      // Étape 2: Calendrier et dates
       return <StepTwo {...props} />;
     case 2:
-      // الخطوة الثالثة: بنود المناقصة
+      // Étape 3: Lots de l'appel d'offres
       return <StepThree {...props} />;
     case 3:
-      // الخطوة الرابعة: شروط الأهلية
+      // Étape 4: Critères d'éligibilité
       return <StepFour {...props} />;
     case 4:
-      // الخطوة الخامسة: معايير التقييم والوثائق
+      // Étape 5: Critères d'évaluation
       return <StepFive {...props} />;
     case 5:
-      // الخطوة السادسة: المراجعة والنشر
-      return <StepSix {...props} />;
+      // Étape 6: Documents
+      return <StepDocuments {...props} />;
+    case 6:
+      // Étape 7: Révision et publication
+      return <StepSeven {...props} />;
     default:
-      // حالة افتراضية في حال وجود خطوة غير معروفة
-      return <div>خطوة غير معروفة. يرجى العودة.</div>;
+      return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          Étape inconnue. Veuillez revenir en arrière.
+        </div>
+      );
   }
 };
 
