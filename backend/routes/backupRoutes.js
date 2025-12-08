@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const BackupService = require('../services/backup/BackupService');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken } = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 const { asyncHandler } = require('../middleware/errorHandlingMiddleware');
 const { validationMiddleware } = require('../middleware/validationMiddleware');
@@ -36,7 +36,7 @@ const verifySuperAdmin = (req, res, next) => {
  */
 router.get(
   '/list',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   asyncHandler(async (req, res) => {
     try {
@@ -63,7 +63,7 @@ router.get(
  */
 router.get(
   '/stats',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   asyncHandler(async (req, res) => {
     const result = BackupService.getBackupStats();
@@ -82,7 +82,7 @@ router.get(
  */
 router.get(
   '/scheduler/status',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   asyncHandler(async (req, res) => {
     const BackupScheduler = require('../services/backup/BackupScheduler');
@@ -108,7 +108,7 @@ router.get(
  */
 router.post(
   '/create',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   asyncHandler(async (req, res) => {
     try {
@@ -136,7 +136,7 @@ router.post(
  */
 router.post(
   '/verify/:filename',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   validateIdMiddleware, // Assuming filename is a valid ID
   asyncHandler(async (req, res) => {
@@ -160,7 +160,7 @@ router.post(
  */
 router.get(
   '/download/:filename',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   validateIdMiddleware, // Assuming filename is a valid ID
   asyncHandler(async (req, res) => {
@@ -194,7 +194,7 @@ router.get(
  */
 router.post(
   '/restore/:filename',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   validateIdMiddleware, // Assuming filename is a valid ID
   asyncHandler(async (req, res) => {
@@ -237,7 +237,7 @@ router.post(
  */
 router.delete(
   '/:filename',
-  authMiddleware.verifyToken,
+  verifyToken,
   verifySuperAdmin,
   validateIdMiddleware, // Assuming filename is a valid ID
   asyncHandler(async (req, res) => {

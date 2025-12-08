@@ -3,7 +3,7 @@ const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 // Super Admin functionality moved to frontend
 // const superAdminController = require('../controllers/superAdminController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken, checkRole } = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 
 // File upload middleware
@@ -25,8 +25,8 @@ try {
  */
 
 // Middleware: Verify token and super_admin role
-router.use(authMiddleware.verifyToken);
-router.use(authMiddleware.checkRole(['super_admin']));
+router.use(verifyToken);
+router.use(checkRole(['super_admin']));
 
 // Admin-specific middleware stack
 router.use(adminMiddleware.adminLimiter); // Rate limiting

@@ -3,12 +3,12 @@ const express = require('express');
 const router = express.Router();
 const PaymentGatewayService = require('../services/PaymentGatewayService');
 const SubscriptionService = require('../services/SubscriptionService');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken } = require('../middleware/authMiddleware');
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const logger = require('../utils/logger');
 
 // جميع المسارات تتطلب المصادقة
-router.use(authMiddleware.verifyToken);
+router.use(verifyToken);
 
 /**
  * إنشاء جلسة دفع لاشتراك جديد
