@@ -508,6 +508,56 @@ router.get('/tenders/:id/with-offers', AuthorizationGuard.authenticateToken.bind
 router.get('/tenders/:id/statistics', AuthorizationGuard.authenticateToken.bind(AuthorizationGuard), validateIdMiddleware('id'), TenderController.getTenderStatistics);
 router.post('/tenders/:id/award', AuthorizationGuard.authenticateToken.bind(AuthorizationGuard), validateIdMiddleware('id'), TenderController.awardTender);
 
+// Buyer trends endpoint (temporal analytics)
+router.get(
+  '/buyer/trends',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  async (req, res) => {
+    try {
+      const buyerId = req.user?.id;
+      const { period = '6 months' } = req.query;
+      const pool = getPool();
+
+      if (!buyerId) {
+        return errorResponse(res, 'User not authenticated', 401);
+      }
+
+      const trendsQuery = `
+        SELECT 
+          DATE_TRUNC('month', t.created_at) as month,
+          COUNT(DISTINCT t.id) as tenders_created,
+          COUNT(DISTINCT o.id) as offers_received,
+          AVG(o.total_amount) as avg_offer_price,
+          SUM(t.budget_max) as total_budget_allocated
+        FROM tenders t
+        LEFT JOIN offers o ON t.id = o.tender_id AND o.is_deleted = FALSE
+        WHERE t.buyer_id = $1 
+          AND t.is_deleted = FALSE
+          AND t.created_at >= NOW() - INTERVAL '${period}'
+        GROUP BY DATE_TRUNC('month', t.created_at)
+        ORDER BY month DESC
+        LIMIT 12
+      `;
+
+      const result = await pool.query(trendsQuery, [buyerId]);
+
+      return res.json({
+        success: true,
+        trends: result.rows.map(row => ({
+          month: row.month,
+          tendersCreated: parseInt(row.tenders_created) || 0,
+          offersReceived: parseInt(row.offers_received) || 0,
+          avgOfferPrice: parseFloat(row.avg_offer_price) || 0,
+          totalBudgetAllocated: parseFloat(row.total_budget_allocated) || 0
+        }))
+      });
+    } catch (error) {
+      console.error('Buyer trends error:', error);
+      return handleError(res, error, 500);
+    }
+  }
+);
+
 // Buyer analytics endpoint
 router.get(
   '/buyer/analytics',
@@ -522,17 +572,41 @@ router.get(
       }
 
       const analyticsQuery = `
-        SELECT 
-          COUNT(DISTINCT t.id) as total_tenders,
-          COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'published') as published_tenders,
-          COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'closed') as closed_tenders,
-          COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'awarded') as awarded_tenders,
-          COUNT(DISTINCT o.id) as total_offers,
-          AVG(o.total_amount) as avg_offer_amount,
-          SUM(t.budget_max) as total_budget
-        FROM tenders t
-        LEFT JOIN offers o ON t.id = o.tender_id AND o.is_deleted = FALSE
-        WHERE t.buyer_id = $1 AND t.is_deleted = FALSE
+        WITH tender_stats AS (
+          SELECT 
+            COUNT(DISTINCT t.id) as total_tenders,
+            COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'published') as published_tenders,
+            COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'open') as open_tenders,
+            COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'closed') as closed_tenders,
+            COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'awarded') as awarded_tenders,
+            COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'draft') as draft_tenders,
+            SUM(t.budget_max) as total_budget,
+            AVG(t.budget_max) as avg_budget
+          FROM tenders t
+          WHERE t.buyer_id = $1 AND t.is_deleted = FALSE
+        ),
+        offer_stats AS (
+          SELECT 
+            COUNT(DISTINCT o.id) as total_offers,
+            COUNT(DISTINCT o.supplier_id) as unique_suppliers,
+            AVG(o.total_amount) as avg_offer_amount,
+            MIN(o.total_amount) as min_offer_amount,
+            MAX(o.total_amount) as max_offer_amount,
+            COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'accepted') as accepted_offers,
+            COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'rejected') as rejected_offers,
+            COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'pending') as pending_offers
+          FROM offers o
+          JOIN tenders t ON o.tender_id = t.id
+          WHERE t.buyer_id = $1 AND o.is_deleted = FALSE
+        ),
+        time_stats AS (
+          SELECT 
+            AVG(EXTRACT(EPOCH FROM (t.deadline - t.publish_date))/86400) as avg_tender_duration_days
+          FROM tenders t
+          WHERE t.buyer_id = $1 AND t.is_deleted = FALSE 
+            AND t.publish_date IS NOT NULL AND t.deadline IS NOT NULL
+        )
+        SELECT * FROM tender_stats, offer_stats, time_stats
       `;
 
       const result = await pool.query(analyticsQuery, [buyerId]);
@@ -543,11 +617,21 @@ router.get(
         analytics: {
           totalTenders: parseInt(analytics.total_tenders) || 0,
           publishedTenders: parseInt(analytics.published_tenders) || 0,
+          openTenders: parseInt(analytics.open_tenders) || 0,
           closedTenders: parseInt(analytics.closed_tenders) || 0,
           awardedTenders: parseInt(analytics.awarded_tenders) || 0,
+          draftTenders: parseInt(analytics.draft_tenders) || 0,
           totalOffers: parseInt(analytics.total_offers) || 0,
+          uniqueSuppliers: parseInt(analytics.unique_suppliers) || 0,
           avgOfferAmount: parseFloat(analytics.avg_offer_amount) || 0,
-          totalBudget: parseFloat(analytics.total_budget) || 0
+          minOfferAmount: parseFloat(analytics.min_offer_amount) || 0,
+          maxOfferAmount: parseFloat(analytics.max_offer_amount) || 0,
+          acceptedOffers: parseInt(analytics.accepted_offers) || 0,
+          rejectedOffers: parseInt(analytics.rejected_offers) || 0,
+          pendingOffers: parseInt(analytics.pending_offers) || 0,
+          totalBudget: parseFloat(analytics.total_budget) || 0,
+          avgBudget: parseFloat(analytics.avg_budget) || 0,
+          avgTenderDuration: parseFloat(analytics.avg_tender_duration_days) || 0
         }
       });
     } catch (error) {

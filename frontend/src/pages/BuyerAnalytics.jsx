@@ -39,18 +39,30 @@ export default function BuyerAnalytics() {
       const analytics = response.data.analytics || {};
 
       const completedCount = (analytics.closedTenders || 0) + (analytics.awardedTenders || 0);
-      const activeCount = analytics.publishedTenders || 0;
+      const activeCount = (analytics.publishedTenders || 0) + (analytics.openTenders || 0);
       const totalTenders = analytics.totalTenders || 0;
 
       setStats({
         totalTenders: totalTenders,
+        draftTenders: analytics.draftTenders || 0,
+        publishedTenders: analytics.publishedTenders || 0,
+        openTenders: analytics.openTenders || 0,
+        closedTenders: analytics.closedTenders || 0,
+        awardedTenders: analytics.awardedTenders || 0,
         totalSpent: analytics.totalBudget || 0,
-        avgBudget: totalTenders > 0 ? (analytics.totalBudget || 0) / totalTenders : 0,
+        avgBudget: analytics.avgBudget || 0,
         completedCount: completedCount,
         activeCount: activeCount,
         completionRate: totalTenders > 0 ? ((completedCount / totalTenders) * 100).toFixed(1) : 0,
         totalOffers: analytics.totalOffers || 0,
+        uniqueSuppliers: analytics.uniqueSuppliers || 0,
         avgOfferAmount: analytics.avgOfferAmount || 0,
+        minOfferAmount: analytics.minOfferAmount || 0,
+        maxOfferAmount: analytics.maxOfferAmount || 0,
+        acceptedOffers: analytics.acceptedOffers || 0,
+        rejectedOffers: analytics.rejectedOffers || 0,
+        pendingOffers: analytics.pendingOffers || 0,
+        avgTenderDuration: analytics.avgTenderDuration || 0,
       });
     } catch (err) {
       console.error('Erreur de chargement des analyses:', err);
@@ -188,6 +200,42 @@ export default function BuyerAnalytics() {
           <Card>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                Performance des Offres
+              </Typography>
+              <Stack spacing={2}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography>Fournisseurs Uniques</Typography>
+                  <Typography sx={{ fontWeight: 600, color: theme.palette.info.main }}>
+                    {stats?.uniqueSuppliers || 0}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography>Offres Acceptées</Typography>
+                  <Typography sx={{ fontWeight: 600, color: theme.palette.success.main }}>
+                    {stats?.acceptedOffers || 0}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography>Offres en Attente</Typography>
+                  <Typography sx={{ fontWeight: 600, color: theme.palette.warning.main }}>
+                    {stats?.pendingOffers || 0}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography>Offres Rejetées</Typography>
+                  <Typography sx={{ fontWeight: 600, color: theme.palette.error.main }}>
+                    {stats?.rejectedOffers || 0}
+                  </Typography>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                 Recommandations
               </Typography>
               <Stack spacing={1}>
@@ -200,6 +248,11 @@ export default function BuyerAnalytics() {
                 <Typography variant="body2" color="textSecondary">
                   • Maintenez une communication régulière avec les fournisseurs
                 </Typography>
+                {stats?.avgTenderDuration > 0 && (
+                  <Typography variant="body2" color="textSecondary">
+                    • Durée moyenne des appels: {stats.avgTenderDuration.toFixed(0)} jours
+                  </Typography>
+                )}
               </Stack>
             </CardContent>
           </Card>

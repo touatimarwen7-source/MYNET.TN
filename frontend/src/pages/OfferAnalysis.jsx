@@ -71,7 +71,14 @@ export default function OfferAnalysis() {
       if (offersRes.data.is_sealed) {
         setTender(tenderRes.data.tender);
         setOffers([]);
-        setError(`Les offres sont scellées jusqu'au ${new Date(offersRes.data.opening_date).toLocaleDateString('fr-FR')}. Total: ${offersRes.data.total_offers}`);
+        setAnalysis({
+          avgPrice: 0,
+          minPrice: 0,
+          maxPrice: 0,
+          totalOffers: offersRes.data.total_offers || 0,
+        });
+        const openingDate = new Date(offersRes.data.opening_date);
+        setError(`🔒 Les offres sont scellées jusqu'au ${openingDate.toLocaleDateString('fr-FR')} à ${openingDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}. Nombre d'offres reçues: ${offersRes.data.total_offers}`);
         setLoading(false);
         return;
       }
