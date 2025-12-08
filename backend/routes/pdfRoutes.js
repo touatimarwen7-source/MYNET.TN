@@ -1,42 +1,64 @@
+
 const express = require('express');
+const router = express.Router();
 const PDFController = require('../controllers/admin/PDFController');
 const authMiddleware = require('../middleware/authMiddleware');
+const { asyncHandler } = require('../middleware/errorHandlingMiddleware');
 
-const router = express.Router();
-const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
-
-// Generate tender PDF document
-router.get(
-  '/tender/:tender_id',
-  validateIdMiddleware('tender_id'),
-  authMiddleware.verifyToken,
-  (req, res) => PDFController.generateTenderPDF(req, res)
+/**
+ * @route   POST /api/pdf/generate-tender
+ * @desc    Generate PDF for tender
+ * @access  Private
+ */
+router.post(
+  '/generate-tender',
+  authMiddleware,
+  asyncHandler(async (req, res) => {
+    const controller = new PDFController();
+    return controller.generateTenderPDF(req, res);
+  })
 );
 
-// Generate offer evaluation report
-router.get(
-  '/offer/:offer_id',
-  validateIdMiddleware('offer_id'),
-  authMiddleware.verifyToken,
-  authMiddleware.checkPermission('view_reports'),
-  (req, res) => PDFController.generateOfferReport(req, res)
+/**
+ * @route   POST /api/pdf/generate-offer
+ * @desc    Generate PDF for offer
+ * @access  Private
+ */
+router.post(
+  '/generate-offer',
+  authMiddleware,
+  asyncHandler(async (req, res) => {
+    const controller = new PDFController();
+    return controller.generateOfferPDF(req, res);
+  })
 );
 
-// Generate award certificate
-router.get(
-  '/award-certificate/:tender_id/:supplier_id',
-  validateIdMiddleware(['tender_id', 'supplier_id']),
-  authMiddleware.verifyToken,
-  authMiddleware.checkPermission('award_tenders'),
-  (req, res) => PDFController.generateAwardCertificate(req, res)
+/**
+ * @route   POST /api/pdf/generate-opening-report
+ * @desc    Generate PDF for opening report
+ * @access  Private
+ */
+router.post(
+  '/generate-opening-report',
+  authMiddleware,
+  asyncHandler(async (req, res) => {
+    const controller = new PDFController();
+    return controller.generateOpeningReportPDF(req, res);
+  })
 );
 
-// Generate transaction report for supplier
-router.get(
-  '/transactions/:supplier_id',
-  validateIdMiddleware('supplier_id'),
-  authMiddleware.verifyToken,
-  (req, res) => PDFController.generateTransactionReport(req, res)
+/**
+ * @route   POST /api/pdf/generate-award
+ * @desc    Generate PDF for tender award
+ * @access  Private
+ */
+router.post(
+  '/generate-award',
+  authMiddleware,
+  asyncHandler(async (req, res) => {
+    const controller = new PDFController();
+    return controller.generateAwardPDF(req, res);
+  })
 );
 
 module.exports = router;

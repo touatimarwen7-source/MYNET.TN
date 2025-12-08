@@ -1,98 +1,149 @@
+
+const { getPool } = require('../../config/db');
+const { sendOk, sendNotFound, sendInternalError } = require('../../utils/responseHelper');
+const { logger } = require('../../utils/logger');
 const PDFService = require('../../services/PDFService');
 
+/**
+ * 📄 PDF CONTROLLER
+ * Handles PDF generation for tenders, offers, reports, and awards
+ */
 class PDFController {
+  /**
+   * Generate PDF for tender
+   * @route POST /api/pdf/generate-tender
+   */
   async generateTenderPDF(req, res) {
     try {
-      const { tender_id } = req.params;
+      const { tenderId } = req.body;
 
-      if (!tender_id) {
-        return res.status(400).json({ error: 'tender_id is required' });
+      if (!tenderId) {
+        return sendInternalError(res, 'Tender ID is required');
       }
 
-      const pdf = await PDFService.generateTenderDocument(tender_id);
-
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="tender_${tender_id}.pdf"`);
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-
-      pdf.pipe(res);
-      pdf.end();
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async generateOfferReport(req, res) {
-    try {
-      const { offer_id } = req.params;
-
-      if (!offer_id) {
-        return res.status(400).json({ error: 'offer_id is required' });
-      }
-
-      const pdf = await PDFService.generateOfferEvaluationReport(offer_id);
-
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="offer_report_${offer_id}.pdf"`);
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-
-      pdf.pipe(res);
-      pdf.end();
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async generateAwardCertificate(req, res) {
-    try {
-      const { tender_id, supplier_id } = req.params;
-
-      if (!tender_id || !supplier_id) {
-        return res.status(400).json({ error: 'tender_id and supplier_id are required' });
-      }
-
-      const pdf = await PDFService.generateAwardCertificate(tender_id, supplier_id);
-
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename="award_certificate_${tender_id}_${supplier_id}.pdf"`
+      const pool = getPool();
+      const result = await pool.query(
+        'SELECT * FROM tenders WHERE id = $1',
+        [tenderId]
       );
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-      pdf.pipe(res);
-      pdf.end();
+      if (result.rows.length === 0) {
+        return sendNotFound(res, 'Tender');
+      }
+
+      const tender = result.rows[0];
+      const pdfBuffer = await PDFService.generateTenderPDF(tender);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=tender_${tenderId}.pdf`);
+      return res.send(pdfBuffer);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      logger.error('Error generating tender PDF:', { error: error.message, tenderId: req.body.tenderId });
+      return sendInternalError(res, 'Failed to generate tender PDF');
     }
   }
 
-  async generateTransactionReport(req, res) {
+  /**
+   * Generate PDF for offer
+   * @route POST /api/pdf/generate-offer
+   */
+  async generateOfferPDF(req, res) {
     try {
-      const { supplier_id } = req.params;
-      const { start_date, end_date } = req.query;
+      const { offerId } = req.body;
 
-      if (!supplier_id || !start_date || !end_date) {
-        return res
-          .status(400)
-          .json({ error: 'supplier_id, start_date, and end_date are required' });
+      if (!offerId) {
+        return sendInternalError(res, 'Offer ID is required');
       }
 
-      const pdf = await PDFService.generateTransactionReport(supplier_id, start_date, end_date);
+      const pool = getPool();
+      const result = await pool.query(
+        'SELECT * FROM offers WHERE id = $1',
+        [offerId]
+      );
+
+      if (result.rows.length === 0) {
+        return sendNotFound(res, 'Offer');
+      }
+
+      const offer = result.rows[0];
+      const pdfBuffer = await PDFService.generateOfferPDF(offer);
 
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename="transactions_${supplier_id}.pdf"`
-      );
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-
-      pdf.pipe(res);
-      pdf.end();
+      res.setHeader('Content-Disposition', `attachment; filename=offer_${offerId}.pdf`);
+      return res.send(pdfBuffer);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      logger.error('Error generating offer PDF:', { error: error.message, offerId: req.body.offerId });
+      return sendInternalError(res, 'Failed to generate offer PDF');
+    }
+  }
+
+  /**
+   * Generate PDF for opening report
+   * @route POST /api/pdf/generate-opening-report
+   */
+  async generateOpeningReportPDF(req, res) {
+    try {
+      const { reportId } = req.body;
+
+      if (!reportId) {
+        return sendInternalError(res, 'Report ID is required');
+      }
+
+      const pool = getPool();
+      const result = await pool.query(
+        'SELECT * FROM opening_reports WHERE id = $1',
+        [reportId]
+      );
+
+      if (result.rows.length === 0) {
+        return sendNotFound(res, 'Opening Report');
+      }
+
+      const report = result.rows[0];
+      const pdfBuffer = await PDFService.generateOpeningReportPDF(report);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=opening_report_${reportId}.pdf`);
+      return res.send(pdfBuffer);
+    } catch (error) {
+      logger.error('Error generating opening report PDF:', { error: error.message, reportId: req.body.reportId });
+      return sendInternalError(res, 'Failed to generate opening report PDF');
+    }
+  }
+
+  /**
+   * Generate PDF for tender award
+   * @route POST /api/pdf/generate-award
+   */
+  async generateAwardPDF(req, res) {
+    try {
+      const { awardId } = req.body;
+
+      if (!awardId) {
+        return sendInternalError(res, 'Award ID is required');
+      }
+
+      const pool = getPool();
+      const result = await pool.query(
+        'SELECT * FROM tender_awards WHERE id = $1',
+        [awardId]
+      );
+
+      if (result.rows.length === 0) {
+        return sendNotFound(res, 'Award');
+      }
+
+      const award = result.rows[0];
+      const pdfBuffer = await PDFService.generateAwardPDF(award);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=award_${awardId}.pdf`);
+      return res.send(pdfBuffer);
+    } catch (error) {
+      logger.error('Error generating award PDF:', { error: error.message, awardId: req.body.awardId });
+      return sendInternalError(res, 'Failed to generate award PDF');
     }
   }
 }
 
-module.exports = new PDFController();
+module.exports = PDFController;
