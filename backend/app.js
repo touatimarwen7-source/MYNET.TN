@@ -62,7 +62,6 @@ const {
   authLimiter,
   uploadLimiter,
 } = require('./middleware/ddosProtectionMiddleware');
-const ErrorHandler = require('./middleware/errorHandler');
 const requestIdMiddleware = require('./middleware/requestIdMiddleware');
 const performanceMiddleware = require('./middleware/performanceMiddleware');
 const { versionMiddleware } = require('./config/apiVersion');
@@ -167,9 +166,6 @@ app.use(distributedCacheMiddleware);
 
 // ENHANCEMENT: Add API version headers
 app.use(versionMiddleware);
-
-// ISSUE FIX #9: Add logging middleware
-app.use(loggingMiddleware);
 
 // 🛡️ CRITICAL FIX #1: Safe database connection handling
 app.use(safeQueryMiddleware);
