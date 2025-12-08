@@ -253,7 +253,7 @@ export default function SupplierDashboard() {
               }}
             >
               <CardContent sx={{ p: 3 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                   <Box>
                     <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 500, mb: 1 }}>
                       {stat.label}
@@ -265,10 +265,20 @@ export default function SupplierDashboard() {
                       {stat.subtitle}
                     </Typography>
                   </Box>
-                  <Avatar sx={{ backgroundColor: `${stat.color}15`, width: 56, height: 56 }}>
+                  <Box
+                    sx={{
+                      backgroundColor: `${stat.color}15`,
+                      width: 56,
+                      height: 56,
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
                     <stat.icon sx={{ fontSize: 28, color: stat.color }} />
-                  </Avatar>
-                </Stack>
+                  </Box>
+                </Box>
                 <Stack direction="row" alignItems="center" spacing={0.5}>
                   {stat.trend === 'up' ? (
                     <TrendingUp sx={{ fontSize: 16, color: theme.palette.success.main }} />

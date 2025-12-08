@@ -18,6 +18,9 @@ import {
   ListItemText,
   IconButton,
   Divider,
+  Avatar,
+  Stack,
+  Paper,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -103,29 +106,33 @@ export default function BuyerDashboard() {
     {
       title: 'المناقصات النشطة',
       value: stats.activeTenders,
-      icon: <Description sx={{ fontSize: 40, color: institutionalTheme.palette.primary.main }} />,
+      icon: Description,
       color: institutionalTheme.palette.primary.main,
+      subtitle: 'Active',
       action: () => navigate('/buyer-active-tenders'),
     },
     {
       title: 'إجمالي العروض',
       value: stats.totalOffers,
-      icon: <TrendingUp sx={{ fontSize: 40, color: '#2196f3' }} />,
-      color: '#2196f3',
+      icon: TrendingUp,
+      color: institutionalTheme.palette.info.main,
+      subtitle: 'Total Offers',
       action: () => navigate('/buyer/offers'),
     },
     {
       title: 'المناقصات المكتملة',
       value: stats.completedTenders,
-      icon: <CheckCircle sx={{ fontSize: 40, color: '#4caf50' }} />,
-      color: '#4caf50',
+      icon: CheckCircle,
+      color: institutionalTheme.palette.success.main,
+      subtitle: 'Completed',
       action: () => navigate('/buyer/completed-tenders'),
     },
     {
       title: 'التقييمات المعلقة',
       value: stats.pendingEvaluations,
-      icon: <Schedule sx={{ fontSize: 40, color: '#ff9800' }} />,
-      color: '#ff9800',
+      icon: Schedule,
+      color: institutionalTheme.palette.warning.main,
+      subtitle: 'Pending',
       action: () => navigate('/buyer/evaluations'),
     },
   ];
@@ -281,27 +288,43 @@ export default function BuyerDashboard() {
                   sx={{
                     height: '100%',
                     cursor: 'pointer',
-                    transition: 'all 0.3s',
-                    border: `2px solid ${card.color}20`,
+                    transition: 'all 0.3s ease',
+                    border: '1px solid',
+                    borderColor: institutionalTheme.palette.divider,
+                    boxShadow: 'none',
                     '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: `0 8px 16px ${card.color}30`,
-                      borderColor: card.color,
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
                     },
                   }}
                   onClick={card.action}
                 >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                       <Box>
-                        <Typography variant="h6" sx={{ color: 'text.secondary', mb: 1 }}>
+                        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 500, mb: 1 }}>
                           {card.title}
                         </Typography>
-                        <Typography variant="h3" sx={{ fontWeight: 'bold', color: card.color }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: card.color, mb: 0.5 }}>
                           {card.value}
                         </Typography>
+                        <Typography variant="caption" color="textSecondary">
+                          {card.subtitle}
+                        </Typography>
                       </Box>
-                      <Box>{card.icon}</Box>
+                      <Box
+                        sx={{
+                          backgroundColor: `${card.color}15`,
+                          width: 56,
+                          height: 56,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <card.icon sx={{ fontSize: 28, color: card.color }} />
+                      </Box>
                     </Box>
                   </CardContent>
                 </Card>
@@ -309,43 +332,108 @@ export default function BuyerDashboard() {
             ))}
           </Grid>
 
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-              الإجراءات السريعة
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={() => navigate('/create-tender')}
-                  sx={{ py: 2 }}
-                >
-                  إنشاء مناقصة جديدة
-                </Button>
+          <Card sx={{ mt: 4, border: '1px solid', borderColor: institutionalTheme.palette.divider, boxShadow: 'none' }}>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+                إجراءات سريعة
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      border: '1px solid',
+                      borderColor: institutionalTheme.palette.divider,
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        borderColor: institutionalTheme.palette.primary.main,
+                        backgroundColor: `${institutionalTheme.palette.primary.main}08`,
+                        transform: 'translateY(-2px)',
+                      }
+                    }}
+                    onClick={() => navigate('/create-tender')}
+                  >
+                    <Stack spacing={1.5}>
+                      <Avatar sx={{ backgroundColor: `${institutionalTheme.palette.primary.main}15` }}>
+                        <AddIcon sx={{ color: institutionalTheme.palette.primary.main }} />
+                      </Avatar>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                        إنشاء مناقصة جديدة
+                      </Typography>
+                      <Typography variant="caption" color="textSecondary">
+                        ابدأ مناقصة جديدة
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      border: '1px solid',
+                      borderColor: institutionalTheme.palette.divider,
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        borderColor: institutionalTheme.palette.info.main,
+                        backgroundColor: `${institutionalTheme.palette.info.main}08`,
+                        transform: 'translateY(-2px)',
+                      }
+                    }}
+                    onClick={() => navigate('/buyer-active-tenders')}
+                  >
+                    <Stack spacing={1.5}>
+                      <Avatar sx={{ backgroundColor: `${institutionalTheme.palette.info.main}15` }}>
+                        <GavelIcon sx={{ color: institutionalTheme.palette.info.main }} />
+                      </Avatar>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                        المناقصات النشطة
+                      </Typography>
+                      <Typography variant="caption" color="textSecondary">
+                        عرض وإدارة المناقصات
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      border: '1px solid',
+                      borderColor: institutionalTheme.palette.divider,
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        borderColor: institutionalTheme.palette.success.main,
+                        backgroundColor: `${institutionalTheme.palette.success.main}08`,
+                        transform: 'translateY(-2px)',
+                      }
+                    }}
+                    onClick={() => navigate('/buyer-analytics')}
+                  >
+                    <Stack spacing={1.5}>
+                      <Avatar sx={{ backgroundColor: `${institutionalTheme.palette.success.main}15` }}>
+                        <AssessmentIcon sx={{ color: institutionalTheme.palette.success.main }} />
+                      </Avatar>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                        التقارير والتحليلات
+                      </Typography>
+                      <Typography variant="caption" color="textSecondary">
+                        تحليلات مفصلة
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={() => navigate('/buyer-active-tenders')}
-                  sx={{ py: 2 }}
-                >
-                  عرض المناقصات النشطة
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={() => navigate('/buyer-analytics')}
-                  sx={{ py: 2 }}
-                >
-                  التقارير والتحليلات
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
+            </CardContent>
+          </Card>
         </Container>
       </Box>
     </Box>
