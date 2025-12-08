@@ -66,7 +66,7 @@ export default function BuyerDashboard() {
       setLoading(true);
       setError(null);
 
-      const response = await axiosInstance.get('/api/procurement/buyer/dashboard-stats');
+      const response = await axiosInstance.get('/procurement/buyer/dashboard-stats');
 
       if (response?.data) {
         setStats({

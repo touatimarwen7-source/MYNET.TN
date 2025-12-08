@@ -49,6 +49,48 @@ const validatePagination = (req, res, next) => {
   next();
 };
 
+// ========== DASHBOARD STATS (must be before parameterized routes) ==========
+
+// Supplier Dashboard Stats
+router.get(
+  '/supplier/dashboard-stats',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  async (req, res) => {
+    try {
+      const supplierId = req.user?.id;
+      const pool = getPool();
+
+      if (!supplierId) {
+        return errorResponse(res, 'User not authenticated', 401);
+      }
+
+      const statsQuery = `
+        SELECT 
+          COUNT(DISTINCT o.id) FILTER (WHERE o.is_deleted = FALSE) as total_offers,
+          COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'accepted' AND o.is_deleted = FALSE) as accepted_offers,
+          COUNT(DISTINCT t.id) FILTER (WHERE t.status IN ('open', 'published') AND t.is_deleted = FALSE) as available_tenders,
+          COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'pending' AND o.is_deleted = FALSE) as pending_offers
+        FROM offers o
+        LEFT JOIN tenders t ON o.tender_id = t.id
+        WHERE o.supplier_id = $1
+      `;
+
+      const result = await pool.query(statsQuery, [supplierId]);
+      const stats = result.rows[0];
+
+      return res.json({
+        success: true,
+        totalOffers: parseInt(stats.total_offers) || 0,
+        acceptedOffers: parseInt(stats.accepted_offers) || 0,
+        availableTenders: parseInt(stats.available_tenders) || 0,
+        pendingOffers: parseInt(stats.pending_offers) || 0
+      });
+    } catch (error) {
+      return handleError(res, error, 500);
+    }
+  }
+);
+
 // Buyer Dashboard Stats
 router.get(
   '/buyer/dashboard-stats',
@@ -59,8 +101,11 @@ router.get(
       const pool = getPool();
 
       if (!buyerId) {
+        console.error('Dashboard stats: User not authenticated');
         return errorResponse(res, 'User not authenticated', 401);
       }
+
+      console.log('Fetching dashboard stats for buyer:', buyerId);
 
       const statsQuery = `
         SELECT 
@@ -76,19 +121,24 @@ router.get(
       const result = await pool.query(statsQuery, [buyerId]);
       const stats = result.rows[0];
 
-      res.json({
+      const response = {
         success: true,
         activeTenders: parseInt(stats.active_tenders) || 0,
         totalOffers: parseInt(stats.total_offers) || 0,
         completedTenders: parseInt(stats.completed_tenders) || 0,
         pendingEvaluations: parseInt(stats.pending_evaluations) || 0
-      });
+      };
+
+      console.log('Dashboard stats response:', response);
+      return res.json(response);
     } catch (error) {
-      handleError(res, error, 500);
+      console.error('Dashboard stats error:', error);
+      return handleError(res, error, 500);
     }
   }
 );
 
+// ========== TENDERS CRUD ==========
 // Tenders - with validation
 router.post(
   '/tenders',

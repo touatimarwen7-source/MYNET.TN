@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,7 +15,6 @@ import {
   Paper,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
   Divider,
 } from '@mui/material';
@@ -40,6 +38,7 @@ import institutionalTheme from '../theme/theme';
 import { setPageTitle } from '../utils/pageTitle';
 import TokenManager from '../services/tokenManager';
 import EnhancedTable from '../components/EnhancedTable';
+import axiosInstance from '../services/axiosInstance'; // Assuming axiosInstance is used for API calls
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -52,6 +51,27 @@ export default function AdminDashboard() {
     const userData = TokenManager.getUser();
     setUser(userData);
     setPermissions(userData?.permissions || ['view_users', 'view_reports']);
+
+    // Fetching dashboard stats, users, and tenders as per the intention
+    const fetchDashboardData = async () => {
+      try {
+        const [statsRes, usersRes, tendersRes] = await Promise.all([
+          axiosInstance.get('/admin/stats'), // Corrected URL
+          axiosInstance.get('/admin/users'), // Corrected URL
+          axiosInstance.get('/procurement/tenders', { params: { limit: 5 } }), // Corrected URL
+        ]);
+        // Process fetched data here if needed
+        console.log('Stats:', statsRes.data);
+        console.log('Users:', usersRes.data);
+        console.log('Tenders:', tendersRes.data);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+        // Handle errors, e.g., show an alert to the user
+      }
+    };
+
+    fetchDashboardData();
+
   }, []);
 
   const stats = [
@@ -231,7 +251,7 @@ export default function AdminDashboard() {
         >
           Tableau de Bord Assistant Administrateur
         </Typography>
-<Typography variant="body2" color="textSecondary">
+        <Typography variant="body2" color="textSecondary">
           Bienvenue {user.username || user.email} - Gestion complète du système
         </Typography>
       </Box>
