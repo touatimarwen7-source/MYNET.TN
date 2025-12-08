@@ -2,7 +2,10 @@
  * Authentication API
  * Handles login, register, password reset, email verification
  */
-import axiosInstance from '../services/axiosConfig.js';
+import axiosInstance from './axiosConfig';
+
+// Ensure we're using the correct base URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 export const authAPI = {
   login: (credentials) => axiosInstance.post('/auth/login', credentials),
