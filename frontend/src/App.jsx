@@ -18,6 +18,7 @@ import TokenManager from './services/tokenManager';
 // Import role-specific dashboards
 import BuyerDashboard from './pages/BuyerDashboard';
 import SupplierDashboard from './pages/SupplierDashboard';
+import AdminDashboard from './pages/AdminDashboard'; // Import AdminDashboard
 
 // Core pages (eager load)
 import HomePage from './pages/HomePage';
@@ -272,8 +273,9 @@ function AppContent() {
                           path="/dashboard"
                           element={
                             user ? (
-                              user.role === 'buyer' ? <Navigate to="/buyer-dashboard" replace /> :
-                              user.role === 'supplier' ? <Navigate to="/supplier-dashboard" replace /> :
+                              user.role === 'buyer' ? <BuyerDashboard /> :
+                              user.role === 'supplier' ? <SupplierDashboard /> :
+                              user.role === 'admin' ? <AdminDashboard /> :
                               user.role === 'super_admin' ? <Navigate to="/super-admin" replace /> :
                               <Navigate to="/profile" replace />
                             ) : (
@@ -292,6 +294,12 @@ function AppContent() {
                         <Route
                           path="/supplier-dashboard"
                           element={user?.role === 'supplier' ? <SupplierDashboard /> : <Navigate to="/dashboard" />}
+                        />
+
+                        {/* Admin Dashboard */}
+                        <Route
+                          path="/admin-dashboard"
+                          element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" />}
                         />
 
                         {/* ========== Buyer Routes ========== */}

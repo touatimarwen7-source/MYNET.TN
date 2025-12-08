@@ -24,25 +24,25 @@ import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 export const getMenuByRole = (role, permissions = null) => {
   const menus = {
     buyer: [
-      { text: 'لوحة التحكم', icon: DashboardIcon, path: '/dashboard' },
+      { text: 'لوحة التحكم', icon: DashboardIcon, path: '/buyer-dashboard' },
       { text: 'المناقصات', icon: GavelIcon, path: '/tenders' },
-      { text: 'إنشاء مناقصة', icon: GavelIcon, path: '/tenders/create' },
-      { text: 'العروض', icon: LocalOfferIcon, path: '/buyer-offers' },
-      { text: 'التقارير', icon: AssessmentIcon, path: '/reports' },
+      { text: 'إنشاء مناقصة', icon: GavelIcon, path: '/create-tender' },
+      { text: 'العروض', icon: LocalOfferIcon, path: '/buyer-active-tenders' },
+      { text: 'التقارير', icon: AssessmentIcon, path: '/financial-reports' },
       { text: 'الملف الشخصي', icon: PersonIcon, path: '/profile' },
       { text: 'الإعدادات', icon: SettingsIcon, path: '/settings' },
     ],
     supplier: [
-      { text: 'لوحة التحكم', icon: DashboardIcon, path: '/dashboard' },
+      { text: 'لوحة التحكم', icon: DashboardIcon, path: '/supplier-dashboard' },
       { text: 'المناقصات المتاحة', icon: GavelIcon, path: '/tenders' },
       { text: 'عروضي', icon: LocalOfferIcon, path: '/my-offers' },
-      { text: 'الطلبات', icon: ShoppingCartIcon, path: '/orders' },
+      { text: 'الفواتير', icon: ShoppingCartIcon, path: '/supplier-invoices' },
       { text: 'الملف الشخصي', icon: PersonIcon, path: '/profile' },
       { text: 'الإعدادات', icon: SettingsIcon, path: '/settings' },
     ],
     admin: buildAdminMenu(permissions),
     super_admin: [
-      { text: 'لوحة التحكم', icon: DashboardIcon, path: '/dashboard' },
+      { text: 'لوحة التحكم', icon: DashboardIcon, path: '/super-admin' },
       { text: 'مركز التحكم الكامل', icon: AdminPanelSettingsIcon, path: '/super-admin' },
       { text: 'إدارة المستخدمين', icon: PeopleIcon, path: '/super-admin/users' },
       { text: 'الأدوار والصلاحيات', icon: SecurityIcon, path: '/super-admin/roles' },
@@ -61,7 +61,7 @@ export const getMenuByRole = (role, permissions = null) => {
 
 // بناء قائمة المساعد الإداري حسب صلاحياته
 function buildAdminMenu(permissions) {
-  const baseMenu = [{ text: 'لوحة التحكم', icon: DashboardIcon, path: '/dashboard' }];
+  const baseMenu = [{ text: 'لوحة التحكم', icon: DashboardIcon, path: '/admin-dashboard' }];
 
   const permissionMap = {
     manage_users: { text: 'إدارة المستخدمين', icon: PeopleIcon, path: '/admin/users' },
