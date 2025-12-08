@@ -37,35 +37,112 @@ import institutionalTheme from '../../theme/theme';
 const THEME = institutionalTheme;
 
 export default function SubscriptionManagement() {
-  const [plans] = useState([
-    { id: 1, name: 'الخطة الأساسية', price: 99, users: 10, offers: 50, features: 15 },
-    { id: 2, name: 'الخطة المتوسطة', price: 299, users: 50, offers: 500, features: 30 },
-    {
-      id: 3,
-      name: 'الخطة الاحترافية',
-      price: 999,
-      users: 'غير محدود',
-      offers: 'غير محدود',
-      features: 'الكل',
-    },
-  ]);
+  const [plans, setPlans] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingPlan, setEditingPlan] = useState(null);
+  const [message, setMessage] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: 0,
+    currency: 'TND',
+    duration_days: 30,
+    max_tenders: 10,
+    max_offers: 50,
+    max_products: 50,
+    storage_limit: 5,
+    features: {}
+  });
 
-  const [subscriptions] = useState([
-    {
-      id: 1,
-      company: 'شركة الأمل',
-      plan: 'الخطة المتوسطة',
-      active_users: 35,
-      renewal_date: '2025-04-26',
-    },
-    {
-      id: 2,
-      company: 'شركة النجاح',
-      plan: 'الخطة الأساسية',
-      active_users: 8,
-      renewal_date: '2025-02-15',
-    },
-  ]);
+  useEffect(() => {
+    fetchPlans();
+    fetchAnalytics();
+  }, []);
+
+  const fetchPlans = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/admin/subscriptions/plans');
+      setPlans(response.data.data || []);
+    } catch (error) {
+      setMessage('Erreur lors du chargement des plans');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      const response = await api.get('/admin/subscriptions/analytics');
+      setAnalytics(response.data.data);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+    }
+  };
+
+  const handleOpenDialog = (plan = null) => {
+    if (plan) {
+      setEditingPlan(plan);
+      setFormData({
+        name: plan.name,
+        description: plan.description || '',
+        price: plan.price,
+        currency: plan.currency || 'TND',
+        duration_days: plan.duration_days,
+        max_tenders: plan.max_tenders,
+        max_offers: plan.max_offers,
+        max_products: plan.max_products || 50,
+        storage_limit: plan.storage_limit || 5,
+        features: typeof plan.features === 'string' ? JSON.parse(plan.features) : plan.features || {}
+      });
+    } else {
+      setEditingPlan(null);
+      setFormData({
+        name: '',
+        description: '',
+        price: 0,
+        currency: 'TND',
+        duration_days: 30,
+        max_tenders: 10,
+        max_offers: 50,
+        max_products: 50,
+        storage_limit: 5,
+        features: {}
+      });
+    }
+    setOpenDialog(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      if (editingPlan) {
+        await api.put(`/admin/subscriptions/plans/${editingPlan.id}`, formData);
+        setMessage('Plan mis à jour avec succès');
+      } else {
+        await api.post('/admin/subscriptions/plans', formData);
+        setMessage('Plan créé avec succès');
+      }
+      setOpenDialog(false);
+      fetchPlans();
+      fetchAnalytics();
+    } catch (error) {
+      setMessage('Erreur lors de la sauvegarde');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce plan ?')) {
+      try {
+        await api.delete(`/admin/subscriptions/plans/${id}`);
+        setMessage('Plan supprimé avec succès');
+        fetchPlans();
+      } catch (error) {
+        setMessage(error.response?.data?.error || 'Erreur lors de la suppression');
+      }
+    }
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#F9F9F9', paddingY: 4 }}>

@@ -244,6 +244,32 @@ const schemaQueries = [
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );`,
 
+  `CREATE TABLE IF NOT EXISTS advertisements (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        image_url VARCHAR(500),
+        link_url VARCHAR(500),
+        cta_text VARCHAR(100),
+        ad_type VARCHAR(50) DEFAULT 'banner',
+        placement VARCHAR(50) DEFAULT 'homepage',
+        target_audience JSONB,
+        start_date TIMESTAMP WITH TIME ZONE,
+        end_date TIMESTAMP WITH TIME ZONE,
+        priority INTEGER DEFAULT 0,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );`,
+
+  `CREATE TABLE IF NOT EXISTS ad_impressions (
+        id SERIAL PRIMARY KEY,
+        ad_id INTEGER REFERENCES advertisements(id) ON DELETE CASCADE,
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        clicked BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );`,
+
   `CREATE TABLE IF NOT EXISTS supplier_features (
         id SERIAL PRIMARY KEY,
         supplier_id INTEGER REFERENCES users(id) NOT NULL,

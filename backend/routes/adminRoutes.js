@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const adminController = require('../controllers/adminController');
+const subscriptionAdminController = require('../controllers/admin/SubscriptionAdminController');
+const advertisementController = require('../controllers/admin/AdvertisementController');
 const authMiddleware = require('../middleware/authMiddleware');
 const { errorResponse } = require('../middleware/errorResponseFormatter');
 const { validatePagination } = require('../middleware/paginationValidator');
@@ -88,6 +90,20 @@ router.get('/analytics/stats', adminController.getAnalyticsStats);
 router.get('/analytics/health', adminController.getHealthDashboard);
 router.get('/analytics/activities', adminController.getRecentActivities);
 router.get('/analytics/users', adminController.getUserStatistics);
+
+// ===== Gestion des abonnements =====
+router.get('/subscriptions/plans', subscriptionAdminController.getAllPlans);
+router.post('/subscriptions/plans', subscriptionAdminController.createPlan);
+router.put('/subscriptions/plans/:id', validateIdMiddleware('id'), subscriptionAdminController.updatePlan);
+router.delete('/subscriptions/plans/:id', validateIdMiddleware('id'), subscriptionAdminController.deletePlan);
+router.get('/subscriptions/analytics', subscriptionAdminController.getSubscriptionAnalytics);
+
+// ===== Gestion des publicités =====
+router.get('/advertisements', advertisementController.getAllAds);
+router.post('/advertisements', advertisementController.createAd);
+router.put('/advertisements/:id', validateIdMiddleware('id'), advertisementController.updateAd);
+router.delete('/advertisements/:id', validateIdMiddleware('id'), advertisementController.deleteAd);
+router.get('/advertisements/:id/analytics', validateIdMiddleware('id'), advertisementController.getAdAnalytics);
 
 // ===== Routes de compatibilité (anciennes versions) =====
 router.put('/users/:id/block', validateIdMiddleware('id'), adminController.blockUser);
