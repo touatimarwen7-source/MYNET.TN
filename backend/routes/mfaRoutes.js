@@ -1,12 +1,15 @@
 // Two-Factor Authentication (MFA) Routes - TURN 3 ENHANCEMENT
 const crypto = require('crypto');
 const express = require('express');
-const { verifyToken } = require('../middleware/authMiddleware');
+const authMiddleware = require('../middleware/authMiddleware'); // Corrected import
 const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
+// Protect all MFA routes
+router.use(authMiddleware.verifyToken);
+
 // Enable MFA for user
-router.post('/enable', authMiddleware, async (req, res) => {
+router.post('/enable', async (req, res) => {
   try {
     const { method } = req.body; // 'sms' or 'totp'
     const userId = req.user.id;
@@ -35,7 +38,7 @@ router.post('/enable', authMiddleware, async (req, res) => {
 });
 
 // Disable MFA for user
-router.post('/disable', authMiddleware, async (req, res) => {
+router.post('/disable', async (req, res) => {
   try {
     const userId = req.user.id;
     const db = req.app.get('db');
@@ -56,7 +59,7 @@ router.post('/disable', authMiddleware, async (req, res) => {
 });
 
 // Verify MFA code
-router.post('/verify', authMiddleware, async (req, res) => {
+router.post('/verify', async (req, res) => {
   try {
     const { code } = req.body;
     const userId = req.user.id;
