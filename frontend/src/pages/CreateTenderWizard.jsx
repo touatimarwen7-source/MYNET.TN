@@ -47,6 +47,11 @@ const CreateTenderWizard = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [showExit, setShowExit] = useState(false);
 
+  // Add error boundary check
+  React.useEffect(() => {
+    console.log('CreateTenderWizard mounted successfully');
+  }, []);
+
   // Charger le brouillon au démarrage du composant
   useEffect(() => {
     const savedDraft = recoverDraft(DRAFT_KEY);
@@ -234,8 +239,8 @@ const CreateTenderWizard = () => {
       console.error('❌ Create tender error:', err);
       
       // Handle database not initialized error
-      if (err.response?.status === 503) {
-        setError('La base de données n\'est pas initialisée. Veuillez contacter l\'administrateur.');
+      if (err.response?.status === 503 || err.response?.data?.error?.includes('does not exist')) {
+        setError('⚠️ La base de données n\'est pas initialisée. Veuillez exécuter: node backend/scripts/initDb.js');
       } else {
         const errorMessage = err.response?.data?.error || 
                             err.response?.data?.message || 
@@ -248,42 +253,55 @@ const CreateTenderWizard = () => {
     }
   };
 
-  return (
-    <TenderFormLayout
-      currentStep={currentStep}
-      error={error}
-      loading={loading}
-      handlePrevious={handlePrevious}
-      handleNext={handleNext}
-      handleSubmit={handleSubmit}
-      showPreview={showPreview}
-      setShowPreview={setShowPreview}
-      showExit={showExit}
-      setShowExit={setShowExit}
-      formData={formData}
-      totalCriteria={
-        Object.values(formData.evaluation_criteria || {}).reduce(
-          (sum, val) => sum + (Number(val) || 0),
-          0
-        )
-      }
-      navigate={navigate}
-    >
-      <TenderStepRenderer
+  try {
+    return (
+      <TenderFormLayout
         currentStep={currentStep}
-        formData={formData}
-        setFormData={setFormData}
-        handleChange={handleChange}
+        error={error}
         loading={loading}
+        handlePrevious={handlePrevious}
+        handleNext={handleNext}
+        handleSubmit={handleSubmit}
+        showPreview={showPreview}
+        setShowPreview={setShowPreview}
+        showExit={showExit}
+        setShowExit={setShowExit}
+        formData={formData}
         totalCriteria={
           Object.values(formData.evaluation_criteria || {}).reduce(
             (sum, val) => sum + (Number(val) || 0),
             0
           )
         }
-      />
-    </TenderFormLayout>
-  );
+        navigate={navigate}
+      >
+        <TenderStepRenderer
+          currentStep={currentStep}
+          formData={formData}
+          setFormData={setFormData}
+          handleChange={handleChange}
+          loading={loading}
+          totalCriteria={
+            Object.values(formData.evaluation_criteria || {}).reduce(
+              (sum, val) => sum + (Number(val) || 0),
+              0
+            )
+          }
+        />
+      </TenderFormLayout>
+    );
+  } catch (renderError) {
+    console.error('CreateTenderWizard render error:', renderError);
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>Erreur de chargement du formulaire</h2>
+        <p>{renderError.message}</p>
+        <button onClick={() => navigate('/buyer/dashboard')}>
+          Retour au tableau de bord
+        </button>
+      </div>
+    );
+  }
 };
 
 export default CreateTenderWizard;
