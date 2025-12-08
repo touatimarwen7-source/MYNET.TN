@@ -7,12 +7,18 @@ const getBaseURL = () => {
     return import.meta.env.VITE_API_BASE_URL;
   }
 
-  if (import.meta.env.DEV) {
-    return 'http://localhost:3000';
+  // For Replit environment, use 0.0.0.0
+  if (window.location.hostname.includes('replit')) {
+    return window.location.origin.replace(':5000', ':3000').replace(':80', ':3000');
   }
 
-  // In production on Replit, use current origin
-  return window.location.origin.replace(':5000', ':3000').replace(':80', ':3000');
+  // Development: use 0.0.0.0 instead of localhost
+  if (import.meta.env.DEV) {
+    return 'http://0.0.0.0:3000';
+  }
+
+  // Fallback
+  return window.location.origin.replace(':5000', ':3000');
 };
 
 const axiosInstance = axios.create({

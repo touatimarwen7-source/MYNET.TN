@@ -139,6 +139,8 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:5000',
   'http://127.0.0.1:3000',
+  'http://0.0.0.0:5000',
+  'http://0.0.0.0:3000',
   /https:\/\/.*\.replit\.dev$/,
   /https:\/\/.*\.replit\.dev:\d+$/,
   /http:\/\/.*\.repl\.co$/,
@@ -146,6 +148,7 @@ const allowedOrigins = [
   /https:\/\/.*\.repl\.co$/,
   /https:\/\/.*\.repl\.co:\d+$/,
   /http:\/\/localhost:\d+$/,
+  /http:\/\/0\.0\.0\.0:\d+$/,
 ];
 
 // Add Replit domains dynamically

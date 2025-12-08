@@ -3,10 +3,21 @@ require('dotenv').config();
 const http = require('http');
 
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0'; // Bind to all interfaces for external access
+const HOST = '0.0.0.0'; // Bind to all interfaces for Replit access
 
 async function startServer() {
   try {
+    // Kill any existing process on port 3000
+    try {
+      const { execSync } = require('child_process');
+      execSync(`pkill -f "node.*server.js" || true`, { stdio: 'ignore' });
+      console.log('✅ Cleaned up existing processes');
+      // Wait a bit for cleanup
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (e) {
+      // Ignore cleanup errors
+    }
+
     console.log('========================================');
     console.log('MyNet.tn Backend Server Starting...');
     console.log('========================================');
