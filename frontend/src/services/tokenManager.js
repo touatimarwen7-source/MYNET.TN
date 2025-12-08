@@ -75,6 +75,57 @@ class TokenManager {
       return null;
     }
   }
+
+  // Vérifier si le token est valide (non expiré)
+  isTokenValid() {
+    const token = this.getAccessToken();
+    if (!token) return false;
+
+    try {
+      const decoded = this.getUserFromToken(token);
+      if (!decoded || !decoded.exp) return false;
+
+      const now = Math.floor(Date.now() / 1000);
+      return decoded.exp > now;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Vérifier si le token doit être rafraîchi (< 2 min avant expiration)
+  shouldRefreshToken() {
+    const token = this.getAccessToken();
+    if (!token) return false;
+
+    try {
+      const decoded = this.getUserFromToken(token);
+      if (!decoded || !decoded.exp) return false;
+
+      const now = Math.floor(Date.now() / 1000);
+      const timeUntilExpiry = decoded.exp - now;
+      
+      // Refresh if less than 2 minutes until expiry
+      return timeUntilExpiry > 0 && timeUntilExpiry < 120;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Obtenir le temps restant avant expiration (en secondes)
+  getTimeUntilExpiry() {
+    const token = this.getAccessToken();
+    if (!token) return 0;
+
+    try {
+      const decoded = this.getUserFromToken(token);
+      if (!decoded || !decoded.exp) return 0;
+
+      const now = Math.floor(Date.now() / 1000);
+      return Math.max(0, decoded.exp - now);
+    } catch (error) {
+      return 0;
+    }
+  }
 }
 
 // Create singleton instance
