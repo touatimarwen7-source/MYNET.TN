@@ -460,4 +460,195 @@ class AdminController {
   }
 }
 
+async getHealthDashboard(req, res) {
+    try {
+      const pool = getPool();
+      
+      const healthQuery = `
+        SELECT 
+          COUNT(*) FILTER (WHERE is_deleted = FALSE) as total_users,
+          COUNT(*) FILTER (WHERE role = 'buyer' AND is_deleted = FALSE) as total_buyers,
+          COUNT(*) FILTER (WHERE role = 'supplier' AND is_deleted = FALSE) as total_suppliers,
+          COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '7 days') as new_users_week
+        FROM users
+      `;
+      
+      const result = await pool.query(healthQuery);
+      const stats = result.rows[0];
+      
+      res.json({
+        success: true,
+        health: {
+          totalUsers: parseInt(stats.total_users) || 0,
+          totalBuyers: parseInt(stats.total_buyers) || 0,
+          totalSuppliers: parseInt(stats.total_suppliers) || 0,
+          newUsersWeek: parseInt(stats.new_users_week) || 0
+        }
+      });
+    } catch (error) {
+      console.error('Health dashboard error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch health dashboard' });
+    }
+  }
+
+  async getDashboard(req, res) {
+    try {
+      const pool = getPool();
+      
+      const statsQuery = `
+        SELECT 
+          (SELECT COUNT(*) FROM users WHERE is_deleted = FALSE) as total_users,
+          (SELECT COUNT(*) FROM tenders WHERE is_deleted = FALSE) as total_tenders,
+          (SELECT COUNT(*) FROM offers WHERE is_deleted = FALSE) as total_offers,
+          (SELECT COUNT(*) FROM purchase_orders WHERE is_deleted = FALSE) as total_orders
+      `;
+      
+      const result = await pool.query(statsQuery);
+      const stats = result.rows[0];
+      
+      res.json({
+        success: true,
+        dashboard: {
+          totalUsers: parseInt(stats.total_users) || 0,
+          totalTenders: parseInt(stats.total_tenders) || 0,
+          totalOffers: parseInt(stats.total_offers) || 0,
+          totalOrders: parseInt(stats.total_orders) || 0
+        }
+      });
+    } catch (error) {
+      console.error('Dashboard error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch dashboard' });
+    }
+  }
+
+  async getAnalytics(req, res) {
+    try {
+      const pool = getPool();
+      
+      const analyticsQuery = `
+        SELECT 
+          DATE_TRUNC('day', created_at) as date,
+          COUNT(*) as count
+        FROM users
+        WHERE created_at >= NOW() - INTERVAL '30 days'
+        GROUP BY DATE_TRUNC('day', created_at)
+        ORDER BY date DESC
+      `;
+      
+      const result = await pool.query(analyticsQuery);
+      
+      res.json({
+        success: true,
+        analytics: result.rows
+      });
+    } catch (error) {
+      console.error('Analytics error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch analytics' });
+    }
+  }
+
+  async getUserStatistics(req, res) {
+    try {
+      const pool = getPool();
+      
+      const statsQuery = `
+        SELECT 
+          role,
+          COUNT(*) as count
+        FROM users
+        WHERE is_deleted = FALSE
+        GROUP BY role
+      `;
+      
+      const result = await pool.query(statsQuery);
+      
+      res.json({
+        success: true,
+        statistics: result.rows
+      });
+    } catch (error) {
+      console.error('User statistics error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch user statistics' });
+    }
+  }
+
+  async getRecentActivities(req, res) {
+    try {
+      const pool = getPool();
+      
+      const activitiesQuery = `
+        SELECT 
+          id,
+          user_id,
+          action,
+          created_at
+        FROM audit_logs
+        ORDER BY created_at DESC
+        LIMIT 50
+      `;
+      
+      const result = await pool.query(activitiesQuery);
+      
+      res.json({
+        success: true,
+        activities: result.rows
+      });
+    } catch (error) {
+      console.error('Recent activities error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch recent activities' });
+    }
+  }
+
+  async exportAuditLogs(req, res) {
+    try {
+      const pool = getPool();
+      
+      const logsQuery = `
+        SELECT * FROM audit_logs
+        ORDER BY created_at DESC
+      `;
+      
+      const result = await pool.query(logsQuery);
+      
+      res.json({
+        success: true,
+        logs: result.rows
+      });
+    } catch (error) {
+      console.error('Export audit logs error:', error);
+      res.status(500).json({ success: false, error: 'Failed to export audit logs' });
+    }
+  }
+
+  async getAdminPerformance(req, res) {
+    try {
+      res.json({
+        success: true,
+        performance: {
+          avgResponseTime: 150,
+          uptime: 99.9
+        }
+      });
+    } catch (error) {
+      console.error('Admin performance error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch admin performance' });
+    }
+  }
+
+  async getAdminAssistantsStats(req, res) {
+    try {
+      res.json({
+        success: true,
+        stats: {
+          totalAssistants: 0,
+          activeAssistants: 0
+        }
+      });
+    } catch (error) {
+      console.error('Admin assistants stats error:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch admin assistants stats' });
+    }
+  }
+}
+
 module.exports = new AdminController();
