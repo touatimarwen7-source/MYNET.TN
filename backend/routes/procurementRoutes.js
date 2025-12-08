@@ -695,8 +695,8 @@ router.get(
           DATE_TRUNC('month', o.submitted_at) as month,
           COUNT(DISTINCT o.id) as offers_submitted,
           COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'accepted') as offers_accepted,
-          AVG(o.total_amount) as avg_offer_price,
-          SUM(CASE WHEN o.status = 'accepted' THEN o.total_amount ELSE 0 END) as revenue_generated
+          COALESCE(AVG(o.total_amount), 0) as avg_offer_price,
+          COALESCE(SUM(CASE WHEN o.status = 'accepted' THEN o.total_amount ELSE 0 END), 0) as revenue_generated
         FROM offers o
         WHERE o.supplier_id = $1 
           AND o.is_deleted = FALSE
@@ -891,7 +891,7 @@ router.get(
             COUNT(DISTINCT r.id) FILTER (WHERE r.rating >= 4) as positive_reviews
           FROM reviews r
           LEFT JOIN offers o ON r.offer_id = o.id
-          WHERE o.supplier_id = $1 AND r.is_deleted = FALSE
+          WHERE o.supplier_id = $1
         )
         SELECT * FROM offer_stats, revenue_stats, review_stats
       `;
@@ -906,21 +906,21 @@ router.get(
       const response = {
         success: true,
         analytics: {
-          totalOffers: parseInt(analytics.total_offers) || 0,
-          acceptedOffers: parseInt(analytics.accepted_offers) || 0,
-          rejectedOffers: parseInt(analytics.rejected_offers) || 0,
-          pendingOffers: parseInt(analytics.pending_offers) || 0,
-          winRate: parseFloat(winRate),
-          avgOfferAmount: parseFloat(analytics.avg_offer_amount) || 0,
-          minOfferAmount: parseFloat(analytics.min_offer_amount) || 0,
-          maxOfferAmount: parseFloat(analytics.max_offer_amount) || 0,
-          uniqueTenders: parseInt(analytics.unique_tenders) || 0,
-          totalRevenue: parseFloat(analytics.total_revenue) || 0,
-          avgOrderValue: parseFloat(analytics.avg_order_value) || 0,
-          totalOrders: parseInt(analytics.total_orders) || 0,
-          totalReviews: parseInt(analytics.total_reviews) || 0,
-          avgRating: parseFloat(analytics.avg_rating) || 0,
-          positiveReviews: parseInt(analytics.positive_reviews) || 0
+          totalOffers: parseInt(analytics?.total_offers) || 0,
+          acceptedOffers: parseInt(analytics?.accepted_offers) || 0,
+          rejectedOffers: parseInt(analytics?.rejected_offers) || 0,
+          pendingOffers: parseInt(analytics?.pending_offers) || 0,
+          winRate: parseFloat(winRate) || 0,
+          avgOfferAmount: parseFloat(analytics?.avg_offer_amount) || 0,
+          minOfferAmount: parseFloat(analytics?.min_offer_amount) || 0,
+          maxOfferAmount: parseFloat(analytics?.max_offer_amount) || 0,
+          uniqueTenders: parseInt(analytics?.unique_tenders) || 0,
+          totalRevenue: parseFloat(analytics?.total_revenue) || 0,
+          avgOrderValue: parseFloat(analytics?.avg_order_value) || 0,
+          totalOrders: parseInt(analytics?.total_orders) || 0,
+          totalReviews: parseInt(analytics?.total_reviews) || 0,
+          avgRating: parseFloat(analytics?.avg_rating).toFixed(1) || 0,
+          positiveReviews: parseInt(analytics?.positive_reviews) || 0
         }
       };
 
