@@ -6,6 +6,7 @@
 
 const { logger } = require('../utils/logger');
 const { ErrorResponseFormatter } = require('../utils/errorHandler');
+const { handleDatabaseError } = require('../utils/databaseErrorHandler');
 
 /**
  * Async route wrapper to catch errors
@@ -26,7 +27,18 @@ function errorHandler(err, req, res, next) {
     stack: err.stack,
     path: req.path,
     method: req.method,
+    code: err.code
   });
+
+  // Handle database errors specifically
+  if (err.code && (err.code.startsWith('23') || err.code.startsWith('42') || err.code.startsWith('08') || err.code.startsWith('22'))) {
+    const dbError = handleDatabaseError(err);
+    const errorResponse = ErrorResponseFormatter.error(dbError, dbError.statusCode, {
+      path: req.path,
+      method: req.method,
+    });
+    return res.status(dbError.statusCode).json(errorResponse);
+  }
 
   // Determine status code
   const statusCode = err.statusCode || err.status || 500;

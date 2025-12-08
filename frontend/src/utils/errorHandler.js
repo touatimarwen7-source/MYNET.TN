@@ -143,6 +143,133 @@ export const errorHandler = {
     }
 
     return formatted;
+  },
+
+  /**
+   * Vérifier si c'est une erreur d'authentification
+   */
+  isAuthError(error) {
+    const status = error.response?.status;
+    return status === 401 || status === 403;
+  },
+
+  /**
+   * Vérifier si l'erreur peut être réessayée
+   */
+  isRetryable(error) {
+    // Erreurs réseau ou timeout
+    if (!error.response) return true;
+    
+    const status = error.response.status;
+    // 408 Request Timeout, 429 Too Many Requests, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout
+    return [408, 429, 502, 503, 504].includes(status);
+  },
+
+  /**
+   * Formater les erreurs de validation
+   */
+  formatValidationErrors(errors) {
+    if (!errors) return {};
+    
+    if (Array.isArray(errors)) {
+      return errors.reduce((acc, err) => {
+        acc[err.field || 'general'] = {
+          code: ERROR_CODES.VALIDATION_ERROR,
+          message: err.message || 'Erreur de validation'
+        };
+        return acc;
+      }, {});
+    }
+    
+    if (typeof errors === 'object') {
+      return Object.entries(errors).reduce((acc, [field, message]) => {
+        acc[field] = {
+          code: ERROR_CODES.VALIDATION_ERROR,
+          message: typeof message === 'string' ? message : message.message || 'Erreur de validation'
+        };
+        return acc;
+      }, {});
+    }
+    
+    return {};
+  },
+
+  /**
+   * Gérer les erreurs d'authentification
+   */
+  handleAuthError() {
+    // Nettoyer les tokens
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    
+    // Rediriger vers la page de connexion
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login?session=expired';
+    }
+  },
+
+  /**
+   * Gestion d'erreur type Go
+   */
+  async handle(promise) {
+    try {
+      const data = await promise;
+      return [null, data];
+    } catch (error) {
+      return [error, null];
+    }
+  },
+
+  /**
+   * Réessayer avec délai exponentiel
+   */
+  async retry(fn, maxRetries = 3, initialDelay = 1000) {
+    let lastError;
+    
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        lastError = error;
+        
+        // Ne pas réessayer si ce n'est pas une erreur réessayable
+        if (!this.isRetryable(error)) {
+          throw error;
+        }
+        
+        // Attendre avant de réessayer (délai exponentiel)
+        if (attempt < maxRetries - 1) {
+          const delay = initialDelay * Math.pow(2, attempt);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    throw lastError;
+  },
+
+  /**
+   * Obtenir l'erreur selon le code HTTP
+   */
+  getStatusError(statusCode) {
+    const errorMap = {
+      400: { code: ERROR_CODES.VALIDATION_ERROR, message: 'Requête invalide' },
+      401: { code: ERROR_CODES.UNAUTHORIZED, message: 'Non autorisé' },
+      403: { code: ERROR_CODES.FORBIDDEN, message: 'Accès refusé' },
+      404: { code: ERROR_CODES.NOT_FOUND, message: 'Ressource non trouvée' },
+      409: { code: ERROR_CODES.CONFLICT, message: 'Conflit de données' },
+      429: { code: ERROR_CODES.RATE_LIMIT, message: 'Trop de requêtes' },
+      500: { code: ERROR_CODES.SERVER_ERROR, message: 'Erreur serveur' },
+      502: { code: ERROR_CODES.NETWORK_ERROR, message: 'Passerelle invalide' },
+      503: { code: ERROR_CODES.SERVER_ERROR, message: 'Service indisponible' },
+      504: { code: ERROR_CODES.NETWORK_ERROR, message: 'Délai d\'attente dépassé' }
+    };
+    
+    return errorMap[statusCode] || { 
+      code: ERROR_CODES.UNKNOWN_ERROR, 
+      message: 'Erreur inconnue' 
+    };
   }
 };
 
