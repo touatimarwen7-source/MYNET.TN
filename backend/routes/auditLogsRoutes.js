@@ -86,15 +86,11 @@ router.get(
       WHERE user_id = $1
       ORDER BY created_at DESC
       ${sql}
-      `,
+    `,
       [userId, limit, offset]
     );
 
     return sendOk(res, result.rows, 'User activity logs retrieved successfully');
-  })
-);
-
-    res.json(result.rows);
   })
 );
 

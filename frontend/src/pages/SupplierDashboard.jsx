@@ -68,7 +68,9 @@ export default function SupplierDashboard() {
       value: dashboardStats.totalOffers || 0, 
       icon: OfferIcon, 
       color: theme.palette.primary.main,
-      subtitle: `${dashboardStats.pendingOffers || 0} en attente`
+      subtitle: `${dashboardStats.pendingOffers || 0} en attente`,
+      change: dashboardStats.offersChange || 0,
+      trend: dashboardStats.offersChange > 0 ? 'up' : dashboardStats.offersChange < 0 ? 'down' : null
     },
     { 
       label: 'Taux de Victoire', 
@@ -77,21 +79,57 @@ export default function SupplierDashboard() {
         : '0%', 
       icon: WonIcon, 
       color: theme.palette.success.main,
-      subtitle: `${dashboardStats.acceptedOffers || 0} sur ${dashboardStats.totalOffers || 0} offres`
+      subtitle: `${dashboardStats.acceptedOffers || 0} sur ${dashboardStats.totalOffers || 0} offres`,
+      change: dashboardStats.winRateChange || 0,
+      trend: dashboardStats.winRateChange > 0 ? 'up' : dashboardStats.winRateChange < 0 ? 'down' : null
     },
     { 
       label: 'Revenus Générés', 
-      value: `${((dashboardStats.totalRevenue || 0) / 1000).toFixed(1)}K TND`, 
+      value: dashboardStats.totalRevenue >= 1000000 
+        ? `${(dashboardStats.totalRevenue / 1000000).toFixed(1)}M TND`
+        : `${((dashboardStats.totalRevenue || 0) / 1000).toFixed(1)}K TND`, 
       icon: RevenueIcon, 
       color: theme.palette.info.main,
-      subtitle: 'Des offres gagnées'
+      subtitle: 'Des offres gagnées',
+      change: dashboardStats.revenueChange || 0,
+      trend: dashboardStats.revenueChange > 0 ? 'up' : dashboardStats.revenueChange < 0 ? 'down' : null
     },
     { 
       label: 'Appels Disponibles', 
       value: dashboardStats.availableTenders || 0, 
       icon: SearchIcon, 
       color: theme.palette.warning.main,
-      subtitle: 'Opportunités actives'
+      subtitle: 'Opportunités actives',
+      change: dashboardStats.tendersChange || 0,
+      trend: dashboardStats.tendersChange > 0 ? 'up' : dashboardStats.tendersChange < 0 ? 'down' : null
+    },
+    { 
+      label: 'Offres en Attente', 
+      value: dashboardStats.pendingOffers || 0, 
+      icon: PendingIcon, 
+      color: theme.palette.warning.main,
+      subtitle: 'En cours d\'évaluation'
+    },
+    { 
+      label: 'Offres Rejetées', 
+      value: dashboardStats.rejectedOffers || 0, 
+      icon: LostIcon, 
+      color: theme.palette.error.main,
+      subtitle: 'Non retenues'
+    },
+    { 
+      label: 'Valeur Moyenne Offre', 
+      value: `${((dashboardStats.avgOfferValue || 0) / 1000).toFixed(1)}K TND`, 
+      icon: MonetizationOn, 
+      color: theme.palette.secondary.main,
+      subtitle: 'Par soumission'
+    },
+    { 
+      label: 'Commandes Actives', 
+      value: dashboardStats.activeOrders || 0, 
+      icon: ShoppingCartIcon, 
+      color: theme.palette.success.main,
+      subtitle: 'En cours de livraison'
     },
   ] : [];
 
@@ -259,7 +297,7 @@ export default function SupplierDashboard() {
       {/* KPI Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {stats.map((stat, idx) => (
-          <Grid item xs={12} sm={6} lg={3} key={idx}>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={idx}>
             <Card 
               sx={{ 
                 height: '100%',

@@ -68,28 +68,86 @@ router.get(
       console.log('Fetching dashboard stats for supplier:', supplierId);
 
       const statsQuery = `
+        WITH current_stats AS (
+          SELECT 
+            COUNT(DISTINCT o.id) FILTER (WHERE o.is_deleted = FALSE) as total_offers,
+            COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'accepted' AND o.is_deleted = FALSE) as accepted_offers,
+            COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'rejected' AND o.is_deleted = FALSE) as rejected_offers,
+            COUNT(DISTINCT t.id) FILTER (WHERE t.status IN ('open', 'published') AND t.is_deleted = FALSE) as available_tenders,
+            COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'pending' AND o.is_deleted = FALSE) as pending_offers,
+            COALESCE(SUM(po.total_amount) FILTER (WHERE po.status = 'confirmed' AND po.is_deleted = FALSE), 0) as total_revenue,
+            COALESCE(AVG(o.total_amount) FILTER (WHERE o.is_deleted = FALSE), 0) as avg_offer_value,
+            COUNT(DISTINCT po.id) FILTER (WHERE po.status IN ('confirmed', 'processing') AND po.is_deleted = FALSE) as active_orders
+          FROM offers o
+          LEFT JOIN tenders t ON o.tender_id = t.id
+          LEFT JOIN purchase_orders po ON o.id = po.offer_id
+          WHERE o.supplier_id = $1
+        ),
+        last_month_stats AS (
+          SELECT 
+            COUNT(DISTINCT o.id) as last_month_offers,
+            COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'accepted') as last_month_accepted,
+            COALESCE(SUM(po.total_amount) FILTER (WHERE po.status = 'confirmed'), 0) as last_month_revenue,
+            COUNT(DISTINCT t.id) FILTER (WHERE t.status IN ('open', 'published')) as last_month_tenders
+          FROM offers o
+          LEFT JOIN tenders t ON o.tender_id = t.id
+          LEFT JOIN purchase_orders po ON o.id = po.offer_id
+          WHERE o.supplier_id = $1 
+            AND o.submitted_at >= NOW() - INTERVAL '2 months'
+            AND o.submitted_at < NOW() - INTERVAL '1 month'
+        )
         SELECT 
-          COUNT(DISTINCT o.id) FILTER (WHERE o.is_deleted = FALSE) as total_offers,
-          COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'accepted' AND o.is_deleted = FALSE) as accepted_offers,
-          COUNT(DISTINCT t.id) FILTER (WHERE t.status IN ('open', 'published') AND t.is_deleted = FALSE) as available_tenders,
-          COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'pending' AND o.is_deleted = FALSE) as pending_offers,
-          COALESCE(SUM(po.total_amount) FILTER (WHERE po.status = 'confirmed' AND po.is_deleted = FALSE), 0) as total_revenue
-        FROM offers o
-        LEFT JOIN tenders t ON o.tender_id = t.id
-        LEFT JOIN purchase_orders po ON o.id = po.offer_id
-        WHERE o.supplier_id = $1
+          cs.*,
+          lm.last_month_offers,
+          lm.last_month_accepted,
+          lm.last_month_revenue,
+          lm.last_month_tenders
+        FROM current_stats cs, last_month_stats lm
       `;
 
       const result = await pool.query(statsQuery, [supplierId]);
       const stats = result.rows[0];
 
+      const currentOffers = parseInt(stats.total_offers) || 0;
+      const lastMonthOffers = parseInt(stats.last_month_offers) || 0;
+      const offersChange = lastMonthOffers > 0 
+        ? Math.round(((currentOffers - lastMonthOffers) / lastMonthOffers) * 100) 
+        : 0;
+
+      const currentAccepted = parseInt(stats.accepted_offers) || 0;
+      const lastMonthAccepted = parseInt(stats.last_month_accepted) || 0;
+      const currentWinRate = currentOffers > 0 ? (currentAccepted / currentOffers) * 100 : 0;
+      const lastMonthWinRate = lastMonthOffers > 0 ? (lastMonthAccepted / lastMonthOffers) * 100 : 0;
+      const winRateChange = lastMonthWinRate > 0 
+        ? Math.round(currentWinRate - lastMonthWinRate) 
+        : 0;
+
+      const currentRevenue = parseFloat(stats.total_revenue) || 0;
+      const lastMonthRevenue = parseFloat(stats.last_month_revenue) || 0;
+      const revenueChange = lastMonthRevenue > 0 
+        ? Math.round(((currentRevenue - lastMonthRevenue) / lastMonthRevenue) * 100) 
+        : 0;
+
+      const currentTenders = parseInt(stats.available_tenders) || 0;
+      const lastMonthTenders = parseInt(stats.last_month_tenders) || 0;
+      const tendersChange = lastMonthTenders > 0 
+        ? Math.round(((currentTenders - lastMonthTenders) / lastMonthTenders) * 100) 
+        : 0;
+
       const response = {
         success: true,
-        totalOffers: parseInt(stats.total_offers) || 0,
-        acceptedOffers: parseInt(stats.accepted_offers) || 0,
-        availableTenders: parseInt(stats.available_tenders) || 0,
+        totalOffers: currentOffers,
+        acceptedOffers: currentAccepted,
+        rejectedOffers: parseInt(stats.rejected_offers) || 0,
+        availableTenders: currentTenders,
         pendingOffers: parseInt(stats.pending_offers) || 0,
-        totalRevenue: parseFloat(stats.total_revenue) || 0
+        totalRevenue: currentRevenue,
+        avgOfferValue: parseFloat(stats.avg_offer_value) || 0,
+        activeOrders: parseInt(stats.active_orders) || 0,
+        offersChange,
+        winRateChange,
+        revenueChange,
+        tendersChange
       };
 
       console.log('Supplier dashboard stats response:', response);
