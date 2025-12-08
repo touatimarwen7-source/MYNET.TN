@@ -6,14 +6,14 @@
 
 // Import API modules from their actual locations
 import axiosInstance from '../services/axiosConfig.js';
-import * as authApi from './authApi.js';
+import { authAPI as authApiModule } from './authApi.js';
 import * as procurementApi from './procurementApi.js';
 import * as adminApi from './adminApi.js';
 import * as searchApi from './searchApi.js';
 import * as notificationApi from './notificationApi.js';
 
 // Export organized API namespaces
-export const authAPI = authApi;
+export const authAPI = authApiModule;
 export const procurementAPI = procurementApi;
 export const adminAPI = adminApi;
 export const searchAPI = searchApi;
