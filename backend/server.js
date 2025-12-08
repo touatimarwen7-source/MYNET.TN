@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const http = require('http');
 
@@ -7,24 +8,21 @@ const HOST = '0.0.0.0';
 async function killExistingProcesses() {
   try {
     const { execSync } = require('child_process');
-
-    // Try multiple cleanup methods
-    const cleanupCommands = [
-      `fuser -k 3000/tcp 2>/dev/null || true`,
-      `pkill -9 -f "node.*server.js" 2>/dev/null || true`,
-      `lsof -ti:3000 | xargs kill -9 2>/dev/null || true`,
-    ];
-
-    for (const cmd of cleanupCommands) {
-      try {
-        execSync(cmd, { stdio: 'ignore' });
-      } catch (e) {
-        // Continue to next cleanup method
-      }
-    }
-
-    console.log('✅ Cleaned up existing processes');
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    console.log('🧹 Cleaning up existing processes...');
+    
+    // Kill all node processes on port 3000
+    try {
+      execSync(`lsof -ti:3000 | xargs kill -9 2>/dev/null || true`, { stdio: 'ignore' });
+    } catch (e) {}
+    
+    try {
+      execSync(`fuser -k 3000/tcp 2>/dev/null || true`, { stdio: 'ignore' });
+    } catch (e) {}
+    
+    // Wait for cleanup
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    console.log('✅ Cleanup completed');
   } catch (e) {
     console.log('⚠️ Cleanup completed with warnings');
   }
@@ -35,74 +33,73 @@ async function startServer() {
     await killExistingProcesses();
 
     console.log('========================================');
-    console.log('MyNet.tn Backend Server Starting...');
+    console.log('🚀 MyNet.tn Backend Starting...');
     console.log('========================================');
 
-    // Bootstrap DI Container and Modules
+    // Bootstrap DI Container
     const { bootstrap } = require('./core/bootstrap');
     await bootstrap();
+    console.log('✅ DI Container initialized');
 
-    // Initialize database connection
+    // Initialize database
     const { initializeDb } = require('./config/db');
-    const { checkDatabaseHealth } = require('./utils/databaseHealthCheck');
-
     const dbInitialized = await initializeDb();
 
     if (!dbInitialized) {
       console.warn('⚠️ Database connection failed - running in limited mode');
-      console.warn('⚠️ Some features may not be available');
     } else {
-      console.log('✅ Database connected successfully');
-
-      // التحقق من صحة الاتصال
+      console.log('✅ Database connected');
+      
+      // Check database health
       try {
+        const { checkDatabaseHealth } = require('./utils/databaseHealthCheck');
         const health = await checkDatabaseHealth();
         console.log(`✅ Database health: ${health.status}`);
-        console.log(`✅ Response time: ${health.responseTime}`);
-        console.log(`✅ Pool connections: ${health.pool?.total || 0} total, ${health.pool?.idle || 0} idle`);
       } catch (healthError) {
-        console.warn('⚠️ Database health check failed:', healthError.message);
+        console.warn('⚠️ Health check skipped');
       }
     }
 
-    // Import app after database initialization
+    // Import app
     const app = require('./app');
 
-    // Start server
+    // Create HTTP server
     const httpServer = http.createServer(app);
 
+    // Handle server errors
     httpServer.on('error', (error) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`❌ Port ${PORT} is still in use. Retrying cleanup...`);
-        killExistingProcesses().then(() => {
-          setTimeout(() => startServer(), 3000);
-        });
+        console.error(`❌ Port ${PORT} is in use. Retrying...`);
+        setTimeout(() => {
+          killExistingProcesses().then(() => startServer());
+        }, 2000);
       } else {
         console.error('❌ Server error:', error.message);
         process.exit(1);
       }
     });
 
+    // Start listening
     httpServer.listen(PORT, HOST, () => {
-      console.log(`✅ Server running on http://${HOST}:${PORT}`);
-      console.log('✅ Frontend accessible at http://0.0.0.0:5000');
       console.log('========================================');
-      console.log('Available endpoints:');
-      console.log('  - Health: GET /health');
-      console.log('  - Auth: POST /api/auth/login');
-      console.log('  - Tenders: GET /api/procurement/tenders');
-      console.log('  - API Docs: GET /api-docs');
+      console.log(`✅ Backend running on http://${HOST}:${PORT}`);
+      console.log(`✅ Network: http://172.31.68.98:${PORT}`);
       console.log('========================================');
-      console.log('📧 Default Test Accounts:');
-      console.log('  Buyer: buyer@mynet.tn / buyer123');
-      console.log('  Supplier: supplier@mynet.tn / supplier123');
-      console.log('  Admin: admin@mynet.tn / admin123');
+      console.log('📋 Available Endpoints:');
+      console.log('  • Health: GET /health');
+      console.log('  • Auth: POST /api/auth/login');
+      console.log('  • Tenders: GET /api/procurement/tenders');
+      console.log('  • API Docs: GET /api-docs');
+      console.log('========================================');
+      console.log('👥 Test Accounts:');
+      console.log('  • Buyer: buyer@mynet.tn / buyer123');
+      console.log('  • Supplier: supplier@mynet.tn / supplier123');
       console.log('========================================');
     });
 
     // Graceful shutdown
     process.on('SIGTERM', () => {
-      console.log('⚠️ SIGTERM received, closing server...');
+      console.log('⚠️ SIGTERM received, shutting down...');
       httpServer.close(() => {
         console.log('✅ Server closed');
         process.exit(0);
@@ -113,23 +110,12 @@ async function startServer() {
     console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.error('❌ CRITICAL: Failed to start server');
     console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.error('Error Message:', error.message);
-    console.error('Error Code:', error.code || 'N/A');
-
+    console.error('Error:', error.message);
+    
     if (error.stack) {
-      const stackLines = error.stack.split('\n');
-      console.error('Error Location:', stackLines[1]?.trim() || 'Unknown');
-      console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.error('Full Stack Trace:');
-      console.error(error.stack);
+      console.error('Stack:', error.stack.split('\n').slice(0, 5).join('\n'));
     }
-
-    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.error('💡 Troubleshooting Tips:');
-    console.error('  1. Check controller exports: ensure all methods are properly defined');
-    console.error('  2. Verify database connection in .env file');
-    console.error('  3. Check if all dependencies are installed: npm install');
-    console.error('  4. Review route handlers for missing function references');
+    
     console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     process.exit(1);
   }
@@ -138,7 +124,6 @@ async function startServer() {
 // Global error handlers
 process.on('uncaughtException', (error) => {
   console.error('💥 Uncaught Exception:', error.message);
-  console.error(error);
   process.exit(1);
 });
 
@@ -147,5 +132,5 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1);
 });
 
-// Start the server
+// Start
 startServer();

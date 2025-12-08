@@ -56,17 +56,10 @@ const getApiBaseUrl = () => {
       const baseHost = hostname.split(':')[0];
       return `http://${baseHost}:3000/api`;
     }
-    
-    // في التطوير المحلي
-    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
-      return 'http://0.0.0.0:3000/api';
-    }
-    
-    // استخدم الـ IP الحالي (for networked access)
-    return `http://${hostname.split(':')[0]}:3000/api`;
   }
   
-  return 'http://0.0.0.0:3000/api';
+  // استخدم الـ IP الشبكي مباشرة
+  return 'http://172.31.68.98:3000/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();

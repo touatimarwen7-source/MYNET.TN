@@ -8,7 +8,7 @@ const getBaseURL = () => {
   }
 
   if (typeof window === 'undefined') {
-    return 'http://0.0.0.0:3000';
+    return 'http://172.31.68.98:3000';
   }
 
   const hostname = window.location.hostname;
@@ -19,13 +19,8 @@ const getBaseURL = () => {
     return `http://${baseHost}:3000`;
   }
 
-  // Development: use 0.0.0.0 for all interfaces
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
-    return 'http://0.0.0.0:3000';
-  }
-
-  // For networked access, use the current hostname
-  return `http://${hostname.split(':')[0]}:3000`;
+  // Always use the network IP for Replit environment
+  return 'http://172.31.68.98:3000';
 };
 
 const axiosInstance = axios.create({
