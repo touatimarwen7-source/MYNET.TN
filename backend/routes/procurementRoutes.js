@@ -149,7 +149,7 @@ router.post(
       validateSchema(req.body, createTenderSchema);
       next();
     } catch (error) {
-      // Using the unified handleError which now uses errorResponse
+      console.error('Tender validation error:', error);
       return handleError(res, error, 400);
     }
   },
@@ -507,5 +507,54 @@ router.post(
 router.get('/tenders/:id/with-offers', AuthorizationGuard.authenticateToken.bind(AuthorizationGuard), validateIdMiddleware('id'), TenderController.getTenderWithOffers);
 router.get('/tenders/:id/statistics', AuthorizationGuard.authenticateToken.bind(AuthorizationGuard), validateIdMiddleware('id'), TenderController.getTenderStatistics);
 router.post('/tenders/:id/award', AuthorizationGuard.authenticateToken.bind(AuthorizationGuard), validateIdMiddleware('id'), TenderController.awardTender);
+
+// Buyer analytics endpoint
+router.get(
+  '/buyer/analytics',
+  AuthorizationGuard.authenticateToken.bind(AuthorizationGuard),
+  async (req, res) => {
+    try {
+      const buyerId = req.user?.id;
+      const pool = getPool();
+
+      if (!buyerId) {
+        return errorResponse(res, 'User not authenticated', 401);
+      }
+
+      const analyticsQuery = `
+        SELECT 
+          COUNT(DISTINCT t.id) as total_tenders,
+          COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'published') as published_tenders,
+          COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'closed') as closed_tenders,
+          COUNT(DISTINCT t.id) FILTER (WHERE t.status = 'awarded') as awarded_tenders,
+          COUNT(DISTINCT o.id) as total_offers,
+          AVG(o.total_amount) as avg_offer_amount,
+          SUM(t.budget_max) as total_budget
+        FROM tenders t
+        LEFT JOIN offers o ON t.id = o.tender_id AND o.is_deleted = FALSE
+        WHERE t.buyer_id = $1 AND t.is_deleted = FALSE
+      `;
+
+      const result = await pool.query(analyticsQuery, [buyerId]);
+      const analytics = result.rows[0];
+
+      return res.json({
+        success: true,
+        analytics: {
+          totalTenders: parseInt(analytics.total_tenders) || 0,
+          publishedTenders: parseInt(analytics.published_tenders) || 0,
+          closedTenders: parseInt(analytics.closed_tenders) || 0,
+          awardedTenders: parseInt(analytics.awarded_tenders) || 0,
+          totalOffers: parseInt(analytics.total_offers) || 0,
+          avgOfferAmount: parseFloat(analytics.avg_offer_amount) || 0,
+          totalBudget: parseFloat(analytics.total_budget) || 0
+        }
+      });
+    } catch (error) {
+      console.error('Buyer analytics error:', error);
+      return handleError(res, error, 500);
+    }
+  }
+);
 
 module.exports = router;

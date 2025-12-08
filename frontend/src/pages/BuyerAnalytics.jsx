@@ -35,21 +35,22 @@ export default function BuyerAnalytics() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const response = await procurementAPI.getMyTenders();
-      const tenders = response.data.tenders || [];
+      const response = await procurementAPI.getBuyerAnalytics();
+      const analytics = response.data.analytics || {};
 
-      const totalSpent = tenders.reduce((sum, t) => sum + (t.budget_max || 0), 0);
-      const avgBudget = tenders.length > 0 ? totalSpent / tenders.length : 0;
-      const completedCount = tenders.filter(t => t.status === 'closed' || t.status === 'awarded').length;
-      const activeCount = tenders.filter(t => t.status === 'open' || t.status === 'published').length;
+      const completedCount = (analytics.closedTenders || 0) + (analytics.awardedTenders || 0);
+      const activeCount = analytics.publishedTenders || 0;
+      const totalTenders = analytics.totalTenders || 0;
 
       setStats({
-        totalTenders: tenders.length,
-        totalSpent,
-        avgBudget,
-        completedCount,
-        activeCount,
-        completionRate: tenders.length > 0 ? ((completedCount / tenders.length) * 100).toFixed(1) : 0,
+        totalTenders: totalTenders,
+        totalSpent: analytics.totalBudget || 0,
+        avgBudget: totalTenders > 0 ? (analytics.totalBudget || 0) / totalTenders : 0,
+        completedCount: completedCount,
+        activeCount: activeCount,
+        completionRate: totalTenders > 0 ? ((completedCount / totalTenders) * 100).toFixed(1) : 0,
+        totalOffers: analytics.totalOffers || 0,
+        avgOfferAmount: analytics.avgOfferAmount || 0,
       });
     } catch (err) {
       console.error('Erreur de chargement des analyses:', err);

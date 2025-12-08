@@ -66,15 +66,22 @@ export default function BuyerDashboard() {
       setLoading(true);
       setError(null);
 
-      const response = await axiosInstance.get('/procurement/buyer/dashboard-stats');
+      const [statsResponse, analyticsResponse] = await Promise.allSettled([
+        axiosInstance.get('/procurement/buyer/dashboard-stats'),
+        axiosInstance.get('/procurement/buyer/analytics')
+      ]);
 
-      if (response?.data) {
+      if (statsResponse.status === 'fulfilled' && statsResponse.value?.data) {
         setStats({
-          activeTenders: response.data.activeTenders || 0,
-          totalOffers: response.data.totalOffers || 0,
-          completedTenders: response.data.completedTenders || 0,
-          pendingEvaluations: response.data.pendingEvaluations || 0,
+          activeTenders: statsResponse.value.data.activeTenders || 0,
+          totalOffers: statsResponse.value.data.totalOffers || 0,
+          completedTenders: statsResponse.value.data.completedTenders || 0,
+          pendingEvaluations: statsResponse.value.data.pendingEvaluations || 0,
         });
+      }
+
+      if (analyticsResponse.status === 'fulfilled' && analyticsResponse.value?.data?.analytics) {
+        console.log('Analytics loaded:', analyticsResponse.value.data.analytics);
       }
     } catch (err) {
       console.error('Erreur lors du chargement des données du tableau de bord:', err);

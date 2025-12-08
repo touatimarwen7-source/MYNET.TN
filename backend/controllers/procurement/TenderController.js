@@ -32,6 +32,14 @@ class TenderController {
         });
       }
 
+      // Check if user is buyer and owns this tender
+      if (req.user?.role === 'buyer' && tender.buyer_id !== req.user.id && !tender.is_public) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied to private tender',
+        });
+      }
+
       res.status(200).json({
         success: true,
         tender,

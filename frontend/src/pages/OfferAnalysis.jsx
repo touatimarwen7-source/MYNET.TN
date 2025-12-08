@@ -65,9 +65,18 @@ export default function OfferAnalysis() {
       setError('');
 
       const tenderRes = await procurementAPI.getTender(tenderId);
-      const response = await procurementAPI.getOffers(tenderId);
-      const offersData = response.data.offers || [];
+      const offersRes = await procurementAPI.getOffers(tenderId);
+      
+      // Handle sealed offers response
+      if (offersRes.data.is_sealed) {
+        setTender(tenderRes.data.tender);
+        setOffers([]);
+        setError(`Les offres sont scellées jusqu'au ${new Date(offersRes.data.opening_date).toLocaleDateString('fr-FR')}. Total: ${offersRes.data.total_offers}`);
+        setLoading(false);
+        return;
+      }
 
+      const offersData = offersRes.data.offers || [];
       setTender(tenderRes.data.tender);
       setOffers(offersData);
 
