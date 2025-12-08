@@ -32,7 +32,22 @@ const updateInvoiceStatus = async (invoiceId, status, paymentDate) => {
 
 export const procurementAPI = {
   // ===== Endpoints Communs =====
-  getTenders: (filters) => axiosInstance.get('/procurement/tenders', { params: filters }),
+  getTenders: async (filters = {}) => {
+    try {
+      // Validate pagination parameters before sending
+      const params = {
+        page: Math.max(1, parseInt(filters.page) || 1),
+        limit: Math.max(1, Math.min(100, parseInt(filters.limit) || 20)),
+        ...(filters.status && { status: filters.status }),
+        ...(filters.category && { category: filters.category }),
+      };
+      
+      return await axiosInstance.get('/procurement/tenders', { params });
+    } catch (error) {
+      console.error('Error in getTenders API call:', error);
+      throw error;
+    }
+  },
   getTender: (id) => axiosInstance.get(`/procurement/tenders/${id}`),
   getTenderWithOffers: (id) => axiosInstance.get(`/procurement/tenders/${id}/with-offers`),
   getTenderStatistics: (id) => axiosInstance.get(`/procurement/tenders/${id}/statistics`),

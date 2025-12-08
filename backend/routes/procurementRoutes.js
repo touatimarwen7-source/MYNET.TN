@@ -250,18 +250,24 @@ router.get(
 );
 
 // GET /procurement/tenders - Get all tenders (with pagination)
-router.get('/tenders', validatePagination, async (req, res) => {
+router.get('/tenders', async (req, res) => {
   try {
-    const { page, limit } = getPaginationParams(req);
+    // Validate and sanitize pagination parameters
+    let page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 20;
+    
+    // Ensure positive values
+    page = Math.max(1, page);
+    limit = Math.max(1, Math.min(100, limit)); // Max 100 items per page
+    
     const pool = getPool();
-
     const offset = (page - 1) * limit;
 
     // Get total count
     const totalResult = await pool.query(
       `SELECT COUNT(*) as count FROM tenders WHERE is_deleted = FALSE AND is_public = TRUE`
     );
-    const total = parseInt(totalResult.rows[0].count);
+    const total = parseInt(totalResult.rows[0].count) || 0;
 
     // Get paginated results with more fields
     const result = await pool.query(
@@ -277,7 +283,12 @@ router.get('/tenders', validatePagination, async (req, res) => {
     res.json({
       success: true,
       tenders: result.rows,
-      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+      pagination: { 
+        page, 
+        limit, 
+        total, 
+        pages: Math.max(1, Math.ceil(total / limit))
+      },
     });
   } catch (error) {
     console.error('Error fetching tenders:', error);
@@ -286,11 +297,16 @@ router.get('/tenders', validatePagination, async (req, res) => {
     if (error.code === '42P01') {
       return res.status(503).json({
         success: false,
-        error: 'Database not initialized. Please run database migrations.',
+        error: 'Base de données non initialisée. Veuillez exécuter les migrations.',
         hint: 'Run: node backend/scripts/initDb.js'
       });
     }
-    handleError(res, error, 500);
+    
+    return res.status(500).json({
+      success: false,
+      error: 'Erreur lors de la récupération des appels d\'offres',
+      message: error.message
+    });
   }
 });
 
