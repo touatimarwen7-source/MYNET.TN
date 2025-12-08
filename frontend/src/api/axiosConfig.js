@@ -2,28 +2,30 @@ import axios from 'axios';
 
 // Base URL configuration
 const getBaseURL = () => {
-  // Use environment variable if set, otherwise auto-detect
+  // Use environment variable if set
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
 
-  // For Replit environment, use 0.0.0.0
-  if (window.location.hostname.includes('replit')) {
-    return window.location.origin.replace(':5000', ':3000').replace(':80', ':3000');
+  if (typeof window === 'undefined') {
+    return 'http://0.0.0.0:3000';
   }
 
-  // Development: try backend on multiple possible URLs
-  if (import.meta.env.DEV) {
-    // Check if we can reach the backend
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:3000';
-    }
-    return `http://${hostname}:3000`;
+  const hostname = window.location.hostname;
+  const isReplit = hostname.includes('replit.dev') || hostname.includes('repl.co');
+
+  if (isReplit) {
+    const baseHost = hostname.split(':')[0];
+    return `http://${baseHost}:3000`;
   }
 
-  // Fallback
-  return window.location.origin.replace(':5000', ':3000');
+  // Development: use 0.0.0.0 for all interfaces
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+    return 'http://0.0.0.0:3000';
+  }
+
+  // For networked access, use the current hostname
+  return `http://${hostname.split(':')[0]}:3000`;
 };
 
 const axiosInstance = axios.create({

@@ -53,19 +53,20 @@ const getApiBaseUrl = () => {
     
     if (isReplit) {
       // في Replit: استخدم نفس الـ hostname مع البورت 3000
-      return `http://${hostname.split(':')[0]}:3000/api`;
+      const baseHost = hostname.split(':')[0];
+      return `http://${baseHost}:3000/api`;
     }
     
-    // في التطوير المحلي - استخدم نفس الـ hostname
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:3000/api';
+    // في التطوير المحلي
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+      return 'http://0.0.0.0:3000/api';
     }
     
-    // استخدم الـ IP الحالي
-    return `http://${hostname}:3000/api`;
+    // استخدم الـ IP الحالي (for networked access)
+    return `http://${hostname.split(':')[0]}:3000/api`;
   }
   
-  return 'http://localhost:3000/api';
+  return 'http://0.0.0.0:3000/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();

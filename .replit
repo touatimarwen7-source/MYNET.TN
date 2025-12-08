@@ -78,7 +78,7 @@ localPort = 45467
 externalPort = 6800
 
 [workflows]
-runButton = "Start MyNet.tn"
+runButton = "MyNet.tn Production"
 
 [[workflows.workflow]]
 name = "Project"
@@ -208,6 +208,36 @@ mode = "parallel"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "pkill -f \"node.*server.js\" 2>/dev/null || true && sleep 2 && cd backend && node server.js"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd frontend && npm run dev"
+
+[[workflows.workflow]]
+name = "Clean Backend Start"
+author = 49972067
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -9 -f \"node.*server.js\" 2>/dev/null || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 3"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && node server.js"
+
+[[workflows.workflow]]
+name = "MyNet.tn Production"
+author = 49972067
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -9 -f \"node.*server.js\" 2>/dev/null || true && sleep 3 && cd backend && node server.js"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

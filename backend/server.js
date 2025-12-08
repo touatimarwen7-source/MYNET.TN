@@ -1,28 +1,38 @@
-
 require('dotenv').config();
 const http = require('http');
 
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0'; // Bind to all interfaces for Replit access
+const HOST = '0.0.0.0';
+
+async function killExistingProcesses() {
+  try {
+    const { execSync } = require('child_process');
+
+    // Try multiple cleanup methods
+    const cleanupCommands = [
+      `fuser -k 3000/tcp 2>/dev/null || true`,
+      `pkill -9 -f "node.*server.js" 2>/dev/null || true`,
+      `lsof -ti:3000 | xargs kill -9 2>/dev/null || true`,
+    ];
+
+    for (const cmd of cleanupCommands) {
+      try {
+        execSync(cmd, { stdio: 'ignore' });
+      } catch (e) {
+        // Continue to next cleanup method
+      }
+    }
+
+    console.log('✅ Cleaned up existing processes');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  } catch (e) {
+    console.log('⚠️ Cleanup completed with warnings');
+  }
+}
 
 async function startServer() {
   try {
-    // Kill any existing process on port 3000
-    try {
-      const { execSync } = require('child_process');
-      // Try to kill processes more aggressively
-      try {
-        execSync(`fuser -k 3000/tcp 2>/dev/null || true`, { stdio: 'ignore' });
-      } catch (e) {
-        // fuser might not be available, try pkill
-        execSync(`pkill -f "node.*server.js" 2>/dev/null || true`, { stdio: 'ignore' });
-      }
-      console.log('✅ Cleaned up existing processes');
-      // Wait for cleanup
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } catch (e) {
-      console.log('⚠️ Could not clean up processes:', e.message);
-    }
+    await killExistingProcesses();
 
     console.log('========================================');
     console.log('MyNet.tn Backend Server Starting...');
@@ -35,15 +45,15 @@ async function startServer() {
     // Initialize database connection
     const { initializeDb } = require('./config/db');
     const { checkDatabaseHealth } = require('./utils/databaseHealthCheck');
-    
+
     const dbInitialized = await initializeDb();
-    
+
     if (!dbInitialized) {
       console.warn('⚠️ Database connection failed - running in limited mode');
       console.warn('⚠️ Some features may not be available');
     } else {
       console.log('✅ Database connected successfully');
-      
+
       // التحقق من صحة الاتصال
       try {
         const health = await checkDatabaseHealth();
@@ -60,7 +70,19 @@ async function startServer() {
 
     // Start server
     const httpServer = http.createServer(app);
-    
+
+    httpServer.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is still in use. Retrying cleanup...`);
+        killExistingProcesses().then(() => {
+          setTimeout(() => startServer(), 3000);
+        });
+      } else {
+        console.error('❌ Server error:', error.message);
+        process.exit(1);
+      }
+    });
+
     httpServer.listen(PORT, HOST, () => {
       console.log(`✅ Server running on http://${HOST}:${PORT}`);
       console.log('✅ Frontend accessible at http://0.0.0.0:5000');
@@ -78,16 +100,6 @@ async function startServer() {
       console.log('========================================');
     });
 
-    httpServer.on('error', (error) => {
-      if (error.code === 'EADDRINUSE') {
-        console.error(`❌ Port ${PORT} is already in use`);
-        process.exit(1);
-      } else {
-        console.error('❌ Server error:', error.message);
-        process.exit(1);
-      }
-    });
-
     // Graceful shutdown
     process.on('SIGTERM', () => {
       console.log('⚠️ SIGTERM received, closing server...');
@@ -103,7 +115,7 @@ async function startServer() {
     console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.error('Error Message:', error.message);
     console.error('Error Code:', error.code || 'N/A');
-    
+
     if (error.stack) {
       const stackLines = error.stack.split('\n');
       console.error('Error Location:', stackLines[1]?.trim() || 'Unknown');
@@ -111,7 +123,7 @@ async function startServer() {
       console.error('Full Stack Trace:');
       console.error(error.stack);
     }
-    
+
     console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.error('💡 Troubleshooting Tips:');
     console.error('  1. Check controller exports: ensure all methods are properly defined');
