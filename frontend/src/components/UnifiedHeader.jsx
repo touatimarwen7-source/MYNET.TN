@@ -171,11 +171,16 @@ export default function UnifiedHeader() {
                   : theme.palette.text.primary,
               fontWeight: location.pathname === link.href ? 600 : 500,
               textTransform: 'none',
-              fontSize: '14px',
+              fontSize: '15px',
               position: 'relative',
+              padding: '10px 18px',
+              minHeight: '44px',
+              borderRadius: '8px',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
                 color: theme.palette.primary.main,
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgba(0, 86, 179, 0.04)',
+                transform: 'translateY(-1px)',
               },
               '&::after': {
                 content: '""',
@@ -183,19 +188,58 @@ export default function UnifiedHeader() {
                 bottom: 0,
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: location.pathname === link.href ? '80%' : '0%',
+                width: location.pathname === link.href ? '70%' : '0%',
                 height: '3px',
                 backgroundColor: theme.palette.primary.main,
                 borderRadius: '3px 3px 0 0',
-                transition: 'width 0.3s ease',
+                transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: location.pathname === link.href ? '0 2px 8px rgba(0,86,179,0.3)' : 'none',
               },
               '&:hover::after': {
-                width: '80%',
+                width: '70%',
+              },
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                borderRadius: '8px',
+                border: location.pathname === link.href ? '2px solid transparent' : '2px solid transparent',
+                background: location.pathname === link.href 
+                  ? 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #0056B3, #0d47a1) border-box'
+                  : 'transparent',
+                opacity: location.pathname === link.href ? 0.1 : 0,
+                transition: 'opacity 0.3s ease',
+                pointerEvents: 'none',
               },
             }}
           >
-            <span style={{ marginRight: '6px' }}>{link.icon}</span>
-            {link.label}
+            <Box
+              component="span"
+              sx={{
+                marginRight: '8px',
+                fontSize: '18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                transition: 'transform 0.3s ease',
+                '.MuiButton-root:hover &': {
+                  transform: 'scale(1.1) rotate(5deg)',
+                },
+              }}
+            >
+              {link.icon}
+            </Box>
+            <Box
+              component="span"
+              sx={{
+                letterSpacing: '0.3px',
+                fontFamily: "'Segoe UI', 'Roboto', sans-serif",
+              }}
+            >
+              {link.label}
+            </Box>
           </Button>
         </Tooltip>
       ));
@@ -208,12 +252,17 @@ export default function UnifiedHeader() {
       <AppBar
         position="sticky"
         sx={{
-          backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.95)' : '#ffffff',
+          backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.98)' : '#ffffff',
           color: theme.palette.text.primary,
-          borderBottom: scrolled ? '2px solid #0056B3' : '1px solid #e0e0e0',
-          boxShadow: scrolled ? '0 4px 20px rgba(0,86,179,0.1)' : 'none',
-          backdropFilter: scrolled ? 'blur(10px)' : 'none',
-          transition: 'all 0.3s ease',
+          borderBottom: scrolled 
+            ? '2px solid #0056B3' 
+            : '1px solid rgba(224, 224, 224, 0.8)',
+          boxShadow: scrolled 
+            ? '0 4px 24px rgba(0,86,179,0.12), 0 2px 8px rgba(0,86,179,0.08)' 
+            : '0 1px 3px rgba(0,0,0,0.02)',
+          backdropFilter: scrolled ? 'blur(12px) saturate(180%)' : 'none',
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          zIndex: 1100,
         }}
       >
         <Toolbar
@@ -267,7 +316,37 @@ export default function UnifiedHeader() {
 
           {/* Desktop Navigation */}
           <Fade in timeout={800}>
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: '4px', flex: 1, justifyContent: 'center' }}>
+            <Box 
+              sx={{ 
+                display: { xs: 'none', md: 'flex' }, 
+                gap: '6px', 
+                flex: 1, 
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '0 16px',
+                position: 'relative',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  left: 0,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '1px',
+                  height: '30px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  right: 0,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '1px',
+                  height: '30px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                },
+              }}
+            >
               {shouldShowAuthLinks && renderNavLinks(authenticatedLinks)}
               {shouldShowPublicLinks && renderNavLinks(publicLinks)}
             </Box>
@@ -589,21 +668,65 @@ export default function UnifiedHeader() {
                   key={link.href}
                   onClick={() => handleNavigate(link.href)}
                   sx={{
-                    mb: 1,
-                    borderRadius: '8px',
-                    backgroundColor: location.pathname === link.href ? '#e3f2fd' : 'transparent',
+                    mb: 1.5,
+                    borderRadius: '12px',
+                    backgroundColor: location.pathname === link.href 
+                      ? 'rgba(0, 86, 179, 0.08)' 
+                      : 'transparent',
                     color:
                       location.pathname === link.href
                         ? theme.palette.primary.main
                         : theme.palette.text.primary,
                     fontWeight: location.pathname === link.href ? 600 : 400,
+                    padding: '14px 16px',
+                    border: location.pathname === link.href 
+                      ? '2px solid rgba(0, 86, 179, 0.2)' 
+                      : '2px solid transparent',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    position: 'relative',
+                    overflow: 'hidden',
                     '&:hover': {
-                      backgroundColor: '#e3f2fd',
+                      backgroundColor: 'rgba(0, 86, 179, 0.06)',
+                      transform: 'translateX(4px)',
+                      borderColor: 'rgba(0, 86, 179, 0.15)',
+                    },
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: location.pathname === link.href ? '4px' : '0px',
+                      backgroundColor: theme.palette.primary.main,
+                      transition: 'width 0.3s ease',
+                      borderRadius: '0 4px 4px 0',
                     },
                   }}
                 >
-                  <span style={{ marginRight: '12px', fontSize: '20px' }}>{link.icon}</span>
-                  <ListItemText primary={link.label} />
+                  <Box
+                    component="span"
+                    sx={{
+                      marginRight: '14px',
+                      fontSize: '22px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      transition: 'transform 0.3s ease',
+                      'li:hover &': {
+                        transform: 'scale(1.15) rotate(5deg)',
+                      },
+                    }}
+                  >
+                    {link.icon}
+                  </Box>
+                  <ListItemText 
+                    primary={link.label}
+                    primaryTypographyProps={{
+                      sx: {
+                        fontSize: '15px',
+                        letterSpacing: '0.3px',
+                      }
+                    }}
+                  />
                 </ListItem>
               ))}
             {shouldShowPublicLinks &&
@@ -613,21 +736,65 @@ export default function UnifiedHeader() {
                   key={link.href}
                   onClick={() => handleNavigate(link.href)}
                   sx={{
-                    mb: 1,
-                    borderRadius: '8px',
-                    backgroundColor: location.pathname === link.href ? '#e3f2fd' : 'transparent',
+                    mb: 1.5,
+                    borderRadius: '12px',
+                    backgroundColor: location.pathname === link.href 
+                      ? 'rgba(0, 86, 179, 0.08)' 
+                      : 'transparent',
                     color:
                       location.pathname === link.href
                         ? theme.palette.primary.main
                         : theme.palette.text.primary,
                     fontWeight: location.pathname === link.href ? 600 : 400,
+                    padding: '14px 16px',
+                    border: location.pathname === link.href 
+                      ? '2px solid rgba(0, 86, 179, 0.2)' 
+                      : '2px solid transparent',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    position: 'relative',
+                    overflow: 'hidden',
                     '&:hover': {
-                      backgroundColor: '#e3f2fd',
+                      backgroundColor: 'rgba(0, 86, 179, 0.06)',
+                      transform: 'translateX(4px)',
+                      borderColor: 'rgba(0, 86, 179, 0.15)',
+                    },
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: location.pathname === link.href ? '4px' : '0px',
+                      backgroundColor: theme.palette.primary.main,
+                      transition: 'width 0.3s ease',
+                      borderRadius: '0 4px 4px 0',
                     },
                   }}
                 >
-                  <span style={{ marginRight: '12px', fontSize: '20px' }}>{link.icon}</span>
-                  <ListItemText primary={link.label} />
+                  <Box
+                    component="span"
+                    sx={{
+                      marginRight: '14px',
+                      fontSize: '22px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      transition: 'transform 0.3s ease',
+                      'li:hover &': {
+                        transform: 'scale(1.15) rotate(5deg)',
+                      },
+                    }}
+                  >
+                    {link.icon}
+                  </Box>
+                  <ListItemText 
+                    primary={link.label}
+                    primaryTypographyProps={{
+                      sx: {
+                        fontSize: '15px',
+                        letterSpacing: '0.3px',
+                      }
+                    }}
+                  />
                 </ListItem>
               ))}
           </List>
