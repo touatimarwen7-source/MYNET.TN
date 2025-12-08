@@ -181,7 +181,7 @@ mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && lsof -ti:3000 | xargs kill -9 2>/dev/null; sleep 1 && npm run dev"
+args = "cd backend && pkill -f \"node server.js\" 2>/dev/null || true && sleep 1 && npm run dev"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
