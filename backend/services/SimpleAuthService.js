@@ -68,22 +68,36 @@ class SimpleAuthService {
 
   async authenticate(email, password) {
     try {
-      const user = this.users.find(u => u.email === email && u.is_active);
+      console.log('🔍 SimpleAuthService: Authenticating user:', email);
+      console.log('📁 Total users loaded:', this.users.length);
+      
+      const user = this.users.find(u => u.email === email);
       
       if (!user) {
+        console.log('❌ User not found:', email);
         return null;
       }
 
-      // Simple password comparison (in production, use hashing)
-      if (user.password !== password) {
+      if (!user.is_active) {
+        console.log('❌ User account is inactive:', email);
         return null;
       }
+
+      console.log('✅ User found:', { email: user.email, role: user.role });
+
+      // Simple password comparison (in production, use hashing)
+      if (user.password !== password) {
+        console.log('❌ Password mismatch for:', email);
+        return null;
+      }
+
+      console.log('✅ Password matched for:', email);
 
       // Return user without password
       const { password: _, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (error) {
-      console.error('Authentication error:', error);
+      console.error('❌ Authentication error:', error);
       return null;
     }
   }

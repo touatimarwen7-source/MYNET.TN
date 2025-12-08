@@ -118,7 +118,8 @@ class AuthController {
       if (!user) {
         console.log('❌ Authentication failed for:', email);
         return res.status(401).json({
-          error: 'Invalid email or password',
+          error: 'Email ou mot de passe invalide',
+          message: 'Email ou mot de passe invalide',
         });
       }
 
