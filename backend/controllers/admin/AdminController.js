@@ -601,6 +601,68 @@ class AdminController {
       });
     }
   }
+
+  /**
+   * Delete user (soft delete)
+   */
+  async deleteUser(req, res) {
+    try {
+      const { userId } = req.params;
+      const pool = getPool();
+
+      await pool.query(
+        'UPDATE users SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+        [userId]
+      );
+
+      res.json({
+        success: true,
+        message: 'User deleted successfully'
+      });
+    } catch (error) {
+      logger.error('Delete user error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to delete user'
+      });
+    }
+  }
+
+  /**
+   * Update user role
+   */
+  async updateUserRole(req, res) {
+    try {
+      const { userId } = req.params;
+      const { role } = req.body;
+      const pool = getPool();
+
+      // Validate role
+      const validRoles = ['buyer', 'supplier', 'admin', 'super_admin'];
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid role'
+        });
+      }
+
+      await pool.query(
+        'UPDATE users SET role = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+        [role, userId]
+      );
+
+      res.json({
+        success: true,
+        message: 'User role updated successfully'
+      });
+    } catch (error) {
+      logger.error('Update user role error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to update user role'
+      });
+    }
+  }
 }
 
 module.exports = AdminController;
