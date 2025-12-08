@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TenderFormLayout from '../components/TenderSteps/TenderFormLayout';
 import TenderStepRenderer from '../components/TenderSteps/TenderStepRenderer';
@@ -9,6 +9,18 @@ import {
   autosaveDraft,
   AUTOSAVE_INTERVAL,
 } from '../utils/draftStorageHelper';
+import {
+  Container,
+  Stepper,
+  Step,
+  StepLabel,
+  Button,
+  Typography,
+  Box,
+  Paper,
+  CircularProgress,
+} from '@mui/material';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const DRAFT_KEY = 'tender_draft';
 const TOTAL_STEPS = 6; // Étapes de 0 à 6 (7 étapes au total)
@@ -82,14 +94,14 @@ const CreateTenderWizard = () => {
       console.error('Invalid event object in handleChange');
       return;
     }
-    
+
     const { name, value, type, checked } = e.target;
-    
+
     if (!name) {
       console.error('Event target has no name attribute');
       return;
     }
-    
+
     // Gérer les champs imbriqués (ex: evaluation_criteria.price)
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
@@ -111,7 +123,7 @@ const CreateTenderWizard = () => {
   const handleNext = () => {
     // Validate current step before proceeding
     setError('');
-    
+
     // Step 0: Basic info validation
     if (currentStep === 0) {
       if (!formData.title || formData.title.trim().length < 5) {
@@ -127,7 +139,7 @@ const CreateTenderWizard = () => {
         return;
       }
     }
-    
+
     // Step 1: Dates validation
     if (currentStep === 1) {
       if (formData.deadline && formData.publication_date) {
@@ -139,7 +151,7 @@ const CreateTenderWizard = () => {
         }
       }
     }
-    
+
     // Step 4: Evaluation criteria validation
     if (currentStep === 4) {
       const total = Object.values(formData.evaluation_criteria || {}).reduce(
@@ -151,7 +163,7 @@ const CreateTenderWizard = () => {
         return;
       }
     }
-    
+
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -171,11 +183,11 @@ const CreateTenderWizard = () => {
       if (!formData.title || formData.title.trim().length < 5) {
         throw new Error('Le titre doit contenir au moins 5 caractères');
       }
-      
+
       if (!formData.description || formData.description.trim().length < 20) {
         throw new Error('La description doit contenir au moins 20 caractères');
       }
-      
+
       if (!formData.category) {
         throw new Error('Veuillez sélectionner une catégorie');
       }
@@ -189,20 +201,20 @@ const CreateTenderWizard = () => {
         opening_date: formData.opening_date || null,
         queries_start_date: formData.queries_start_date || null,
         queries_end_date: formData.queries_end_date || null,
-        
+
         // Ensure numeric fields
         budget_min: formData.budget_min ? Number(formData.budget_min) : 0,
         budget_max: formData.budget_max ? Number(formData.budget_max) : 0,
         quantity_required: formData.quantity_required ? Number(formData.quantity_required) : null,
         offer_validity_days: formData.offer_validity_days ? Number(formData.offer_validity_days) : 90,
-        
+
         // Ensure arrays
         lots: Array.isArray(formData.lots) ? formData.lots : [],
         requirements: Array.isArray(formData.requirements) ? formData.requirements : [],
         mandatory_documents: Array.isArray(formData.mandatory_documents) ? formData.mandatory_documents : [],
         specification_documents: Array.isArray(formData.specification_documents) ? formData.specification_documents : [],
         attachments: Array.isArray(formData.attachments) ? formData.attachments : [],
-        
+
         // Ensure evaluation_criteria is object
         evaluation_criteria: formData.evaluation_criteria || {
           price: 0,
@@ -210,7 +222,7 @@ const CreateTenderWizard = () => {
           delivery: 0,
           experience: 0
         },
-        
+
         // Set status as draft initially
         status: 'draft'
       };
@@ -237,7 +249,7 @@ const CreateTenderWizard = () => {
       });
     } catch (err) {
       console.error('❌ Create tender error:', err);
-      
+
       // Handle database not initialized error
       if (err.response?.status === 503 || err.response?.data?.error?.includes('does not exist')) {
         setError('⚠️ La base de données n\'est pas initialisée. Veuillez exécuter: node backend/scripts/initDb.js');
@@ -255,40 +267,51 @@ const CreateTenderWizard = () => {
 
   try {
     return (
-      <TenderFormLayout
-        currentStep={currentStep}
-        error={error}
-        loading={loading}
-        handlePrevious={handlePrevious}
-        handleNext={handleNext}
-        handleSubmit={handleSubmit}
-        showPreview={showPreview}
-        setShowPreview={setShowPreview}
-        showExit={showExit}
-        setShowExit={setShowExit}
-        formData={formData}
-        totalCriteria={
-          Object.values(formData.evaluation_criteria || {}).reduce(
-            (sum, val) => sum + (Number(val) || 0),
-            0
-          )
-        }
-        navigate={navigate}
-      >
-        <TenderStepRenderer
-          currentStep={currentStep}
-          formData={formData}
-          setFormData={setFormData}
-          handleChange={handleChange}
-          loading={loading}
-          totalCriteria={
-            Object.values(formData.evaluation_criteria || {}).reduce(
-              (sum, val) => sum + (Number(val) || 0),
-              0
-            )
-          }
-        />
-      </TenderFormLayout>
+      <ErrorBoundary>
+        <Suspense fallback={<Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box>}>
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Paper elevation={3} sx={{ p: 4 }}>
+              <Typography variant="h4" gutterBottom align="center">
+                Créer un Nouvel Appel d'Offre
+              </Typography>
+              <TenderFormLayout
+                currentStep={currentStep}
+                error={error}
+                loading={loading}
+                handlePrevious={handlePrevious}
+                handleNext={handleNext}
+                handleSubmit={handleSubmit}
+                showPreview={showPreview}
+                setShowPreview={setShowPreview}
+                showExit={showExit}
+                setShowExit={setShowExit}
+                formData={formData}
+                totalCriteria={
+                  Object.values(formData.evaluation_criteria || {}).reduce(
+                    (sum, val) => sum + (Number(val) || 0),
+                    0
+                  )
+                }
+                navigate={navigate}
+              >
+                <TenderStepRenderer
+                  currentStep={currentStep}
+                  formData={formData}
+                  setFormData={setFormData}
+                  handleChange={handleChange}
+                  loading={loading}
+                  totalCriteria={
+                    Object.values(formData.evaluation_criteria || {}).reduce(
+                      (sum, val) => sum + (Number(val) || 0),
+                      0
+                    )
+                  }
+                />
+              </TenderFormLayout>
+            </Paper>
+          </Container>
+        </Suspense>
+      </ErrorBoundary>
     );
   } catch (renderError) {
     console.error('CreateTenderWizard render error:', renderError);

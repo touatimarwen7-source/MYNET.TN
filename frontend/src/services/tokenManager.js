@@ -37,19 +37,19 @@ class TokenManager {
       console.warn('TokenManager: Attempted to set null/undefined user');
       return;
     }
-    
+
     // Normaliser userId et id
     const normalizedUser = {
       ...user,
       userId: user.userId || user.id,
       id: user.id || user.userId
     };
-    
+
     if (!normalizedUser.userId && !normalizedUser.id) {
       console.error('TokenManager: User data missing both userId and id:', user);
       return;
     }
-    
+
     try {
       localStorage.setItem(this.USER_KEY, JSON.stringify(normalizedUser));
       console.log('TokenManager: User data stored successfully');
@@ -65,7 +65,7 @@ class TokenManager {
         console.log('TokenManager: No user data in storage');
         return null;
       }
-      
+
       const user = JSON.parse(userJson);
       console.log('TokenManager: User data retrieved:', user?.userId);
       return user;
@@ -140,7 +140,7 @@ class TokenManager {
 
       const now = Math.floor(Date.now() / 1000);
       const timeUntilExpiry = decoded.exp - now;
-      
+
       // Refresh if less than 2 minutes until expiry
       return timeUntilExpiry > 0 && timeUntilExpiry < 120;
     } catch (error) {
