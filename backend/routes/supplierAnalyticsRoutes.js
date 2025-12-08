@@ -4,6 +4,7 @@ const router = express.Router();
 const { verifyToken } = require('../middleware/authMiddleware');
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 const { validationMiddleware } = require('../middleware/validationMiddleware');
+const { getPool } = require('../config/db'); // Added as per changes
 
 // Apply validation middleware to all routes
 router.use(validationMiddleware);
@@ -130,6 +131,32 @@ router.get('/offers/:id', verifyToken, validateIdMiddleware, async (req, res) =>
     res.json(offer.rows[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// New endpoint for performance metrics
+router.get('/performance', verifyToken, async (req, res) => {
+  try {
+    const pool = getPool(); // Use the connection pool
+    const userId = req.user.id;
+
+    // Example: Fetching data related to offer response times or order fulfillment times
+    const performanceData = await pool.query(
+      `
+      SELECT
+        AVG(EXTRACT(EPOCH FROM (accepted_at - created_at))) as avg_acceptance_time_seconds,
+        AVG(EXTRACT(EPOCH FROM (fulfilled_at - created_at))) as avg_fulfillment_time_seconds,
+        COUNT(*) as total_orders_processed
+      FROM purchase_orders
+      WHERE supplier_id = $1 AND status = 'completed' AND is_deleted = false
+      `,
+      [userId]
+    );
+
+    res.json(performanceData.rows[0]);
+  } catch (error) {
+    console.error("Error fetching performance data:", error); // Log error on server
+    res.status(500).json({ error: 'Failed to fetch performance data' });
   }
 });
 

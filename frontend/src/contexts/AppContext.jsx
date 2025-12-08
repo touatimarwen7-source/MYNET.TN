@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
 } from 'react';
 import TokenManager from '../services/tokenManager';
 import { setupInactivityTimer } from '../utils/security';
@@ -91,22 +92,22 @@ export const AppProvider = ({ children }) => {
         console.error('Invalid user data received:', userData);
         throw new Error('Données utilisateur invalides');
       }
-      
+
       console.log('AppContext login: Setting user data:', userData);
-      
+
       // Store in TokenManager
       TokenManager.setUser(userData);
-      
+
       // Update state immediately
       setUser(userData);
       setIsAuthenticated(true);
       setAuthError(null);
-      
+
       console.log('AppContext login: User state updated successfully');
-      
+
       // Dispatch event for cross-tab sync
       window.dispatchEvent(new CustomEvent('authChanged', { detail: userData }));
-      
+
       return true;
     } catch (error) {
       console.error('Login error in AppContext:', error);
@@ -228,7 +229,7 @@ export const AppProvider = ({ children }) => {
     const handleAuthChange = (event) => {
       const userData = event.detail;
       console.log('Auth change event received:', userData);
-      
+
       if (userData && userData.userId) {
         console.log('Setting user from auth change event');
         setUser(userData);
@@ -247,43 +248,39 @@ export const AppProvider = ({ children }) => {
 
   // ===== Context Value =====
 
-  const value = {
-    // Authentication State
-    user,
-    isAuthenticated,
-    authLoading,
-    authError,
+  const contextValue = useMemo(
+    () => ({
+      user,
+      isAuthenticated,
+      authLoading,
+      authError,
+      login,
+      logout,
+      updateUser,
+      appLoading,
+      appError,
+      toasts,
+      addToast,
+      removeToast,
+      sidebarOpen,
+      toggleSidebar,
+      appSettings,
+      updateSettings,
+      setLanguage,
+      setTheme,
+      setLoading,
+      setError,
+      clearError,
+      checkAuth,
+    }),
+    [user, isAuthenticated, authLoading, authError, appLoading, appError, toasts, addToast, removeToast, sidebarOpen, toggleSidebar, appSettings, updateSettings, setLanguage, setTheme, setLoading, setError, clearError, login, logout, updateUser, checkAuth]
+  );
 
-    // App State
-    appLoading,
-    appError,
-    toasts,
-    addToast,
-    removeToast,
-
-    // App Settings
-    sidebarOpen,
-    appSettings,
-
-    // Auth Methods
-    login,
-    logout,
-    updateUser,
-    checkAuth,
-
-    // Settings Methods
-    toggleSidebar,
-    updateSettings,
-    setLanguage,
-    setTheme,
-
-    // App State Methods
-    setLoading,
-    setError,
-    clearError,
-  };
-
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={contextValue}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 /**

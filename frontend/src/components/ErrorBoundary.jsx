@@ -79,117 +79,38 @@ class ErrorBoundary extends React.Component {
     window.location.href = '/';
   };
 
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null, errorInfo: null });
+    window.location.reload();
+  };
+
   render() {
     if (this.state.hasError) {
-      // Get theme using a functional component pattern workaround
-      const errorContent = (
-        <Container maxWidth="md">
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '60vh',
-              padding: '40px 20px',
-              textAlign: 'center',
-            }}
-          >
-            <ErrorOutlineIcon
-              sx={{
-                fontSize: 80,
-                color: THEME_COLORS.error,
-                marginBottom: '20px',
-              }}
-            />
-
-            <Typography
-              variant="h3"
-              sx={{
-                color: THEME_COLORS.textPrimary,
-                fontWeight: 600,
-                marginBottom: '16px',
-              }}
-            >
-              Désolé, une erreur s'est produite
-            </Typography>
-
-            <Typography
-              variant="body1"
-              sx={{
-                color: THEME_COLORS.textSecondary,
-                marginBottom: '24px',
-                maxWidth: '500px',
-              }}
-            >
-              Un problème inattendu s'est produit. Veuillez essayer de rafraîchir la page ou de
-              retourner à l'accueil.
-            </Typography>
-
-            <Box sx={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Button
-                variant="contained"
-                onClick={this.handleReset}
-                startIcon={<RefreshIcon />}
-                sx={{
-                  backgroundColor: THEME_COLORS.primary,
-                  color: THEME_COLORS.bgPaper,
-                  textTransform: 'none',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  minHeight: '40px',
-                  '&:hover': {
-                    backgroundColor: THEME_COLORS.primaryDark,
-                  },
-                }}
-              >
-                Réessayer
-              </Button>
-
-              <Button
-                variant="outlined"
-                onClick={this.handleReload}
-                startIcon={<RefreshIcon />}
-                sx={{
-                  color: THEME_COLORS.primary,
-                  borderColor: THEME_COLORS.primary,
-                  textTransform: 'none',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  minHeight: '40px',
-                  '&:hover': {
-                    borderColor: THEME_COLORS.primaryDark,
-                    backgroundColor: `${THEME_COLORS.primary}10`,
-                  },
-                }}
-              >
-                Rafraîchir
-              </Button>
-
-              <Button
-                variant="outlined"
-                onClick={this.handleGoHome}
-                startIcon={<HomeIcon />}
-                sx={{
-                  color: THEME_COLORS.textSecondary,
-                  borderColor: THEME_COLORS.textSecondary,
-                  textTransform: 'none',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  minHeight: '40px',
-                  '&:hover': {
-                    borderColor: THEME_COLORS.textPrimary,
-                    backgroundColor: `${THEME_COLORS.textSecondary}10`,
-                  },
-                }}
-              >
-                Page d'accueil
-              </Button>
-            </Box>
+      return (
+        <Box sx={{ padding: '40px', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
+          <Typography variant="h4" color="error" gutterBottom sx={{ fontWeight: 600 }}>
+            ⚠️ عذرًا، حدث خطأ غير متوقع
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 3, color: '#616161' }}>
+            {this.state.error?.message || 'خطأ غير معروف'}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+            <Button variant="contained" onClick={this.handleRetry}>
+              إعادة المحاولة
+            </Button>
+            <Button variant="outlined" onClick={() => window.location.href = '/'}>
+              العودة للصفحة الرئيسية
+            </Button>
           </Box>
-        </Container>
+          {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
+            <Box sx={{ mt: 4, textAlign: 'left', backgroundColor: '#F5F5F5', p: 2, borderRadius: 1 }}>
+              <Typography variant="caption" component="pre" sx={{ fontSize: '10px' }}>
+                {this.state.errorInfo.componentStack}
+              </Typography>
+            </Box>
+          )}
+        </Box>
       );
-      return errorContent;
     }
 
     return this.props.children;
