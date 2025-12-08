@@ -1,68 +1,76 @@
-// Email Management Routes - TURN 3 OPTIONAL
+
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
-const { sendEmail, emailTemplates } = require('../config/emailService');
 const router = express.Router();
-const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
+const { verifyToken, checkRole } = require('../middleware/authMiddleware');
+const { validationMiddleware } = require('../middleware/validationMiddleware');
+const EmailVerificationService = require('../services/email/EmailVerificationService');
 
-// Send test email
-router.post('/send-test', authMiddleware, async (req, res) => {
+// Apply validation middleware globally
+router.use(validationMiddleware);
+
+// Send verification email
+router.post('/send-verification', verifyToken, async (req, res) => {
   try {
-    const { email } = req.body;
+    const userId = req.user.id;
+    const email = req.user.email;
 
-    if (!email) {
-      return res.status(400).json({ error: 'Email address required' });
-    }
+    await EmailVerificationService.sendVerificationEmail(userId, email);
 
-    const success = await sendEmail(
-      email,
-      'MyNet.tn Test Email',
-      '<h1>Welcome to MyNet.tn!</h1><p>This is a test email.</p>'
-    );
-
-    if (success) {
-      res.json({ success: true, message: 'Test email sent' });
-    } else {
-      res.status(500).json({ error: 'Failed to send email' });
-    }
+    res.json({
+      success: true,
+      message: 'Email de vérification envoyé avec succès',
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
-// Send offer notification
-router.post('/notify-offer', authMiddleware, async (req, res) => {
+// Verify email token
+router.get('/verify/:token', async (req, res) => {
   try {
-    const { buyerEmail, tenderId, supplierName, price } = req.body;
-    const template = emailTemplates.newOffer(tenderId, supplierName, price);
+    const { token } = req.params;
 
-    const success = await sendEmail(buyerEmail, template.subject, template.html);
+    const result = await EmailVerificationService.verifyEmailToken(token);
 
-    if (success) {
-      res.json({ success: true });
+    if (result.success) {
+      res.json({
+        success: true,
+        message: 'Email vérifié avec succès',
+      });
     } else {
-      res.status(500).json({ error: 'Failed to send notification' });
+      res.status(400).json({
+        success: false,
+        error: result.error,
+      });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
-// Send tender update notification
-router.post('/notify-tender-update', authMiddleware, async (req, res) => {
+// Resend verification email
+router.post('/resend-verification', verifyToken, async (req, res) => {
   try {
-    const { buyerEmail, tenderId, status } = req.body;
-    const template = emailTemplates.tenderUpdate(tenderId, status);
+    const userId = req.user.id;
+    const email = req.user.email;
 
-    const success = await sendEmail(buyerEmail, template.subject, template.html);
+    await EmailVerificationService.sendVerificationEmail(userId, email);
 
-    if (success) {
-      res.json({ success: true });
-    } else {
-      res.status(500).json({ error: 'Failed to send notification' });
-    }
+    res.json({
+      success: true,
+      message: 'Email de vérification renvoyé avec succès',
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
