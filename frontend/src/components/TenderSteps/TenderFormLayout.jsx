@@ -27,6 +27,26 @@ const steps = [
   'Révision',
 ];
 
+/**
+ * Layout component for the multi-step tender creation form.
+ * It handles the overall structure, header, progress, and navigation.
+ * @param {object} props
+ * @param {React.ReactNode} props.children - The content of the current step.
+ * @param {number} props.currentStep - The current active step index.
+ * @param {string} props.error - The current error message.
+ * @param {boolean} props.loading - The loading state.
+ * @param {Function} props.handlePrevious - Function to go to the previous step.
+ * @param {Function} props.handleNext - Function to go to the next step.
+ * @param {Function} props.handleSubmit - Function to submit the form.
+ * @param {boolean} props.showPreview - State for the preview dialog.
+ * @param {Function} props.setShowPreview - Function to toggle the preview dialog.
+ * @param {boolean} props.showExit - State for the exit dialog.
+ * @param {Function} props.setShowExit - Function to toggle the exit dialog.
+ * @param {object} props.formData - The form data for preview.
+ * @param {number} props.totalCriteria - The total of evaluation criteria.
+ * @param {Function} props.navigate - The navigate function from react-router-dom.
+ * @returns {JSX.Element}
+ */
 const TenderFormLayout = ({
   currentStep,
   error,

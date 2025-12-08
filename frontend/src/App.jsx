@@ -213,7 +213,7 @@ function AppContent() {
                           element={user ? <TenderPreferencesSettings /> : <Navigate to="/login" />}
                         />
 
-                        {/* ========== Tender Actions - Buyer ========== */}
+                        {/* Tender Actions - Buyer */}
                         <Route
                           path="/create-tender"
                           element={user?.role === 'buyer' ? <CreateTenderWizard /> : <Navigate to="/tenders" />}
