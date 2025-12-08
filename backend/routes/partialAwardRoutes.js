@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const { verifyToken, checkRole } = require('../middleware/authMiddleware');
@@ -8,20 +9,20 @@ router.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'partial-awards' });
 });
 
-// Get partial award settings for a tender
+// Get partial award settings
 router.get('/tender/:tenderId/settings', verifyToken, validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     res.json({ 
       success: true, 
       data: { allowPartialAward: false, maxWinners: 1 },
-      message: 'Partial award settings retrieved' 
+      message: 'Settings retrieved' 
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Create partial award (buyer)
+// Create partial award
 router.post('/create', verifyToken, checkRole(['buyer']), async (req, res) => {
   try {
     res.json({ success: true, message: 'Partial award created successfully' });

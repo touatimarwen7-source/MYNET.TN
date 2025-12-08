@@ -126,8 +126,9 @@ const exportLimiter = rateLimit({
  * Custom rate limiting middleware with advanced tracking
  */
 const advancedRateLimitMiddleware = (req, res, next) => {
-  // Track for metrics
-  const key = req.user ? `user:${req.user.id}` : req.ip || 'unknown';
+  try {
+    // Track for metrics
+    const key = req.user ? `user:${req.user.id}` : req.ip || 'unknown';
 
   if (!userLimits.has(key)) {
     userLimits.set(key, {
@@ -154,6 +155,11 @@ const advancedRateLimitMiddleware = (req, res, next) => {
   };
 
   next();
+  } catch (error) {
+    // Log error but don't block request
+    console.error('Rate limit tracking error:', error);
+    next();
+  }
 };
 
 /**

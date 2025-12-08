@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const { verifyToken, checkRole } = require('../middleware/authMiddleware');
@@ -7,7 +8,7 @@ router.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'cache' });
 });
 
-// Get cache statistics (admin only)
+// Get cache statistics
 router.get('/stats', verifyToken, checkRole(['admin', 'super_admin']), async (req, res) => {
   try {
     res.json({ 
@@ -23,7 +24,7 @@ router.get('/stats', verifyToken, checkRole(['admin', 'super_admin']), async (re
   }
 });
 
-// Clear cache (admin only)
+// Clear cache
 router.delete('/clear', verifyToken, checkRole(['admin', 'super_admin']), async (req, res) => {
   try {
     res.json({ success: true, message: 'Cache cleared successfully' });

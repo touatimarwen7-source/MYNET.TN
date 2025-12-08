@@ -8,7 +8,7 @@ router.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'performance' });
 });
 
-// Get performance metrics (admin only)
+// Get performance metrics
 router.get('/metrics', verifyToken, checkRole(['admin', 'super_admin']), async (req, res) => {
   try {
     res.json({ 

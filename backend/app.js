@@ -204,7 +204,7 @@ try {
   }
 
   // Advanced rate limit middleware for tracking
-  if (enhancedRateLimiting && enhancedRateLimiting.advancedRateLimitMiddleware) {
+  if (enhancedRateLimiting && typeof enhancedRateLimiting.advancedRateLimitMiddleware === 'function') {
     app.use(enhancedRateLimiting.advancedRateLimitMiddleware);
   }
 } catch (err) {

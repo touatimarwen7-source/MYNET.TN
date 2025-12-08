@@ -9,7 +9,7 @@ router.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'clarifications' });
 });
 
-// Get all clarifications for a tender (buyer)
+// Get all clarifications for a tender
 router.get('/tender/:tenderId', verifyToken, validateIdMiddleware('tenderId'), async (req, res) => {
   try {
     res.json({ success: true, data: [], message: 'Clarifications retrieved successfully' });
@@ -18,7 +18,7 @@ router.get('/tender/:tenderId', verifyToken, validateIdMiddleware('tenderId'), a
   }
 });
 
-// Create clarification request (buyer)
+// Create clarification request
 router.post('/create', verifyToken, checkRole(['buyer']), async (req, res) => {
   try {
     res.json({ success: true, message: 'Clarification created successfully' });
@@ -27,7 +27,7 @@ router.post('/create', verifyToken, checkRole(['buyer']), async (req, res) => {
   }
 });
 
-// Respond to clarification (supplier)
+// Respond to clarification
 router.post('/:clarificationId/respond', verifyToken, checkRole(['supplier']), validateIdMiddleware('clarificationId'), async (req, res) => {
   try {
     res.json({ success: true, message: 'Response submitted successfully' });
