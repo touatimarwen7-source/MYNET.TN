@@ -1,10 +1,10 @@
 const express = require('express');
+const { asyncHandler } = require('../middleware/errorHandlingMiddleware');
 const authMiddleware = require('../middleware/authMiddleware');
 const { buildPaginationQuery } = require('../utils/paginationHelper');
-const { asyncHandler } = require('../middleware/errorHandlingMiddleware');
+const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 const router = express.Router();
-const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 /**
  * Log an action to audit logs (used internally by other modules)

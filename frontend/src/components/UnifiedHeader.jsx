@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -42,9 +41,10 @@ import institutionalTheme from '../theme/theme';
 // Hide header on scroll down
 function HideOnScroll({ children }) {
   const trigger = useScrollTrigger();
+
   return (
     <Slide appear={false} direction="down" in={!trigger}>
-      {children}
+      <div>{children}</div>
     </Slide>
   );
 }
