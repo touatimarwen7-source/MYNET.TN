@@ -138,16 +138,31 @@ class AuthController {
 
       console.log('✅ Tokens generated successfully');
 
-      res.status(200).json({
+      // Return consistent response format
+      const responseData = {
         success: true,
         message: 'Login successful',
         accessToken,
         refreshToken,
         refreshTokenId: refreshToken,
         expiresIn: 900,
-        user,
-        data: user,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          full_name: user.full_name,
+          role: user.role,
+          is_active: user.is_active,
+          is_verified: user.is_verified
+        }
+      };
+      
+      console.log('✅ Sending response:', { 
+        hasToken: !!responseData.accessToken,
+        hasUser: !!responseData.user 
       });
+      
+      res.status(200).json(responseData);
     } catch (error) {
       console.error('❌ Login error:', error.message);
       console.error('Stack:', error.stack);

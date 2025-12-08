@@ -28,14 +28,24 @@ export default function Login() {
 
   const form = useFormValidation({ email: '', password: '' }, authSchemas.login, async (values) => {
     setApiError('');
+    
     try {
+      console.log('🔐 Attempting login for:', values.email);
       const response = await authAPI.login(values);
+      
+      console.log('📥 Login response received:', {
+        hasData: !!response?.data,
+        hasToken: !!response?.data?.accessToken,
+        hasUser: !!response?.data?.user
+      });
 
       if (!response || !response.data) {
+        console.error('❌ Invalid server response');
         throw new Error('Réponse du serveur invalide');
       }
 
       if (!response.data.accessToken) {
+        console.error('❌ No access token received');
         throw new Error('Pas de token reçu du serveur');
       }
 
@@ -49,16 +59,29 @@ export default function Login() {
       }
 
       const userData = response.data.user;
+      if (!userData) {
+        console.error('❌ No user data received');
+        throw new Error('Données utilisateur manquantes');
+      }
+      
       TokenManager.setUserData(userData);
-
+      
+      console.log('✅ Login successful, redirecting to dashboard');
       addToast('Connexion réussie', 'success', 2000);
       window.dispatchEvent(new CustomEvent('authChanged', { detail: userData }));
 
-      // إعادة التوجيه للوحة التحكم الموحدة لجميع المستخدمين
-      navigate('/dashboard');
+      // Redirect to dashboard after short delay to ensure state is updated
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 100);
+      
     } catch (err) {
+      console.error('❌ Login error:', err);
       const errorMsg = String(
-        err.response?.data?.error || 'Erreur de connexion. Vérifiez vos identifiants.'
+        err.response?.data?.error || 
+        err.response?.data?.message ||
+        err.message ||
+        'Erreur de connexion. Vérifiez vos identifiants.'
       );
       setApiError(errorMsg);
       addToast(errorMsg, 'error', 3000);
@@ -69,9 +92,17 @@ export default function Login() {
     setPageTitle('Connexion Sécurisée');
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    form.handleSubmit(e);
+    e.stopPropagation();
+    
+    // Prevent multiple submissions
+    if (form.isSubmitting) {
+      console.warn('⚠️ Form already submitting, ignoring duplicate request');
+      return;
+    }
+    
+    await form.handleSubmit(e);
   };
 
   return (
