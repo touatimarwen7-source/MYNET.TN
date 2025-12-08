@@ -11,17 +11,25 @@ async function killExistingProcesses() {
     
     console.log('🧹 Cleaning up existing processes...');
     
-    // Kill all node processes on port 3000
+    // Multiple cleanup strategies
     try {
-      execSync(`lsof -ti:3000 | xargs kill -9 2>/dev/null || true`, { stdio: 'ignore' });
+      // Strategy 1: Kill by port (most reliable)
+      execSync(`lsof -ti:${PORT} | xargs kill -9 2>/dev/null || true`, { stdio: 'pipe' });
+      console.log('✓ Killed processes on port', PORT);
     } catch (e) {}
     
     try {
-      execSync(`fuser -k 3000/tcp 2>/dev/null || true`, { stdio: 'ignore' });
+      // Strategy 2: fuser (alternative)
+      execSync(`fuser -k ${PORT}/tcp 2>/dev/null || true`, { stdio: 'pipe' });
     } catch (e) {}
     
-    // Wait for cleanup
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Strategy 3: Kill all node server.js processes
+      execSync(`pkill -9 -f "node.*server.js" 2>/dev/null || true`, { stdio: 'pipe' });
+    } catch (e) {}
+    
+    // Wait for port to be fully released
+    await new Promise(resolve => setTimeout(resolve, 2000));
     console.log('✅ Cleanup completed');
   } catch (e) {
     console.log('⚠️ Cleanup completed with warnings');
@@ -30,6 +38,7 @@ async function killExistingProcesses() {
 
 async function startServer() {
   try {
+    // Kill existing processes ONCE
     await killExistingProcesses();
 
     console.log('========================================');
@@ -50,7 +59,6 @@ async function startServer() {
     } else {
       console.log('✅ Database connected');
       
-      // Check database health
       try {
         const { checkDatabaseHealth } = require('./utils/databaseHealthCheck');
         const health = await checkDatabaseHealth();
@@ -66,13 +74,12 @@ async function startServer() {
     // Create HTTP server
     const httpServer = http.createServer(app);
 
-    // Handle server errors
+    // Handle server errors - EXIT instead of retry to prevent loops
     httpServer.on('error', (error) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`❌ Port ${PORT} is in use. Retrying...`);
-        setTimeout(() => {
-          killExistingProcesses().then(() => startServer());
-        }, 2000);
+        console.error(`\n❌ FATAL: Port ${PORT} is still in use after cleanup`);
+        console.error('Please manually stop the process and restart.\n');
+        process.exit(1); // Exit instead of retry
       } else {
         console.error('❌ Server error:', error.message);
         process.exit(1);

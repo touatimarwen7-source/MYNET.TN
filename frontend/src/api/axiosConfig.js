@@ -7,19 +7,7 @@ const getBaseURL = () => {
     return import.meta.env.VITE_API_BASE_URL;
   }
 
-  if (typeof window === 'undefined') {
-    return 'http://172.31.68.98:3000';
-  }
-
-  const hostname = window.location.hostname;
-  const isReplit = hostname.includes('replit.dev') || hostname.includes('repl.co');
-
-  if (isReplit) {
-    const baseHost = hostname.split(':')[0];
-    return `http://${baseHost}:3000`;
-  }
-
-  // Always use the network IP for Replit environment
+  // Always use network IP for Replit environment
   return 'http://172.31.68.98:3000';
 };
 

@@ -47,18 +47,7 @@ const getApiBaseUrl = () => {
     return import.meta.env.VITE_API_BASE_URL;
   }
   
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    const isReplit = hostname.includes('replit.dev') || hostname.includes('repl.co');
-    
-    if (isReplit) {
-      // في Replit: استخدم نفس الـ hostname مع البورت 3000
-      const baseHost = hostname.split(':')[0];
-      return `http://${baseHost}:3000/api`;
-    }
-  }
-  
-  // استخدم الـ IP الشبكي مباشرة
+  // استخدم الـ IP الشبكي مباشرة لـ Replit
   return 'http://172.31.68.98:3000/api';
 };
 
