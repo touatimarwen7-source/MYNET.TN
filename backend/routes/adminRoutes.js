@@ -14,15 +14,15 @@ router.use(authMiddleware.verifyToken);
 router.use(authMiddleware.checkRole(['super_admin', 'admin']));
 
 // ===== Tableau de bord =====
-router.get('/health', adminController.getHealthDashboard);
-router.get('/dashboard', adminController.getDashboard);
-router.get('/analytics', adminController.getAnalytics);
-router.get('/analytics/users', adminController.getUserStatistics);
-router.get('/activities/recent', adminController.getRecentActivities);
-router.get('/audit-logs/export', adminController.exportAuditLogs);
+router.get('/health', AdminController.getHealthDashboard.bind(AdminController));
+router.get('/dashboard', AdminController.getDashboard.bind(AdminController));
+router.get('/analytics', AdminController.getAnalytics.bind(AdminController));
+router.get('/analytics/users', AdminController.getUserStatistics.bind(AdminController));
+router.get('/activities/recent', AdminController.getRecentActivities.bind(AdminController));
+router.get('/audit-logs/export', AdminController.exportAuditLogs.bind(AdminController));
 
 // ===== Gestion des utilisateurs =====
-router.get('/users', validatePagination, adminController.getAllUsers);
+router.get('/users', validatePagination, AdminController.getAllUsers.bind(AdminController));
 router.get('/users/:id', validateIdMiddleware('id'), adminController.getUserDetails);
 router.put('/users/:id/role', validateIdMiddleware('id'), adminController.updateUserRole);
 router.post('/users/:id/block', validateIdMiddleware('id'), adminController.blockUser);
@@ -86,10 +86,10 @@ router.post('/config/cache/clear', (req, res) => res.json({ success: true, messa
 router.post('/config/system/restart', (req, res) => res.json({ success: true, message: 'System restart scheduled' }));
 
 // ===== Analyses et surveillance =====
-router.get('/analytics/stats', adminController.getAnalyticsStats);
-router.get('/analytics/health', adminController.getHealthDashboard);
-router.get('/analytics/activities', adminController.getRecentActivities);
-router.get('/analytics/users', adminController.getUserStatistics);
+router.get('/analytics/stats', AdminController.getAnalytics.bind(AdminController));
+router.get('/analytics/health', AdminController.getHealthDashboard.bind(AdminController));
+router.get('/analytics/activities', AdminController.getRecentActivities.bind(AdminController));
+router.get('/analytics/users', AdminController.getUserStatistics.bind(AdminController));
 
 // ===== Gestion des abonnements =====
 router.get('/subscriptions/plans', SubscriptionAdminController.getAllPlans.bind(SubscriptionAdminController));
@@ -106,6 +106,6 @@ router.delete('/advertisements/:id', validateIdMiddleware('id'), AdvertisementCo
 router.get('/advertisements/:id/analytics', validateIdMiddleware('id'), AdvertisementController.getAdAnalytics.bind(AdvertisementController));
 
 // ===== Routes de compatibilité (anciennes versions) =====
-router.put('/users/:id/block', validateIdMiddleware('id'), adminController.blockUser);
+router.put('/users/:id/block', validateIdMiddleware('id'), adminController.blockUser || AdminController.blockUser.bind(AdminController));
 
 module.exports = router;
