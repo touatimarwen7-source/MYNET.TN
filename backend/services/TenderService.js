@@ -276,9 +276,12 @@ class TenderService {
       paramCount++;
     }
 
-    query += ' ORDER BY created_at DESC';
+    // Use indexed sorting for better performance
+    const sortField = filters.sort || 'created_at';
+    const sortOrder = filters.order || 'DESC';
+    query += ` ORDER BY ${sortField} ${sortOrder}`;
 
-    // Pagination avec OFFSET
+    // Pagination avec OFFSET - optimisé
     if (filters.limit && filters.page) {
       const offset = (filters.page - 1) * filters.limit;
       query += ` LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
@@ -289,6 +292,9 @@ class TenderService {
       params.push(filters.limit);
       paramCount++;
     }
+
+    // Add query hint for PostgreSQL
+    query = `/*+ IndexScan(tenders tenders_created_at_idx) */ ${query}`;
 
     try {
       const result = await pool.query(query, params);

@@ -1,4 +1,3 @@
-
 /**
  * Pagination Validator Middleware
  * Validates and sanitizes pagination parameters
@@ -18,43 +17,58 @@ const DEFAULTS = {
  * @param {Function} next - Express next function
  */
 const validatePagination = (req, res, next) => {
-  try {
-    // Extract and parse pagination parameters
-    let { page, limit } = req.query;
+  const { page = 1, limit = 10, sort, order } = req.query;
 
-    // Validate and sanitize page
-    page = parseInt(page, 10);
-    if (isNaN(page) || page < 1) {
-      page = DEFAULTS.PAGE;
-    }
-
-    // Validate and sanitize limit
-    limit = parseInt(limit, 10);
-    if (isNaN(limit) || limit < DEFAULTS.MIN_LIMIT) {
-      limit = DEFAULTS.LIMIT;
-    }
-    if (limit > DEFAULTS.MAX_LIMIT) {
-      limit = DEFAULTS.MAX_LIMIT;
-    }
-
-    // Calculate offset
-    const offset = (page - 1) * limit;
-
-    // Attach sanitized values to request
-    req.pagination = {
-      page,
-      limit,
-      offset,
-    };
-
-    next();
-  } catch (error) {
-    res.status(400).json({
+  // Validate page
+  const pageNum = parseInt(String(page).trim(), 10);
+  if (isNaN(pageNum) || pageNum < 1 || pageNum > 10000) {
+    return res.status(400).json({
       success: false,
-      message: 'Invalid pagination parameters',
-      error: error.message,
+      error: 'Numéro de page invalide (1-10000)',
+      code: 'INVALID_PAGE',
     });
   }
+
+  // Validate limit
+  const limitNum = parseInt(String(limit).trim(), 10);
+  if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+    return res.status(400).json({
+      success: false,
+      error: 'Limite invalide (1-100)',
+      code: 'INVALID_LIMIT',
+    });
+  }
+
+  // Validate sort field (whitelist)
+  const allowedSortFields = ['created_at', 'updated_at', 'title', 'status', 'deadline', 'budget_min'];
+  if (sort && !allowedSortFields.includes(sort)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Champ de tri invalide',
+      code: 'INVALID_SORT_FIELD',
+      allowedFields: allowedSortFields,
+    });
+  }
+
+  // Validate order
+  const validOrders = ['asc', 'desc', 'ASC', 'DESC'];
+  if (order && !validOrders.includes(order)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Ordre de tri invalide (asc/desc)',
+      code: 'INVALID_SORT_ORDER',
+    });
+  }
+
+  req.pagination = {
+    page: pageNum,
+    limit: limitNum,
+    offset: (pageNum - 1) * limitNum,
+    sort: sort || 'created_at',
+    order: (order || 'desc').toUpperCase(),
+  };
+
+  next();
 };
 
 /**

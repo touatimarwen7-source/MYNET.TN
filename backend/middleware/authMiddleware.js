@@ -1,4 +1,3 @@
-
 const AuthorizationGuard = require('../security/AuthorizationGuard');
 
 // Main authentication middleware

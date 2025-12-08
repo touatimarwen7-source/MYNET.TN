@@ -157,21 +157,32 @@ export default function SupplierDashboard() {
     } catch (err) {
       console.error('❌ Dashboard data fetch error:', err);
 
-      // Retry logic for network errors
-      if (retryCount < 2 && (err.code === 'ECONNABORTED' || err.message.includes('Network Error'))) {
+      // Retry logic for network errors - improved
+      const isRetryable = err.code === 'ECONNABORTED' || 
+                          err.code === 'ERR_NETWORK' ||
+                          err.message.includes('Network Error') ||
+                          !err.response;
+                          
+      if (retryCount < 2 && isRetryable) {
         console.log(`⚠️ Retrying... (${retryCount + 1}/2)`);
         setTimeout(() => fetchDashboardData(retryCount + 1), 1000 * (retryCount + 1));
         return;
       }
 
       // Set user-friendly error messages
-      let errorMsg = 'خطأ في تحميل البيانات';
+      let errorMsg = 'Erreur de chargement des données';
       if (err.response?.status === 401) {
-        errorMsg = 'انتهت صلاحية الجلسة. الرجاء تسجيل الدخول مرة أخرى.';
+        errorMsg = 'Session expirée. Veuillez vous reconnecter.';
+        // Optionally redirect to login
+        setTimeout(() => navigate('/login'), 2000);
+      } else if (err.response?.status === 403) {
+        errorMsg = 'Accès refusé. Permissions insuffisantes.';
       } else if (err.response?.status === 503) {
-        errorMsg = 'الخدمة غير متاحة حالياً. الرجاء المحاولة لاحقاً.';
+        errorMsg = 'Service temporairement indisponible.';
       } else if (err.code === 'ECONNABORTED') {
-        errorMsg = 'انتهت مهلة الطلب. تحقق من اتصال الإنترنت.';
+        errorMsg = 'Délai d\'attente dépassé. Vérifiez votre connexion.';
+      } else if (err.code === 'ERR_NETWORK') {
+        errorMsg = 'Erreur réseau. Vérifiez votre connexion internet.';
       } else if (err.response?.data?.error) {
         errorMsg = err.response.data.error;
       }

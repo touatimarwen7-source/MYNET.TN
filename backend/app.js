@@ -133,63 +133,48 @@ app.set('trust proxy', 1);
 // ISSUE FIX #6: CORS & CSRF Protection (upgraded with enhanced security)
 const rateLimit = require('express-rate-limit');
 
-// CORS configuration - Allow all origins in development
+// CORS configuration with strict validation
 const allowedOrigins = [
   'http://localhost:5000',
   'http://localhost:3000',
-  'http://127.0.0.1:5000',
-  'http://127.0.0.1:3000',
-  'http://0.0.0.0:5000',
-  'http://0.0.0.0:3000',
-  /https:\/\/.*\.replit\.dev$/,
-  /https:\/\/.*\.replit\.dev:\d+$/,
-  /http:\/\/.*\.repl\.co$/,
-  /http:\/\/.*\.repl\.co:\d+$/,
-  /https:\/\/.*\.repl\.co$/,
-  /https:\/\/.*\.repl\.co:\d+$/,
-  /http:\/\/localhost:\d+$/,
-  /http:\/\/0\.0\.0\.0:\d+$/,
-];
+  'https://mynet.tn',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 
-// Add Replit domains dynamically
-if (process.env.REPL_SLUG) {
-  allowedOrigins.push(/\.replit\.dev$/);
-  allowedOrigins.push(/\.repl\.co$/);
-}
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
 
-// Allow all Replit workspace domains
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
+      // Check if origin is in allowed list
+      if (allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+        callback(null, true);
+      } else {
+        logger.warn('CORS rejected origin:', { origin });
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+    exposedHeaders: ['X-Total-Count'],
+    maxAge: 86400, // 24 hours
+  })
+);
 
-    // Allow all origins in development
-    if (process.env.NODE_ENV === 'development') return callback(null, true);
-
-    // Check if origin matches Replit patterns
-    const isReplitDomain = /\.replit\.dev$/.test(origin) || 
-                          /\.repl\.co$/.test(origin) ||
-                          origin.includes('localhost') ||
-                          origin.includes('0.0.0.0');
-
-    if (isReplitDomain || allowedOrigins.some(allowed => {
-      if (allowed instanceof RegExp) return allowed.test(origin);
-      return allowed === origin;
-    })) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],
-};
-
-app.use(cors(corsOptions));
+// CSRF Protection
+const csrfProtection = require('./utils/csrfProtection');
+app.use(csrfProtection);
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// SQL Injection Prevention (before input sanitization)
+const sqlInjectionPrevention = require('./middleware/sqlInjectionPrevention');
+app.use(sqlInjectionPrevention);
 
 // Input sanitization middleware (XSS prevention)
 app.use(inputSanitizationMiddleware);

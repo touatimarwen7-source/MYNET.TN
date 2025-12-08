@@ -13,7 +13,26 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true,
+  validateStatus: (status) => status < 500, // Accept all non-5xx as valid
 });
+
+// Retry configuration for failed requests
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+
+const shouldRetry = (error) => {
+  if (!error.config || error.config.__retryCount >= MAX_RETRIES) {
+    return false;
+  }
+  
+  // Retry on network errors and 5xx server errors
+  return (
+    !error.response ||
+    error.code === 'ECONNABORTED' ||
+    error.code === 'ERR_NETWORK' ||
+    (error.response && error.response.status >= 500)
+  );
+};
 
 // Request Interceptor - Ajouter le token
 axiosInstance.interceptors.request.use(
@@ -58,11 +77,22 @@ axiosInstance.interceptors.response.use(
       data: error.response?.data
     });
 
+    // Retry logic for transient failures
+    if (shouldRetry(error)) {
+      originalRequest.__retryCount = (originalRequest.__retryCount || 0) + 1;
+      
+      const delay = RETRY_DELAY * originalRequest.__retryCount;
+      console.log(`⚠️ Retrying request (${originalRequest.__retryCount}/${MAX_RETRIES}) after ${delay}ms`);
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return axiosInstance(originalRequest);
+    }
+
     // Gestion des erreurs réseau
     if (!error.response) {
       if (error.code === 'ECONNABORTED') {
         error.userMessage = 'La requête a expiré. Vérifiez votre connexion.';
-      } else if (error.message === 'Network Error') {
+      } else if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
         error.userMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
       } else {
         error.userMessage = 'Erreur de communication avec le serveur.';
