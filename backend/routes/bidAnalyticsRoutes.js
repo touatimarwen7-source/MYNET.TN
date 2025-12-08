@@ -10,7 +10,7 @@ const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 router.get(
   '/tender/:tenderId',
   validateIdMiddleware('tenderId'),
-  authMiddleware,
+  verifyToken,
   cacheMiddleware(600),
   async (req, res) => {
     try {
@@ -29,7 +29,7 @@ router.get(
 router.get(
   '/distribution/:tenderId',
   validateIdMiddleware('tenderId'),
-  authMiddleware,
+  verifyToken,
   async (req, res) => {
     try {
       const { tenderId } = req.params;
@@ -64,7 +64,7 @@ router.get(
 router.get(
   '/compare/:tenderId',
   validateIdMiddleware('tenderId'),
-  authMiddleware,
+  verifyToken,
   async (req, res) => {
     try {
       const { tenderId } = req.params;

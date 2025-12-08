@@ -1,11 +1,11 @@
 // Advanced Bid Comparison Tool - TURN 3 ENHANCEMENT
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
+const { verifyToken } = require('../middleware/authMiddleware');
 const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
 
 // Compare multiple bids with detailed analysis
-router.post('/compare', authMiddleware, async (req, res) => {
+router.post('/compare', verifyToken, async (req, res) => {
   try {
     const { bidIds } = req.body; // Array of offer IDs
 
