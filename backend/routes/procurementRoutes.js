@@ -20,14 +20,8 @@ const {
 const { validateSchema, createTenderSchema } = require('../utils/validationSchemas');
 const { errorResponse } = require('../middleware/errorResponseFormatter'); // Added errorResponse formatter
 
-// Mock authMiddleware and asyncHandler for demonstration purposes.
-// In a real application, these would be imported from their respective modules.
-const authMiddleware = (req, res, next) => {
-  // Mock authentication: Assume a user object is attached to the request
-  // In a real scenario, this would involve JWT verification
-  req.user = { id: 'mock_user_id', userId: 'mock_user_id' }; // Example user
-  next();
-};
+// Import real authentication middleware
+const authMiddleware = AuthorizationGuard.authenticateToken.bind(AuthorizationGuard);
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
