@@ -1,5 +1,6 @@
 const express = require('express');
 const ClarificationController = require('../controllers/ClarificationController');
+// Note: ClarificationController is in the correct location
 const { authMiddleware, roleMiddleware } = require('../middleware/authMiddleware');
 
 const router = express.Router();

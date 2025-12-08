@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { validateIdMiddleware } = require('../middleware/validateIdMiddleware');
-const superAdminController = require('../controllers/superAdminController');
+// Super Admin functionality moved to frontend
+// const superAdminController = require('../controllers/superAdminController');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 
