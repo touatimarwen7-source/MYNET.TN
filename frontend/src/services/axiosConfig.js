@@ -40,9 +40,10 @@ const getCurrentHost = () => {
     : `${protocol}//${hostname}:3000`;
 };
 
+// ✅ استخدام 0.0.0.0 بدلاً من localhost لتوافق أفضل على Replit
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  'http://localhost:3000/api';
+  'http://0.0.0.0:3000/api';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL.replace(/\/api\/api/, '/api'), // Éviter double /api/
@@ -128,7 +129,12 @@ const processQueue = (error, token = null) => {
  * - Check if token needs refresh
  */
 axiosInstance.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    // ✅ فحص صحة الخادم الخلفي قبل كل طلب
+    if (!await checkBackendHealth()) {
+      return Promise.reject(new Error('Backend is not healthy'));
+    }
+
     // Check if endpoint is public (uses centralized config)
     const isPublic = isPublicEndpoint(config.url);
 
@@ -337,5 +343,30 @@ async function logout() {
   }
 }
 
-export { axiosInstance, refreshAccessToken, logout, TokenManager };
+// ✅ فحص صحة الخادم الخلفي
+let backendHealthy = false;
+let lastHealthCheck = 0;
+const HEALTH_CHECK_INTERVAL = 30000; // 30 seconds
+
+async function checkBackendHealth() {
+  const now = Date.now();
+  if (backendHealthy && (now - lastHealthCheck) < HEALTH_CHECK_INTERVAL) {
+    return true;
+  }
+
+  try {
+    const response = await axios.get(`${API_BASE_URL}/health`, { timeout: 5000 });
+    backendHealthy = response.status === 200;
+    lastHealthCheck = now;
+    console.log('✅ Backend health check: OK');
+    return true;
+  } catch (error) {
+    backendHealthy = false;
+    console.error('❌ Backend health check failed:', error.message);
+    return false;
+  }
+}
+
+// Export health check function
+export { axiosInstance, refreshAccessToken, logout, TokenManager, checkBackendHealth };
 export default axiosInstance;

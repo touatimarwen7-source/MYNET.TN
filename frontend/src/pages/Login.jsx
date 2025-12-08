@@ -29,14 +29,14 @@ export default function Login() {
 
   const form = useFormValidation({ email: '', password: '' }, authSchemas.login, async (values) => {
     setApiError('');
-    
+
     try {
       console.log('🔐 Attempting login for:', values.email);
       const response = await authAPI.login(values);
-      
+
       // axiosConfig wraps response in { data: actualResponse }
       const loginData = response.data || response;
-      
+
       console.log('📥 Login response received:', {
         hasData: !!loginData,
         hasToken: !!loginData?.accessToken,
@@ -66,18 +66,18 @@ export default function Login() {
         console.error('❌ No user data received');
         throw new Error('Données utilisateur manquantes');
       }
-      
+
       // Normalize userId (backend may send 'id' instead of 'userId')
       userData.userId = userData.userId || userData.id;
-      
+
       console.log('✅ Login successful, user data:', userData);
-      
+
       // Use AppContext login which handles everything
       const success = login(userData);
-      
+
       if (success) {
         addToast('Connexion réussie', 'success', 2000);
-        
+
         // Navigate based on user role
         setTimeout(() => {
           const role = userData.role?.toLowerCase();
@@ -90,17 +90,23 @@ export default function Login() {
       } else {
         throw new Error('Échec de la connexion');
       }
-      
-    } catch (err) {
-      console.error('❌ Login error:', err);
-      const errorMsg = String(
-        err.response?.data?.error || 
-        err.response?.data?.message ||
-        err.message ||
-        'Erreur de connexion. Vérifiez vos identifiants.'
-      );
-      setApiError(errorMsg);
-      addToast(errorMsg, 'error', 3000);
+
+    } catch (error) {
+      console.error('❌ Login error:', error);
+
+      // ✅ معالجة محسّنة لأخطاء الشبكة
+      if (error.code === 'ERR_NETWORK' || error.code === 'ERR_CONNECTION_REFUSED' || error.message === 'Network Error') {
+        const backendMessage = '⚠️ فشل الاتصال بالخادم. يرجى التأكد من تشغيل Backend على Port 3000.';
+        setApiError(backendMessage);
+        addToast(backendMessage, 'error');
+        console.error('🔴 Backend Connection Error: Make sure backend is running on port 3000');
+        return;
+      }
+
+      const errorData = error.response?.data;
+      const errorMessage = errorData?.message || errorData?.error || 'Erreur de connexion. Vérifiez vos identifiants.';
+      setApiError(errorMessage);
+      addToast(errorMessage, 'error', 3000);
     }
   });
 
@@ -111,13 +117,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Prevent multiple submissions
     if (form.isSubmitting) {
       console.warn('⚠️ Form already submitting, ignoring duplicate request');
       return;
     }
-    
+
     await form.handleSubmit(e);
   };
 
