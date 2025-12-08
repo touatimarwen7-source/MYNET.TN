@@ -250,15 +250,29 @@ router.get(
 );
 
 // GET /procurement/tenders - Get all tenders (with pagination)
-router.get('/tenders', async (req, res) => {
+router.get('/tenders', validatePagination, async (req, res) => {
   try {
     // Validate and sanitize pagination parameters
-    let page = parseInt(req.query.page) || 1;
-    let limit = parseInt(req.query.limit) || 20;
+    const rawPage = req.query.page;
+    const rawLimit = req.query.limit;
     
-    // Ensure positive values
-    page = Math.max(1, page);
-    limit = Math.max(1, Math.min(100, limit)); // Max 100 items per page
+    let page = 1;
+    let limit = 20;
+    
+    // Safe parsing with fallbacks
+    if (rawPage !== undefined && rawPage !== null && rawPage !== '') {
+      const parsedPage = parseInt(rawPage, 10);
+      if (!isNaN(parsedPage) && parsedPage > 0) {
+        page = parsedPage;
+      }
+    }
+    
+    if (rawLimit !== undefined && rawLimit !== null && rawLimit !== '') {
+      const parsedLimit = parseInt(rawLimit, 10);
+      if (!isNaN(parsedLimit) && parsedLimit > 0) {
+        limit = Math.min(parsedLimit, 100); // Max 100 items per page
+      }
+    }
     
     const pool = getPool();
     const offset = (page - 1) * limit;

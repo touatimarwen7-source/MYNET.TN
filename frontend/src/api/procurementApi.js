@@ -35,12 +35,18 @@ export const procurementAPI = {
   getTenders: async (filters = {}) => {
     try {
       // Validate pagination parameters before sending
+      const page = filters.page !== undefined ? parseInt(filters.page, 10) : 1;
+      const limit = filters.limit !== undefined ? parseInt(filters.limit, 10) : 20;
+      
+      // Ensure valid numbers
       const params = {
-        page: Math.max(1, parseInt(filters.page) || 1),
-        limit: Math.max(1, Math.min(100, parseInt(filters.limit) || 20)),
+        page: isNaN(page) || page < 1 ? 1 : page,
+        limit: isNaN(limit) || limit < 1 ? 20 : Math.min(limit, 100),
         ...(filters.status && { status: filters.status }),
         ...(filters.category && { category: filters.category }),
       };
+      
+      console.log('getTenders called with params:', params);
       
       return await axiosInstance.get('/procurement/tenders', { params });
     } catch (error) {

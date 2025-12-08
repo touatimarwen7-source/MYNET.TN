@@ -50,16 +50,26 @@ export default function TenderList() {
       setLoading(true);
       setError('');
 
-      // Validate pagination parameters
-      const page = Math.max(1, parseInt(currentPage) || 1);
-      const limit = Math.max(1, Math.min(100, parseInt(ITEMS_PER_PAGE) || 10));
+      // Validate pagination parameters with safe parsing
+      const page = Math.max(1, parseInt(currentPage, 10) || 1);
+      const limit = Math.max(1, Math.min(100, parseInt(ITEMS_PER_PAGE, 10) || 10));
+
+      console.log('Fetching tenders with params:', { page, limit });
 
       const response = await procurementAPI.getTenders({ page, limit });
 
+      console.log('Tenders API response:', response);
+
       if (response.data && response.data.success) {
-        setTenders(response.data.tenders || []);
+        const tendersData = response.data.tenders || [];
+        console.log('Tenders loaded:', tendersData.length);
+        setTenders(tendersData);
+      } else if (response.data && Array.isArray(response.data)) {
+        // Handle direct array response
+        setTenders(response.data);
       } else {
-        setError('Impossible de charger les appels d\'offres');
+        console.warn('Unexpected response format:', response);
+        setError('Format de réponse inattendu du serveur');
       }
     } catch (err) {
       console.error('Error fetching tenders:', err);
@@ -68,16 +78,21 @@ export default function TenderList() {
       let errorMessage = 'Une erreur est survenue lors du chargement des appels d\'offres';
 
       if (err.response) {
-        if (err.response.status === 400) {
+        if (err.response.status === 503) {
+          errorMessage = 'Base de données non initialisée. Veuillez contacter l\'administrateur.';
+        } else if (err.response.status === 400) {
           errorMessage = 'Paramètres de pagination invalides';
         } else if (err.response.data && err.response.data.error) {
           errorMessage = err.response.data.error;
         }
+      } else if (err.code === 'ECONNABORTED') {
+        errorMessage = 'La requête a expiré. Veuillez réessayer.';
       } else if (err.message) {
         errorMessage = err.message;
       }
 
       setError(errorMessage);
+      setTenders([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
