@@ -27,7 +27,8 @@ function errorHandler(err, req, res, next) {
     stack: err.stack,
     path: req.path,
     method: req.method,
-    code: err.code
+    code: err.code,
+    statusCode: err.statusCode,
   });
 
   // Handle database errors specifically
@@ -36,17 +37,28 @@ function errorHandler(err, req, res, next) {
     const errorResponse = ErrorResponseFormatter.error(dbError, dbError.statusCode, {
       path: req.path,
       method: req.method,
+      requestId: req.id,
     });
     return res.status(dbError.statusCode).json(errorResponse);
   }
 
-  // Determine status code
-  const statusCode = err.statusCode || err.status || 500;
+  // Determine status code - default to 500 for unknown errors
+  let statusCode = err.statusCode || err.status || 500;
 
-  // Send formatted error response
+  // Map common error types to correct status codes
+  if (err.name === 'ValidationError') statusCode = 400;
+  if (err.name === 'UnauthorizedError') statusCode = 401;
+  if (err.name === 'ForbiddenError') statusCode = 403;
+  if (err.name === 'NotFoundError') statusCode = 404;
+  if (err.name === 'ConflictError') statusCode = 409;
+  if (err.name === 'UnprocessableEntityError') statusCode = 422;
+  if (err.name === 'TooManyRequestsError') statusCode = 429;
+
+  // Send formatted error response with request context
   const errorResponse = ErrorResponseFormatter.error(err, statusCode, {
     path: req.path,
     method: req.method,
+    requestId: req.id,
   });
 
   res.status(statusCode).json(errorResponse);

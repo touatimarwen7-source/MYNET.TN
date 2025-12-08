@@ -186,13 +186,82 @@ class ErrorResponseFormatter {
   /**
    * Format rate limit error
    */
-  static rateLimitError(retryAfter = 60) {
+  static rateLimitError(retryAfter = 60, limit = null, window = null) {
     return {
       success: false,
       statusCode: 429,
-      message: 'Too many requests. Please try again later.',
-      code: 'RATE_LIMIT_EXCEEDED',
-      retryAfter,
+      error: {
+        code: 'RATE_LIMIT_EXCEEDED',
+        message: 'تجاوزت الحد الأقصى للطلبات. يرجى المحاولة لاحقاً',
+        details: {
+          retryAfter,
+          ...(limit && { limit }),
+          ...(window && { window }),
+        },
+      },
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Format conflict error
+   */
+  static conflictError(message, details = {}) {
+    return {
+      success: false,
+      statusCode: 409,
+      error: {
+        code: 'CONFLICT',
+        message: message || 'تعارض في البيانات',
+        ...(Object.keys(details).length > 0 && { details }),
+      },
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Format unprocessable entity error
+   */
+  static unprocessableEntityError(message, details = {}) {
+    return {
+      success: false,
+      statusCode: 422,
+      error: {
+        code: 'UNPROCESSABLE_ENTITY',
+        message: message || 'لا يمكن معالجة الطلب',
+        ...(Object.keys(details).length > 0 && { details }),
+      },
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Format service unavailable error
+   */
+  static serviceUnavailableError(message = null, retryAfter = null) {
+    return {
+      success: false,
+      statusCode: 503,
+      error: {
+        code: 'SERVICE_UNAVAILABLE',
+        message: message || 'الخدمة غير متاحة حالياً',
+        ...(retryAfter && { details: { retryAfter } }),
+      },
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Format bad gateway error
+   */
+  static badGatewayError(message = null) {
+    return {
+      success: false,
+      statusCode: 502,
+      error: {
+        code: 'BAD_GATEWAY',
+        message: message || 'بوابة غير صحيحة',
+      },
       timestamp: new Date().toISOString(),
     };
   }
