@@ -130,26 +130,19 @@ const LoadingFallback = () => (
 
 // Inner App Component - uses AppContext
 function AppContent() {
-  const { user, authLoading, logout, addToast, setUser } = useApp(); // Destructure setUser
+  const { user, authLoading, logout, addToast } = useApp();
 
   useEffect(() => {
     const handleAuthChange = (event) => {
       const userData = event.detail;
       console.log('🔄 Auth changed event received:', userData);
-      setUser(userData);
+      // User is already managed by AppContext, no need to set it here
+      // The Login component already updates TokenManager, which triggers a re-render
     };
-
-    // Check for user on mount
-    const storedUser = TokenManager.getUser();
-    if (storedUser && !user) {
-      console.log('📥 Loading user from storage:', storedUser);
-      // User is already loaded from TokenManager in AppContext
-      // No need to set it again here
-    }
 
     window.addEventListener('authChanged', handleAuthChange);
     return () => window.removeEventListener('authChanged', handleAuthChange);
-  }, []); // setUser is stable, no need to include it
+  }, [])
 
   if (authLoading) {
     return <Box sx={{ padding: '20px', textAlign: 'center' }}>Chargement en cours...</Box>;
