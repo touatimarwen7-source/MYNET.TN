@@ -3,7 +3,7 @@ require('dotenv').config();
 const http = require('http');
 
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
+const HOST = '0.0.0.0'; // Bind to all interfaces for external access
 
 async function startServer() {
   try {

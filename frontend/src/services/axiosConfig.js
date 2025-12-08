@@ -25,10 +25,9 @@ import logger from '../utils/logger'; // Assuming logger utility is available
 
 // Get current host from window location
 const getCurrentHost = () => {
-  if (typeof window === 'undefined') return 'http://0.0.0.0:3000';
+  if (typeof window === 'undefined') return 'http://localhost:3000';
 
   const { protocol, hostname } = window.location;
-  // Force HTTP for local development (not HTTPS)
   const isReplit = hostname.includes('replit.dev');
 
   if (isReplit) {
@@ -37,13 +36,13 @@ const getCurrentHost = () => {
   }
 
   return import.meta.env.DEV
-    ? 'http://0.0.0.0:3000'
+    ? 'http://localhost:3000'
     : `${protocol}//${hostname}:3000`;
 };
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  'http://localhost:5000/api';
+  'http://localhost:3000/api';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL.replace(/\/api\/api/, '/api'), // Éviter double /api/
