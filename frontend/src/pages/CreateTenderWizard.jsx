@@ -73,7 +73,17 @@ const CreateTenderWizard = () => {
   }, [formData]);
 
   const handleChange = useCallback((e) => {
+    if (!e || !e.target) {
+      console.error('Invalid event object in handleChange');
+      return;
+    }
+    
     const { name, value, type, checked } = e.target;
+    
+    if (!name) {
+      console.error('Event target has no name attribute');
+      return;
+    }
     
     // Gérer les champs imbriqués (ex: evaluation_criteria.price)
     if (name.includes('.')) {
@@ -81,7 +91,7 @@ const CreateTenderWizard = () => {
       setFormData((prev) => ({
         ...prev,
         [parent]: {
-          ...prev[parent],
+          ...(prev[parent] || {}),
           [child]: type === 'checkbox' ? checked : value,
         },
       }));
@@ -153,8 +163,16 @@ const CreateTenderWizard = () => {
     setError('');
     try {
       // Validate required fields
-      if (!formData.title || !formData.description) {
-        throw new Error('Veuillez remplir tous les champs obligatoires');
+      if (!formData.title || formData.title.trim().length < 5) {
+        throw new Error('Le titre doit contenir au moins 5 caractères');
+      }
+      
+      if (!formData.description || formData.description.trim().length < 20) {
+        throw new Error('La description doit contenir au moins 20 caractères');
+      }
+      
+      if (!formData.category) {
+        throw new Error('Veuillez sélectionner une catégorie');
       }
 
       // Map and clean data for backend
@@ -168,8 +186,8 @@ const CreateTenderWizard = () => {
         queries_end_date: formData.queries_end_date || null,
         
         // Ensure numeric fields
-        budget_min: formData.budget_min ? Number(formData.budget_min) : null,
-        budget_max: formData.budget_max ? Number(formData.budget_max) : null,
+        budget_min: formData.budget_min ? Number(formData.budget_min) : 0,
+        budget_max: formData.budget_max ? Number(formData.budget_max) : 0,
         quantity_required: formData.quantity_required ? Number(formData.quantity_required) : null,
         offer_validity_days: formData.offer_validity_days ? Number(formData.offer_validity_days) : 90,
         
@@ -181,7 +199,12 @@ const CreateTenderWizard = () => {
         attachments: Array.isArray(formData.attachments) ? formData.attachments : [],
         
         // Ensure evaluation_criteria is object
-        evaluation_criteria: formData.evaluation_criteria || {},
+        evaluation_criteria: formData.evaluation_criteria || {
+          price: 0,
+          quality: 0,
+          delivery: 0,
+          experience: 0
+        },
         
         // Set status as draft initially
         status: 'draft'
@@ -209,11 +232,17 @@ const CreateTenderWizard = () => {
       });
     } catch (err) {
       console.error('❌ Create tender error:', err);
-      const errorMessage = err.response?.data?.error || 
-                          err.response?.data?.message || 
-                          err.message || 
-                          'Échec de la création de l\'appel d\'offres';
-      setError(errorMessage);
+      
+      // Handle database not initialized error
+      if (err.response?.status === 503) {
+        setError('La base de données n\'est pas initialisée. Veuillez contacter l\'administrateur.');
+      } else {
+        const errorMessage = err.response?.data?.error || 
+                            err.response?.data?.message || 
+                            err.message || 
+                            'Échec de la création de l\'appel d\'offres';
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
