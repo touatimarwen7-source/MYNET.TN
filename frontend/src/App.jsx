@@ -367,6 +367,10 @@ function AppContent() {
                           path="/supplier-search"
                           element={user?.role === 'supplier' ? <SupplierSearch /> : <Navigate to="/dashboard" />}
                         />
+                        <Route
+                          path="/supplier-team-management"
+                          element={user?.role === 'supplier' ? <SupplierTeamManagement /> : <Navigate to="/dashboard" />}
+                        />
 
                         {/* Supplier - Bids & Offers */}
                         <Route

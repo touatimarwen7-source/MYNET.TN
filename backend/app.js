@@ -312,7 +312,10 @@ app.use('/api/messages', messagesRoutes);
 
 // System
 app.use('/api/audit-logs', auditLogsRoutes);
+const teamManagementRoutes = require('./routes/teamManagementRoutes');
+const supplierTeamManagementRoutes = require('./routes/supplierTeamManagementRoutes');
 app.use('/api/team-management', teamManagementRoutes);
+app.use('/api/supplier-team-management', supplierTeamManagementRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/tender-history', tenderHistoryRoutes);
 app.use('/api/search', searchRoutes);
