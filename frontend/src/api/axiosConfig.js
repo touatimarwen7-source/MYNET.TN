@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 // Base URL configuration
@@ -9,16 +10,22 @@ const getBaseURL = () => {
 
   // Use current hostname with port 3000
   if (typeof window !== 'undefined') {
+    const protocol = window.location.protocol;
     const hostname = window.location.hostname;
-    return `http://${hostname}:3000`;
+    console.log('🔧 API Config - Protocol:', protocol, 'Hostname:', hostname);
+    return `${protocol}//${hostname}:3000`;
   }
 
   return 'http://localhost:3000';
 };
 
+const BASE_URL = getBaseURL();
+console.log('🔧 API Base URL:', BASE_URL);
+
 const axiosInstance = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: BASE_URL,
   timeout: 30000,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -31,6 +38,7 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log('📤 API Request:', config.method?.toUpperCase(), config.url);
     return config;
   },
   (error) => Promise.reject(error)
@@ -38,8 +46,12 @@ axiosInstance.interceptors.request.use(
 
 // Response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('✅ API Response:', response.status, response.config.url);
+    return response;
+  },
   (error) => {
+    console.error('❌ API Error:', error.message, error.config?.url);
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

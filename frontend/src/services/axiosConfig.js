@@ -49,8 +49,9 @@ const getApiBaseUrl = () => {
   
   // في بيئة Replit، استخدم الـ hostname الحالي مع port 3000
   if (typeof window !== 'undefined') {
+    const protocol = window.location.protocol;
     const hostname = window.location.hostname;
-    return `http://${hostname}:3000/api`;
+    return `${protocol}//${hostname}:3000/api`;
   }
   
   // Fallback للـ IP الشبكي
@@ -59,9 +60,12 @@ const getApiBaseUrl = () => {
 
 const API_BASE_URL = getApiBaseUrl();
 
+console.log('🔧 Axios Config - API Base URL:', API_BASE_URL);
+
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL.replace(/\/api\/api/, '/api'), // Éviter double /api/
+  baseURL: API_BASE_URL,
   timeout: 30000,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

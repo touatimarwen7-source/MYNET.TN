@@ -2,25 +2,7 @@
  * Authentication API
  * Handles login, register, password reset, email verification
  */
-import axios from 'axios';
-import logger from '../utils/logger';
 import axiosInstance from './axiosConfig';
-
-// استخدام نفس الدالة من axiosConfig
-const getApiBaseUrl = () => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
-  }
-
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    return `http://${hostname}:3000/api`;
-  }
-
-  return 'http://localhost:3000/api';
-};
-
-const API_BASE_URL = getApiBaseUrl();
 
 export const authAPI = {
   login: (credentials) => axiosInstance.post('/auth/login', credentials),
