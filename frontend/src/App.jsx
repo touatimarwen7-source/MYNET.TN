@@ -262,9 +262,6 @@ function AppContent() {
                           path="/dashboard"
                           element={user ? <UnifiedDashboard /> : <Navigate to="/login" />}
                         />
-                        {/* Legacy redirects */}
-                        <Route path="/buyer-dashboard" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="/supplier-dashboard" element={<Navigate to="/dashboard" replace />} />
 
                         {/* ========== Buyer Routes ========== */}
                         <Route
@@ -469,60 +466,27 @@ function AppContent() {
                           element={user?.role === 'super_admin' ? <AdminAssistantManagement /> : <Navigate to="/dashboard" />}
                         />
 
-                        {/* ========== Super Admin Dashboard ========== */}
-                        <Route
-                          path="/super-admin"
-                          element={user?.role === 'super_admin' ? <SuperAdminDashboard /> : <Navigate to="/dashboard" />}
-                        />
+                        {/* ========== Super Admin Routes ========== */}
+                        {user?.role === 'super_admin' ? (
+                          <>
+                            <Route path="/super-admin" element={<SuperAdminDashboard />} />
+                            <Route path="/super-admin/users" element={<UserManagement />} />
+                            <Route path="/super-admin/files" element={<FileManagement />} />
+                            <Route path="/super-admin/audit-logs" element={<AuditLogViewer />} />
+                            <Route path="/super-admin/health" element={<HealthMonitoring />} />
+                            <Route path="/super-admin/archive" element={<ArchiveManagement />} />
+                            <Route path="/super-admin/tiers" element={<SubscriptionTiers />} />
+                            <Route path="/super-admin/features" element={<FeatureControl />} />
+                            <Route path="/super-admin/page-editor" element={<PageEditor />} />
+                            <Route path="/super-admin/page-editor/:pageId" element={<PageEditor />} />
+                            <Route path="/email-notifications" element={<EmailNotifications />} />
+                          </>
+                        ) : (
+                          <Route path="/super-admin/*" element={<Navigate to="/dashboard" replace />} />
+                        )}
 
-                        {/* Super Admin - Management */}
-                        <Route
-                          path="/super-admin/users"
-                          element={user?.role === 'super_admin' ? <UserManagement /> : <Navigate to="/dashboard" />}
-                        />
-                        <Route
-                          path="/super-admin/files"
-                          element={user?.role === 'super_admin' ? <FileManagement /> : <Navigate to="/dashboard" />}
-                        />
-                        <Route
-                          path="/super-admin/audit-logs"
-                          element={user?.role === 'super_admin' ? <AuditLogViewer /> : <Navigate to="/dashboard" />}
-                        />
-                        <Route
-                          path="/super-admin/health"
-                          element={user?.role === 'super_admin' ? <HealthMonitoring /> : <Navigate to="/dashboard" />}
-                        />
-                        <Route
-                          path="/super-admin/archive"
-                          element={user?.role === 'super_admin' ? <ArchiveManagement /> : <Navigate to="/dashboard" />}
-                        />
-                        <Route
-                          path="/super-admin/tiers"
-                          element={user?.role === 'super_admin' ? <SubscriptionTiers /> : <Navigate to="/dashboard" />}
-                        />
-                        <Route
-                          path="/super-admin/features"
-                          element={user?.role === 'super_admin' ? <FeatureControl /> : <Navigate to="/dashboard" />}
-                        />
-
-                        {/* Super Admin - Page Editor */}
-                        <Route
-                          path="/super-admin/page-editor"
-                          element={user?.role === 'super_admin' ? <PageEditor /> : <Navigate to="/dashboard" />}
-                        />
-                        <Route
-                          path="/super-admin/page-editor/:pageId"
-                          element={user?.role === 'super_admin' ? <PageEditor /> : <Navigate to="/dashboard" />}
-                        />
-
-                        {/* ========== Admin - Redirect to Super Admin ========== */}
+                        {/* Admin redirects to Super Admin */}
                         <Route path="/admin/*" element={<Navigate to="/super-admin" replace />} />
-
-                        {/* Email Notifications */}
-                        <Route
-                          path="/email-notifications"
-                          element={user?.role === 'super_admin' ? <EmailNotifications /> : <Navigate to="/dashboard" />}
-                        />
 
                         {/* ========== Profile & Security ========== */}
                         <Route

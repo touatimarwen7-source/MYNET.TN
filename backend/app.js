@@ -268,19 +268,30 @@ app.get('/api-spec.json', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/procurement', procurementRoutes);
 app.use('/api/opening-reports', openingReportRoutes);
+// Admin & Super Admin
 app.use('/api/admin', adminRoutes);
 app.use('/api/super-admin', superAdminRoutes);
 app.use('/api/admin/features', featureFlagRoutes);
-app.use('/api/company-profile', companyProfileRoutes);
+
+// User & Profile
 app.use('/api/profile', profileRoutes);
+app.use('/api/company-profile', companyProfileRoutes);
+
+// Procurement & Supply
 app.use('/api/direct-supply', directSupplyRoutes);
+app.use('/api/purchase-orders', purchaseOrdersRoutes);
+
+// Communication
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/messages', messagesRoutes);
-app.use('/api/purchase-orders', purchaseOrdersRoutes);
+
+// System
 app.use('/api/audit-logs', auditLogsRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/tender-history', tenderHistoryRoutes);
 app.use('/api/search', searchRoutes);
+
+// Documents & Payments
 app.use('/api/pdf', pdfRoutes);
 app.use('/api/webhooks', stripeWebhookRoutes);
 
