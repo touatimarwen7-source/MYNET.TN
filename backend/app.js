@@ -99,11 +99,22 @@ app.use(
           "'self'",
           'http://localhost:3000',
           'http://localhost:5000',
+          'http://0.0.0.0:3000',
+          'http://0.0.0.0:5000',
           'https://*.replit.dev',
           'https://*.replit.dev:*',
+          'http://*.replit.dev',
+          'http://*.replit.dev:*',
+          'http://*.repl.co',
+          'http://*.repl.co:*',
+          'https://*.repl.co',
+          'https://*.repl.co:*',
           'ws://localhost:*',
+          'ws://0.0.0.0:*',
           'ws://*.replit.dev:*',
+          'ws://*.repl.co:*',
           'wss://*.replit.dev:*',
+          'wss://*.repl.co:*',
           'wss:',
         ],
         frameAncestors: ["'self'"],
@@ -137,18 +148,39 @@ const allowedOrigins = [
 // Add Replit domains dynamically
 if (process.env.REPL_SLUG) {
   allowedOrigins.push(/\.replit\.dev$/);
+  allowedOrigins.push(/\.repl\.co$/);
 }
 
-app.use(
-  cors({
-    origin: process.env.NODE_ENV === 'development'
-      ? true // Allow all origins in development
-      : allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  })
-);
+// Allow all Replit workspace domains
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow all origins in development
+    if (process.env.NODE_ENV === 'development') return callback(null, true);
+    
+    // Check if origin matches Replit patterns
+    const isReplitDomain = /\.replit\.dev$/.test(origin) || 
+                          /\.repl\.co$/.test(origin) ||
+                          origin.includes('localhost') ||
+                          origin.includes('0.0.0.0');
+    
+    if (isReplitDomain || allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) return allowed.test(origin);
+      return allowed === origin;
+    })) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));

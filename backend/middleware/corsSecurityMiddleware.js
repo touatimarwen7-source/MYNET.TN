@@ -6,10 +6,25 @@
 const cors = require('cors');
 
 /**
- * CORS configuration with security options
+ * CORS configuration with security options - supports all Replit domains
  */
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin
+    if (!origin) return callback(null, true);
+    
+    // Allow all origins in development
+    if (process.env.NODE_ENV === 'development') return callback(null, true);
+    
+    // Check if origin matches allowed patterns
+    const isAllowed = /\.replit\.dev$/.test(origin) || 
+                     /\.repl\.co$/.test(origin) ||
+                     origin.includes('localhost') ||
+                     origin.includes('0.0.0.0') ||
+                     origin === process.env.CORS_ORIGIN;
+    
+    callback(null, isAllowed);
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
