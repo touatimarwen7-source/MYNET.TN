@@ -198,17 +198,24 @@ let enhancedRateLimiting;
 try {
   enhancedRateLimiting = require('./middleware/enhancedRateLimiting');
   
-  // Apply general rate limiting
-  if (enhancedRateLimiting && enhancedRateLimiting.general) {
-    app.use('/api/', enhancedRateLimiting.general);
-  }
+  // Verify module is properly loaded
+  if (enhancedRateLimiting && typeof enhancedRateLimiting === 'object') {
+    // Apply general rate limiting
+    if (typeof enhancedRateLimiting.general === 'function') {
+      app.use('/api/', enhancedRateLimiting.general);
+      logger.info('✅ General rate limiting enabled');
+    }
 
-  // Advanced rate limit middleware for tracking
-  if (enhancedRateLimiting && typeof enhancedRateLimiting.advancedRateLimitMiddleware === 'function') {
-    app.use(enhancedRateLimiting.advancedRateLimitMiddleware);
+    // Advanced rate limit middleware for tracking
+    if (typeof enhancedRateLimiting.advancedRateLimitMiddleware === 'function') {
+      app.use(enhancedRateLimiting.advancedRateLimitMiddleware);
+      logger.info('✅ Advanced rate limiting tracking enabled');
+    }
+  } else {
+    logger.warn('⚠️ Enhanced rate limiting module not properly exported');
   }
 } catch (err) {
-  logger.warn('Enhanced rate limiting not available', { error: err.message });
+  logger.warn('⚠️ Enhanced rate limiting not available', { error: err.message });
 }
 
 // ⏱️ REQUEST TIMEOUT ENFORCEMENT (NEW)
@@ -367,41 +374,80 @@ app.use(globalErrorHandler);
 module.exports = app;
 module.exports.asyncHandler = asyncHandler;
 
-// TURN 3: NEW FEATUREROUTES - WITH COMPREHENSIVE SAFETY CHECKS
+// TURN 3: NEW FEATURE ROUTES - WITH COMPREHENSIVE SAFETY CHECKS
 const safeUseRoute = (path, route, name) => {
-  if (route && (typeof route === 'function' || typeof route.use === 'function')) {
-    try {
-      app.use(path, route);
-      logger.info(`✅ ${name} routes loaded`);
-    } catch (error) {
-      logger.error(`❌ Failed to load ${name} routes: ${error.message}`);
-    }
-  } else {
-    logger.warn(`⚠️ ${name} routes not available (invalid export)`);
+  // Validate route object
+  if (!route) {
+    logger.warn(`⚠️ ${name} routes: null/undefined`);
+    return false;
+  }
+
+  // Check if it's a valid Express router or middleware function
+  const isValidRouter = typeof route === 'function' || 
+                       (typeof route === 'object' && typeof route.use === 'function');
+
+  if (!isValidRouter) {
+    logger.warn(`⚠️ ${name} routes: invalid export (not a router/middleware)`);
+    return false;
+  }
+
+  try {
+    app.use(path, route);
+    logger.info(`✅ ${name} routes loaded successfully on ${path}`);
+    return true;
+  } catch (error) {
+    logger.error(`❌ Failed to load ${name} routes on ${path}`, { 
+      error: error.message,
+      stack: error.stack?.split('\n').slice(0, 3).join('\n')
+    });
+    return false;
   }
 };
 
-// Only load routes if they are properly exported
-if (analyticsRoutes && typeof analyticsRoutes === 'object') safeUseRoute('/api/analytics', analyticsRoutes, 'Analytics');
-if (advancedSearchRoutes && typeof advancedSearchRoutes === 'object') safeUseRoute('/api/search/advanced', advancedSearchRoutes, 'Advanced Search');
-if (exportRoutes && typeof exportRoutes === 'object') safeUseRoute('/api/export', exportRoutes, 'Export');
-if (mfaRoutes && typeof mfaRoutes === 'object') safeUseRoute('/api/mfa', mfaRoutes, 'MFA');
-if (supplierAnalyticsRoutes && typeof supplierAnalyticsRoutes === 'object') safeUseRoute('/api/supplier-analytics', supplierAnalyticsRoutes, 'Supplier Analytics');
-if (bidAnalyticsRoutes && typeof bidAnalyticsRoutes === 'object') safeUseRoute('/api/bid-analytics', bidAnalyticsRoutes, 'Bid Analytics');
-if (bidComparisonRoutes && typeof bidComparisonRoutes === 'object') safeUseRoute('/api/bid-comparison', bidComparisonRoutes, 'Bid Comparison');
-if (performanceTrackingRoutes && typeof performanceTrackingRoutes === 'object') safeUseRoute('/api/performance-tracking', performanceTrackingRoutes, 'Performance Tracking');
-if (notificationRoutes && typeof notificationRoutes === 'object') safeUseRoute('/api/notifications', notificationRoutes, 'Notifications');
-if (emailRoutes && typeof emailRoutes === 'object') safeUseRoute('/api/email', emailRoutes, 'Email');
-if (backupRoutes && typeof backupRoutes === 'object') safeUseRoute('/api/backups', backupRoutes, 'Backup Management');
-if (passwordResetRoutes && typeof passwordResetRoutes === 'object') safeUseRoute('/api/auth/password-reset', passwordResetRoutes, 'Password Reset');
-if (inquiryRoutes && typeof inquiryRoutes === 'object') safeUseRoute('/api/inquiries', inquiryRoutes, 'Tender Inquiries');
-if (offerEvaluationRoutes && typeof offerEvaluationRoutes === 'object') safeUseRoute('/api/evaluation', offerEvaluationRoutes, 'Offer Evaluation');
-if (tenderManagementRoutes && typeof tenderManagementRoutes === 'object') safeUseRoute('/api/tender-management', tenderManagementRoutes, 'Tender Management');
-if (tenderEvaluationRoutes && typeof tenderEvaluationRoutes === 'object') safeUseRoute('/api/tender-evaluation', tenderEvaluationRoutes, 'Tender Evaluation');
-if (tenderAwardingRoutes && typeof tenderAwardingRoutes === 'object') safeUseRoute('/api/tender-awarding', tenderAwardingRoutes, 'Tender Awarding');
-if (contractRoutes && typeof contractRoutes === 'object') safeUseRoute('/api/contracts', contractRoutes, 'Contracts');
-if (deliveryRoutes && typeof deliveryRoutes === 'object') safeUseRoute('/api/deliveries', deliveryRoutes, 'Deliveries');
-if (disputeRoutes && typeof disputeRoutes === 'object') safeUseRoute('/api/disputes', disputeRoutes, 'Disputes');
+// Load routes with comprehensive validation
+const routesToLoad = [
+  { path: '/api/analytics', routes: analyticsRoutes, name: 'Analytics' },
+  { path: '/api/search/advanced', routes: advancedSearchRoutes, name: 'Advanced Search' },
+  { path: '/api/export', routes: exportRoutes, name: 'Export' },
+  { path: '/api/mfa', routes: mfaRoutes, name: 'MFA' },
+  { path: '/api/supplier-analytics', routes: supplierAnalyticsRoutes, name: 'Supplier Analytics' },
+  { path: '/api/bid-analytics', routes: bidAnalyticsRoutes, name: 'Bid Analytics' },
+  { path: '/api/bid-comparison', routes: bidComparisonRoutes, name: 'Bid Comparison' },
+  { path: '/api/performance-tracking', routes: performanceTrackingRoutes, name: 'Performance Tracking' },
+  { path: '/api/notifications', routes: notificationRoutes, name: 'Notifications' },
+  { path: '/api/email', routes: emailRoutes, name: 'Email' },
+  { path: '/api/backups', routes: backupRoutes, name: 'Backup Management' },
+  { path: '/api/auth/password-reset', routes: passwordResetRoutes, name: 'Password Reset' },
+  { path: '/api/inquiries', routes: inquiryRoutes, name: 'Tender Inquiries' },
+  { path: '/api/evaluation', routes: offerEvaluationRoutes, name: 'Offer Evaluation' },
+  { path: '/api/tender-management', routes: tenderManagementRoutes, name: 'Tender Management' },
+  { path: '/api/tender-evaluation', routes: tenderEvaluationRoutes, name: 'Tender Evaluation' },
+  { path: '/api/tender-awarding', routes: tenderAwardingRoutes, name: 'Tender Awarding' },
+  { path: '/api/contracts', routes: contractRoutes, name: 'Contracts' },
+  { path: '/api/deliveries', routes: deliveryRoutes, name: 'Deliveries' },
+  { path: '/api/disputes', routes: disputeRoutes, name: 'Disputes' },
+];
+
+// Load all routes with validation
+let loadedRoutesCount = 0;
+let failedRoutesCount = 0;
+
+routesToLoad.forEach(({ path, routes, name }) => {
+  if (routes && typeof routes === 'object') {
+    try {
+      safeUseRoute(path, routes, name);
+      loadedRoutesCount++;
+    } catch (error) {
+      logger.error(`Failed to load ${name} routes`, { error: error.message, path });
+      failedRoutesCount++;
+    }
+  } else {
+    logger.warn(`⚠️ ${name} routes not available or invalid`);
+    failedRoutesCount++;
+  }
+});
+
+logger.info(`📊 Routes loaded: ${loadedRoutesCount}/${routesToLoad.length} (${failedRoutesCount} failed)`);
 
 // 🤖 AI RECOMMENDATIONS & ADVANCED ANALYTICS ROUTES
 try {

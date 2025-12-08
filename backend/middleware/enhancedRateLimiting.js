@@ -130,31 +130,31 @@ const advancedRateLimitMiddleware = (req, res, next) => {
     // Track for metrics
     const key = req.user ? `user:${req.user.id}` : req.ip || 'unknown';
 
-  if (!userLimits.has(key)) {
-    userLimits.set(key, {
-      requests: 0,
-      firstRequest: Date.now(),
-      blocked: 0,
-    });
-  }
-
-  const stats = userLimits.get(key);
-  stats.requests++;
-
-  // Add custom headers
-  res.setHeader('X-RateLimit-Key', key);
-  res.setHeader('X-RateLimit-Timestamp', new Date().toISOString());
-
-  // Add X-RateLimit-Remaining header
-  const originalJson = res.json.bind(res);
-  res.json = function (data) {
-    if (res.getHeader('RateLimit-Remaining')) {
-      res.setHeader('X-RateLimit-Remaining', res.getHeader('RateLimit-Remaining'));
+    if (!userLimits.has(key)) {
+      userLimits.set(key, {
+        requests: 0,
+        firstRequest: Date.now(),
+        blocked: 0,
+      });
     }
-    return originalJson(data);
-  };
 
-  next();
+    const stats = userLimits.get(key);
+    stats.requests++;
+
+    // Add custom headers
+    res.setHeader('X-RateLimit-Key', key);
+    res.setHeader('X-RateLimit-Timestamp', new Date().toISOString());
+
+    // Add X-RateLimit-Remaining header
+    const originalJson = res.json.bind(res);
+    res.json = function (data) {
+      if (res.getHeader('RateLimit-Remaining')) {
+        res.setHeader('X-RateLimit-Remaining', res.getHeader('RateLimit-Remaining'));
+      }
+      return originalJson(data);
+    };
+
+    next();
   } catch (error) {
     // Log error but don't block request
     console.error('Rate limit tracking error:', error);
