@@ -18,16 +18,16 @@ ignorePorts = false
 expertMode = true
 
 [[ports]]
+localPort = 443
+externalPort = 5000
+
+[[ports]]
 localPort = 3000
 externalPort = 3000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 24678
-externalPort = 24678
 
 [[ports]]
 localPort = 5001
@@ -51,7 +51,7 @@ externalPort = 5173
 
 [[ports]]
 localPort = 24678
-externalPort = 5000
+externalPort = 24678
 
 [[ports]]
 localPort = 33439

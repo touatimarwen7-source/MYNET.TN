@@ -1,0 +1,171 @@
+
+> mynet-frontend@1.2.0 dev
+Re-optimizing dependencies because vite config has changed
+
+  VITE v5.4.21  ready in 619 ms
+
+  ➜  Local:   http://localhost:5000/
+  ➜  Network: http://172.31.68.98:5000/
+  ➜  press h + enter to show help
+Error:   Failed to scan for dependencies from entries:
+  /home/runner/workspace/frontend/index.html
+
+  ✘ [ERROR] Unexpected "{"
+
+    src/hooks/useBidForm.js:23:9:
+      23 │   import { procurementAPI, bidAPI } from '../api';
+         ╵          ^
+
+
+✘ [ERROR] Multiple exports with the same name "VALIDATION_ERRORS"
+
+    src/utils/errorCodes.js:235:13:
+      235 │ export const VALIDATION_ERRORS = {
+          ╵              ~~~~~~~~~~~~~~~~~
+
+  The name "VALIDATION_ERRORS" was originally exported here:
+
+    src/utils/errorCodes.js:58:13:
+      58 │ export const VALIDATION_ERRORS = {
+         ╵              ~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "VALIDATION_ERRORS" has already been declared
+
+    src/utils/errorCodes.js:235:13:
+      235 │ export const VALIDATION_ERRORS = {
+          ╵              ~~~~~~~~~~~~~~~~~
+
+  The symbol "VALIDATION_ERRORS" was originally declared here:
+
+    src/utils/errorCodes.js:58:13:
+      58 │ export const VALIDATION_ERRORS = {
+         ╵              ~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "NETWORK_ERRORS"
+
+    src/utils/errorCodes.js:272:13:
+      272 │ export const NETWORK_ERRORS = {
+          ╵              ~~~~~~~~~~~~~~
+
+  The name "NETWORK_ERRORS" was originally exported here:
+
+    src/utils/errorCodes.js:99:13:
+      99 │ export const NETWORK_ERRORS = {
+         ╵              ~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "NETWORK_ERRORS" has already been declared
+
+    src/utils/errorCodes.js:272:13:
+      272 │ export const NETWORK_ERRORS = {
+          ╵              ~~~~~~~~~~~~~~
+
+  The symbol "NETWORK_ERRORS" was originally declared here:
+
+    src/utils/errorCodes.js:99:13:
+      99 │ export const NETWORK_ERRORS = {
+         ╵              ~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SYSTEM_ERRORS"
+
+    src/utils/errorCodes.js:370:13:
+      370 │ export const SYSTEM_ERRORS = {
+          ╵              ~~~~~~~~~~~~~
+
+  The name "SYSTEM_ERRORS" was originally exported here:
+
+    src/utils/errorCodes.js:135:13:
+      135 │ export const SYSTEM_ERRORS = {
+          ╵              ~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SYSTEM_ERRORS" has already been declared
+
+    src/utils/errorCodes.js:370:13:
+      370 │ export const SYSTEM_ERRORS = {
+          ╵              ~~~~~~~~~~~~~
+
+  The symbol "SYSTEM_ERRORS" was originally declared here:
+
+    src/utils/errorCodes.js:135:13:
+      135 │ export const SYSTEM_ERRORS = {
+          ╵              ~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "getErrorByCode"
+
+    src/utils/errorCodes.js:418:16:
+      418 │ export function getErrorByCode(code) {
+          ╵                 ~~~~~~~~~~~~~~
+
+  The name "getErrorByCode" was originally exported here:
+
+    src/utils/errorCodes.js:181:16:
+      181 │ export function getErrorByCode(code) {
+          ╵                 ~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "getErrorByCode" has already been declared
+
+    src/utils/errorCodes.js:418:16:
+      418 │ export function getErrorByCode(code) {
+          ╵                 ~~~~~~~~~~~~~~
+
+  The symbol "getErrorByCode" was originally declared here:
+
+    src/utils/errorCodes.js:181:16:
+      181 │ export function getErrorByCode(code) {
+          ╵                 ~~~~~~~~~~~~~~
+
+  Duplicate top-level function declarations are not allowed in an ECMAScript module. This file is considered to be an ECMAScript module because of the "export" keyword here:
+
+    src/utils/errorCodes.js:477:0:
+      477 │ export default {
+          ╵ ~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "formatError"
+
+    src/utils/errorCodes.js:445:16:
+      445 │ export function formatError(error) {
+          ╵                 ~~~~~~~~~~~
+
+  The name "formatError" was originally exported here:
+
+    src/utils/errorCodes.js:196:16:
+      196 │ export function formatError(error) {
+          ╵                 ~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "formatError" has already been declared
+
+    src/utils/errorCodes.js:445:16:
+      445 │ export function formatError(error) {
+          ╵                 ~~~~~~~~~~~
+
+  The symbol "formatError" was originally declared here:
+
+    src/utils/errorCodes.js:196:16:
+      196 │ export function formatError(error) {
+          ╵                 ~~~~~~~~~~~
+
+  Duplicate top-level function declarations are not allowed in an ECMAScript module. This file is considered to be an ECMAScript module because of the "export" keyword here:
+
+    src/utils/errorCodes.js:477:0:
+      477 │ export default {
+          ╵ ~~~~~~
+
+
+    at failureErrorWithLog (/home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:943:7)
+    at /home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/home/runner/workspace/frontend/node_modules/esbuild/lib/main.js:600:7)
