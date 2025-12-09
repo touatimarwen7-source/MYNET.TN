@@ -202,8 +202,10 @@ app.use(requestLoggingMiddleware);
 // 🚀 ENHANCED RATE LIMITING with per-user + IP tracking
 let enhancedRateLimiting;
 try {
-  enhancedRateLimiting = require('./middleware/enhancedRateLimiting');
-  
+  // Import the specific object from the module
+  const rateLimitingModule = require('./middleware/enhancedRateLimiting');
+  enhancedRateLimiting = rateLimitingModule.enhancedRateLimiting;
+
   // Validate module structure
   if (!enhancedRateLimiting || typeof enhancedRateLimiting !== 'object') {
     logger.warn('⚠️ Enhanced rate limiting module invalid, using fallback');
@@ -226,7 +228,7 @@ try {
     error: err.message
   });
   enhancedRateLimiting = null;
-  
+
   // Fallback to basic rate limiting
   const basicLimiter = rateLimit({
     windowMs: 60 * 1000,
@@ -395,7 +397,7 @@ app.use(globalErrorHandler);
 module.exports = app;
 module.exports.asyncHandler = asyncHandler;
 
-// TURN 3: NEW FEATURE ROUTES - WITH COMPREHENSIVE SAFETY CHECKS
+// TURN 3: NEW FEATUREROUTES - WITH COMPREHENSIVE SAFETY CHECKS
 const safeUseRoute = (path, route, name) => {
   // Validate route object
   if (!route) {
