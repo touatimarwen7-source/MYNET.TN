@@ -30,7 +30,7 @@ const corsOptions = {
       'https://localhost:3000',
     ];
 
-    // Allow if no origin (mobile apps, Postman, etc.)
+    // Allow if no origin (Vite proxy, mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
 
     // Allow Replit domains (including riker)
@@ -44,13 +44,7 @@ const corsOptions = {
     }
 
     // Allow all in development (Replit is always development)
-    if (process.env.NODE_ENV !== 'production') {
-      return callback(null, true);
-    }
-
-    // Reject other origins in production
-    logger.warn('⚠️ CORS: Blocked origin', { origin });
-    callback(new Error('Not allowed by CORS'));
+    return callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

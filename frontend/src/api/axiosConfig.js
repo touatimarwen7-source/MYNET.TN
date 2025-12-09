@@ -1,8 +1,8 @@
 
 import axios from 'axios';
 
-// Use direct backend URL instead of proxy
-const backendURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
+// Use relative path for Vite proxy
+const backendURL = '/api';
 
 const axiosInstance = axios.create({
   baseURL: backendURL,
@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-console.log('✅ Axios configured with backend URL:', backendURL);
+console.log('✅ Axios configured with Vite proxy:', backendURL);
 
 // Add token to requests
 axiosInstance.interceptors.request.use(
