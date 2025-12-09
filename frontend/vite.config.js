@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -10,6 +11,8 @@ export default defineConfig({
     hmr: {
       clientPort: 443,
       protocol: 'wss',
+      timeout: 30000,
+      overlay: true
     },
     allowedHosts: [
       '.replit.dev',
@@ -17,6 +20,10 @@ export default defineConfig({
       '.riker.replit.dev',
       'localhost',
     ],
+    watch: {
+      usePolling: false,
+      ignored: ['**/node_modules/**', '**/dist/**']
+    }
   },
   build: {
     outDir: 'dist',
