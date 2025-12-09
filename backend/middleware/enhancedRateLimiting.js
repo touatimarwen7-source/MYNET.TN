@@ -1,3 +1,4 @@
+
 /**
  * 🚀 Enhanced Rate Limiting Middleware
  *
@@ -11,6 +12,7 @@
  */
 
 const rateLimit = require('express-rate-limit');
+const { logger } = require('../utils/logger');
 
 // Store for tracking
 const userLimits = new Map();
@@ -38,6 +40,15 @@ const login = rateLimit({
   legacyHeaders: false,
 });
 
+// Auth endpoints (login/register)
+const auth = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Too many authentication requests, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Registration limits (IP-based)
 const register = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -61,6 +72,24 @@ const apiEndpoint = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 60,
   message: 'Too many requests to this API endpoint, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Upload limits
+const upload = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  message: 'Too many upload requests, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Payment limits
+const payment = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: 'Too many payment requests, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -123,18 +152,8 @@ const exportLimiter = rateLimit({
 });
 
 /**
- * Enhanced Rate Limiting Middleware
+ * Advanced Rate Limiting Middleware
  * Provides comprehensive rate limiting with user and IP tracking
- */
-
-const rateLimit = require('express-rate-limit');
-const { logger } = require('../utils/logger');
-
-// Store for tracking rate limits
-const rateLimitStore = new Map();
-
-/**
- * Custom rate limiting middleware with advanced tracking
  */
 function advancedRateLimitMiddleware(req, res, next) {
   try {
@@ -156,10 +175,19 @@ function advancedRateLimitMiddleware(req, res, next) {
     res.setHeader('X-RateLimit-Key', key);
     res.setHeader('X-RateLimit-Timestamp', new Date().toISOString());
 
+    // Log high-frequency requests
+    if (stats.requests > 50) {
+      logger.warn('High request frequency detected', {
+        identifier: key,
+        count: stats.requests,
+        duration: Date.now() - stats.firstRequest
+      });
+    }
+
     next();
   } catch (error) {
     // Log error but don't block request
-    console.error('Rate limit tracking error:', error);
+    logger.error('Rate limit tracking error:', error);
     next();
   }
 }
@@ -170,6 +198,7 @@ function advancedRateLimitMiddleware(req, res, next) {
 function getRateLimitStats() {
   const stats = {
     totalTrackedKeys: userLimits.size,
+    highFrequency: 0,
     trackedUsers: Array.from(userLimits.entries())
       .filter(([key]) => key.startsWith('user:'))
       .map(([key, data]) => ({
@@ -186,6 +215,11 @@ function getRateLimitStats() {
         blocked: data.blocked,
       })),
   };
+
+  userLimits.forEach((data) => {
+    if (data.requests > 50) stats.highFrequency++;
+  });
+
   return stats;
 }
 
@@ -210,10 +244,13 @@ function clearAllLimits() {
 module.exports = {
   // Limiters
   general,
+  auth,
   login,
   register,
   passwordReset,
   apiEndpoint,
+  upload,
+  payment,
   tenderCreation,
   offerSubmission,
   messageSending,
@@ -227,83 +264,4 @@ module.exports = {
   getRateLimitStats,
   resetLimits,
   clearAllLimits,
-};
-
-
-
-/**
- * Advanced rate limit middleware with user/IP tracking
- */
-const advancedRateLimitMiddleware = (req, res, next) => {
-  const identifier = req.user?.id || req.clientIP || req.ip || 'unknown';
-  const key = `ratelimit:${identifier}`;
-  
-  if (!rateLimitStore.has(key)) {
-    rateLimitStore.set(key, {
-      count: 0,
-      firstRequest: Date.now(),
-      lastRequest: Date.now()
-    });
-  }
-  
-  const data = rateLimitStore.get(key);
-  data.count++;
-  data.lastRequest = Date.now();
-  
-  // Log high-frequency requests
-  if (data.count > 50) {
-    logger.warn('High request frequency detected', {
-      identifier,
-      count: data.count,
-      duration: data.lastRequest - data.firstRequest
-    });
-  }
-  
-  next();
-};
-
-/**
- * Get rate limit statistics
- */
-const getRateLimitStats = () => {
-  const stats = {
-    totalTracked: rateLimitStore.size,
-    highFrequency: 0,
-    entries: []
-  };
-  
-  rateLimitStore.forEach((data, key) => {
-    if (data.count > 50) stats.highFrequency++;
-    stats.entries.push({ key, ...data });
-  });
-  
-  return stats;
-};
-
-/**
- * Reset limits for a specific key
- */
-const resetLimits = (key) => {
-  return rateLimitStore.delete(key);
-};
-
-/**
- * Clear all limits
- */
-const clearAllLimits = () => {
-  rateLimitStore.clear();
-};
-
-// Export all rate limiters and utilities
-module.exports = {
-  general,
-  auth,
-  upload,
-  payment,
-  search,
-  exportLimiter,
-  advancedRateLimitMiddleware,
-  getRateLimitStats,
-  resetLimits,
-  clearAllLimits
 };
