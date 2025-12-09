@@ -1,0 +1,57 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+axiosConfig.js:16 ✅ Axios configured with Vite proxy: /api
+logger.js:96 [INFO] MyNet: MyNet Frontend Started {}
+analyticsTracking.js:11 ⚠️ Sentry not available for analytics
+(anonymous) @ analyticsTracking.js:11Understand this warning
+axiosConfig.js:42 ❌ API Error: {url: '/auth/login', method: 'post', status: undefined, message: 'timeout of 30000ms exceeded', code: 'ECONNABORTED'}
+(anonymous) @ axiosConfig.js:42
+Promise.then
+_request @ axios.js?v=85a2a4d0:2310
+request @ axios.js?v=85a2a4d0:2219
+httpMethod @ axios.js?v=85a2a4d0:2356
+wrap @ axios.js?v=85a2a4d0:8
+login @ authApi.js:8
+(anonymous) @ Login.jsx:34
+(anonymous) @ useFormValidation.js:182
+handleSubmit @ Login.jsx:87
+callCallback2 @ chunk-WRD5HZVH.js?v=85a2a4d0:3674
+invokeGuardedCallbackDev @ chunk-WRD5HZVH.js?v=85a2a4d0:3699
+invokeGuardedCallback @ chunk-WRD5HZVH.js?v=85a2a4d0:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-WRD5HZVH.js?v=85a2a4d0:3736
+executeDispatch @ chunk-WRD5HZVH.js?v=85a2a4d0:7014
+processDispatchQueueItemsInOrder @ chunk-WRD5HZVH.js?v=85a2a4d0:7034
+processDispatchQueue @ chunk-WRD5HZVH.js?v=85a2a4d0:7043
+dispatchEventsForPlugins @ chunk-WRD5HZVH.js?v=85a2a4d0:7051
+(anonymous) @ chunk-WRD5HZVH.js?v=85a2a4d0:7174
+batchedUpdates$1 @ chunk-WRD5HZVH.js?v=85a2a4d0:18913
+batchedUpdates @ chunk-WRD5HZVH.js?v=85a2a4d0:3579
+dispatchEventForPluginEventSystem @ chunk-WRD5HZVH.js?v=85a2a4d0:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-WRD5HZVH.js?v=85a2a4d0:5478
+dispatchEvent @ chunk-WRD5HZVH.js?v=85a2a4d0:5472
+dispatchDiscreteEvent @ chunk-WRD5HZVH.js?v=85a2a4d0:5449Understand this error
+axiosConfig.js:46 ⏱️ Request timeout - Backend may be slow or unavailable
+(anonymous) @ axiosConfig.js:46
+Promise.then
+_request @ axios.js?v=85a2a4d0:2310
+request @ axios.js?v=85a2a4d0:2219
+httpMethod @ axios.js?v=85a2a4d0:2356
+wrap @ axios.js?v=85a2a4d0:8
+login @ authApi.js:8
+(anonymous) @ Login.jsx:34
+(anonymous) @ useFormValidation.js:182
+handleSubmit @ Login.jsx:87
+callCallback2 @ chunk-WRD5HZVH.js?v=85a2a4d0:3674
+invokeGuardedCallbackDev @ chunk-WRD5HZVH.js?v=85a2a4d0:3699
+invokeGuardedCallback @ chunk-WRD5HZVH.js?v=85a2a4d0:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-WRD5HZVH.js?v=85a2a4d0:3736
+executeDispatch @ chunk-WRD5HZVH.js?v=85a2a4d0:7014
+processDispatchQueueItemsInOrder @ chunk-WRD5HZVH.js?v=85a2a4d0:7034
+processDispatchQueue @ chunk-WRD5HZVH.js?v=85a2a4d0:7043
+dispatchEventsForPlugins @ chunk-WRD5HZVH.js?v=85a2a4d0:7051
+(anonymous) @ chunk-WRD5HZVH.js?v=85a2a4d0:7174
+batchedUpdates$1 @ chunk-WRD5HZVH.js?v=85a2a4d0:18913
+batchedUpdates @ chunk-WRD5HZVH.js?v=85a2a4d0:3579
+dispatchEventForPluginEventSystem @ chunk-WRD5HZVH.js?v=85a2a4d0:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-WRD5HZVH.js?v=85a2a4d0:5478
+dispatchEvent @ chunk-WRD5HZVH.js?v=85a2a4d0:5472
+dispatchDiscreteEvent @ chunk-WRD5HZVH.js?v=85a2a4d0:5449Understand this error
