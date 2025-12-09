@@ -2,32 +2,14 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [
-    react({
-      fastRefresh: true
-    })
-  ],
+  plugins: [react()],
   server: {
     host: '0.0.0.0',
     port: 5000,
     strictPort: true,
-    watch: {
-      usePolling: false,
-      interval: 1000,
-      ignored: ['**/node_modules/**', '**/dist/**', '**/logs/**']
-    },
-    allowedHosts: [
-      '.replit.dev',
-      '.repl.co',
-      'localhost',
-    ],
     hmr: {
-      protocol: 'wss',
-      host: undefined,
-      port: 443,
-      timeout: 30000,
-      overlay: false,
       clientPort: 443,
+      protocol: 'wss',
     },
   },
   build: {
