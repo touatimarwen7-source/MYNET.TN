@@ -7,9 +7,11 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
-  withCredentials: true,
+  timeout: 30000,
+  withCredentials: false, // تعطيل credentials في Replit
 });
+
+console.log('✅ Axios configured with baseURL:', API_BASE_URL);
 
 // Add token to requests
 axiosInstance.interceptors.request.use(
@@ -23,10 +25,17 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Handle 401 errors
+// Handle errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('❌ API Error:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      message: error.message
+    });
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';
