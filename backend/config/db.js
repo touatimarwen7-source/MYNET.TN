@@ -65,9 +65,9 @@ async function initializeDb() {
         acquireTimeoutMillis: 30000,
         application_name: 'mynet-backend-pro',
         maxUses: 7500,
-        statement_timeout: 30000, // 30s query timeout
-        query_timeout: 30000,
-        idle_in_transaction_session_timeout: 60000, // 60s for transactions
+        statement_timeout: 15000, // 15s query timeout
+        query_timeout: 15000,
+        idle_in_transaction_session_timeout: 30000, // 30s for transactions
         keepAlive: true,
         keepAliveInitialDelayMillis: 10000,
         allowExitOnIdle: false,

@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // Use relative path for Vite proxy
@@ -9,7 +8,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000,
+  timeout: 20000, // 20 seconds timeout (reduced for faster feedback)
   withCredentials: true,
 });
 
@@ -38,7 +37,7 @@ axiosInstance.interceptors.response.use(
       message: error.message,
       code: error.code
     };
-    
+
     console.error('❌ API Error:', errorDetails);
 
     // Handle timeout

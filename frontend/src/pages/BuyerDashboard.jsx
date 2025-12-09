@@ -97,10 +97,22 @@ export default function BuyerDashboard() {
     try {
       console.log('📊 Fetching dashboard data for user:', userId);
 
+      // Define fetch with timeout
+      const fetchWithTimeout = (promise, timeout = 30000) => { // Increased timeout to 30 seconds
+        return Promise.race([
+          promise,
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timeout')), timeout)
+          ),
+        ]);
+      };
+
       const [statsRes, analyticsRes] = await Promise.allSettled([
-        procurementAPI.buyer.getDashboardStats(),
-        procurementAPI.buyer.getAnalytics()
+        fetchWithTimeout(procurementAPI.buyer.getDashboardStats()),
+        fetchWithTimeout(procurementAPI.buyer.getAnalytics())
       ]);
+
+      let hasError = false;
 
       // Handle stats response
       if (statsRes.status === 'fulfilled' && statsRes.value?.data) {
@@ -112,7 +124,8 @@ export default function BuyerDashboard() {
         });
       } else if (statsRes.status === 'rejected') {
         console.warn('فشل تحميل الإحصائيات:', statsRes.reason);
-        // تعيين قيم افتراضية في حالة الفشل
+        hasError = true;
+        // Set default values on failure
         setStats({
           activeTenders: 0,
           totalOffers: 0,
@@ -127,44 +140,63 @@ export default function BuyerDashboard() {
         setAnalytics(analyticsRes.value.data.analytics); // Set analytics state
       } else if (analyticsRes.status === 'rejected') {
         console.warn('فشل تحميل التحليلات:', analyticsRes.reason);
+        hasError = true;
         setAnalytics({}); // Clear analytics on failure
       }
 
-      // Only show error if BOTH requests failed
-      if (statsRes.status === 'rejected' && analyticsRes.status === 'rejected') {
-        const errorMsg = statsRes.reason?.response?.data?.error ||
-                        statsRes.reason?.message ||
-                        analyticsRes.reason?.response?.data?.error ||
-                        analyticsRes.reason?.message ||
-                        'Impossible de charger les données du tableau de bord';
-        setError(errorMsg);
+      // Retry logic: Retry once if any request failed
+      if (hasError && retryCount < 1) {
+        console.log(`⚠️ Retrying dashboard data fetch... (${retryCount + 1}/1)`);
+        setTimeout(() => fetchDashboardData(retryCount + 1), 2000); // Wait 2 seconds before retrying
+        return; // Exit current fetch attempt
+      }
+
+      // If there were errors and retries failed or weren't needed
+      if (hasError) {
+        // Construct a more informative error message if possible
+        const statsError = statsRes.reason?.response?.data?.error || statsRes.reason?.message || 'Unknown stats error';
+        const analyticsError = analyticsRes.reason?.response?.data?.error || analyticsRes.reason?.message || 'Unknown analytics error';
+
+        let combinedErrorMsg = 'خطأ في تحميل البيانات';
+        if (statsRes.status === 'rejected' && analyticsRes.status === 'rejected') {
+          combinedErrorMsg = `فشل تحميل الإحصائيات والتحليلات: ${statsError}, ${analyticsError}`;
+        } else if (statsRes.status === 'rejected') {
+          combinedErrorMsg = `فشل تحميل الإحصائيات: ${statsError}`;
+        } else if (analyticsRes.status === 'rejected') {
+          combinedErrorMsg = `فشل تحميل التحليلات: ${analyticsError}`;
+        }
+        
+        // Check for specific error codes
+        if (statsRes.reason?.response?.status === 401 || analyticsRes.reason?.response?.status === 401) {
+          combinedErrorMsg = 'انتهت صلاحية الجلسة. الرجاء تسجيل الدخول مرة أخرى.';
+        } else if (statsRes.reason?.code === 'ECONNABORTED' || analyticsRes.reason?.code === 'ECONNABORTED') {
+          combinedErrorMsg = 'انتهت مهلة الطلب. تحقق من اتصال الإنترنت.';
+        } else if (statsRes.reason?.response?.status === 503 || analyticsRes.reason?.response?.status === 503) {
+          combinedErrorMsg = 'الخدمة غير متاحة حالياً. الرجاء المحاولة لاحقاً.';
+        }
+
+        setError(combinedErrorMsg);
       }
 
     } catch (err) {
-      console.error('❌ Dashboard data fetch error:', err);
-
-      // Retry logic for network errors
-      if (retryCount < 2 && (err.code === 'ECONNABORTED' || err.message.includes('Network Error'))) {
-        console.log(`⚠️ Retrying... (${retryCount + 1}/2)`);
-        setTimeout(() => fetchDashboardData(retryCount + 1), 1000 * (retryCount + 1));
-        return;
-      }
-
-      // Set user-friendly error messages
-      let errorMsg = 'خطأ في تحميل البيانات';
-      if (err.response?.status === 401) {
+      // This catch block primarily handles unexpected errors not covered by Promise.allSettled
+      console.error('❌ Unexpected Dashboard data fetch error:', err);
+      
+      // Set user-friendly error messages for unexpected issues
+      let errorMsg = 'خطأ غير متوقع في تحميل البيانات';
+      if (err.message.includes('timeout')) {
+        errorMsg = 'انتهت مهلة الطلب. تحقق من اتصال الإنترنت.';
+      } else if (err.response?.status === 401) {
         errorMsg = 'انتهت صلاحية الجلسة. الرجاء تسجيل الدخول مرة أخرى.';
       } else if (err.response?.status === 503) {
         errorMsg = 'الخدمة غير متاحة حالياً. الرجاء المحاولة لاحقاً.';
-      } else if (err.code === 'ECONNABORTED') {
-        errorMsg = 'انتهت مهلة الطلب. تحقق من اتصال الإنترنت.';
       } else if (err.response?.data?.error) {
         errorMsg = err.response.data.error;
       }
 
       setError(errorMsg);
 
-      // Set default values to prevent blank page
+      // Set default values to prevent blank page on unexpected errors
       setStats({
         activeTenders: 0,
         totalOffers: 0,
@@ -175,7 +207,7 @@ export default function BuyerDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [userId, navigate]);
+  }, [userId, navigate]); // Depend on userId and navigate
 
   useEffect(() => {
     setPageTitle('Tableau de Bord Acheteur');
@@ -183,20 +215,22 @@ export default function BuyerDashboard() {
     // Only fetch if user is authenticated and has an ID
     if (!user) {
       setLoading(false);
+      setError('الرجاء تسجيل الدخول'); // Prompt user to login if not authenticated
       return;
     }
 
+    // Ensure user ID is available before fetching
     const id = user.id || user.userId;
     if (!id) {
       console.warn('⚠️ User object exists but no ID found');
       setLoading(false);
-      setError('Identifiant utilisateur manquant. Veuillez vous reconnecter.');
+      setError('معرف المستخدم غير متوفر. الرجاء تسجيل الدخول مرة أخرى.');
       return;
     }
 
     console.log('📊 Fetching dashboard data for user:', id);
-    fetchDashboardData();
-  }, [user?.id, user?.userId, fetchDashboardData]);
+    fetchDashboardData(); // Initial fetch
+  }, [user?.id, user?.userId, fetchDashboardData]); // Re-fetch if user ID changes
 
   const menuItems = [
     { text: 'Tableau de Bord', icon: <DashboardIcon />, path: '/buyer-dashboard' },
@@ -460,7 +494,7 @@ export default function BuyerDashboard() {
                         borderColor: institutionalTheme.palette.primary.main,
                         backgroundColor: `${institutionalTheme.palette.primary.main}08`,
                         transform: 'translateY(-2px)',
-                      }
+                      }}
                     }}
                     onClick={() => navigate('/create-tender')}
                   >
@@ -491,7 +525,7 @@ export default function BuyerDashboard() {
                         borderColor: institutionalTheme.palette.info.main,
                         backgroundColor: `${institutionalTheme.palette.info.main}08`,
                         transform: 'translateY(-2px)',
-                      }
+                      }}
                     }}
                     onClick={() => navigate('/buyer-active-tenders')}
                   >
@@ -522,7 +556,7 @@ export default function BuyerDashboard() {
                         borderColor: institutionalTheme.palette.success.main,
                         backgroundColor: `${institutionalTheme.palette.success.main}08`,
                         transform: 'translateY(-2px)',
-                      }
+                      }}
                     }}
                     onClick={() => navigate('/buyer-analytics')}
                   >

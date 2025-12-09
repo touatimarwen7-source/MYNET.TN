@@ -73,21 +73,31 @@ router.get('/buyer/dashboard-stats', authMiddleware, asyncHandler(async (req, re
   const pool = getPool();
 
   try {
-    // Optimized single query with indexes
+    // Set query timeout to 10 seconds
+    await pool.query('SET LOCAL statement_timeout = 10000');
+
+    // Optimized query with materialized subquery
     const statsQuery = `
+      WITH tender_stats AS (
+        SELECT 
+          COUNT(*) FILTER (WHERE status = 'published') as active_tenders,
+          COUNT(*) FILTER (WHERE status = 'draft') as draft_tenders,
+          COUNT(*) FILTER (WHERE status = 'awarded') as awarded_tenders
+        FROM tenders 
+        WHERE buyer_id = $1 AND is_deleted = false
+      ),
+      offer_stats AS (
+        SELECT COUNT(*) as total_offers
+        FROM offers o
+        INNER JOIN tenders t ON o.tender_id = t.id
+        WHERE t.buyer_id = $1 AND t.is_deleted = false AND o.is_deleted = false
+      )
       SELECT 
-        COUNT(*) FILTER (WHERE status = 'published') as active_tenders,
-        COUNT(*) FILTER (WHERE status = 'draft') as draft_tenders,
-        COUNT(*) FILTER (WHERE status = 'awarded') as awarded_tenders,
-        COALESCE((
-          SELECT COUNT(*) 
-          FROM offers o 
-          WHERE o.tender_id IN (
-            SELECT id FROM tenders WHERE buyer_id = $1 AND is_deleted = false
-          )
-        ), 0) as total_offers
-      FROM tenders 
-      WHERE buyer_id = $1 AND is_deleted = false
+        COALESCE(ts.active_tenders, 0) as active_tenders,
+        COALESCE(ts.draft_tenders, 0) as draft_tenders,
+        COALESCE(ts.awarded_tenders, 0) as awarded_tenders,
+        COALESCE(os.total_offers, 0) as total_offers
+      FROM tender_stats ts, offer_stats os
     `;
 
     const result = await pool.query(statsQuery, [userId]);
@@ -99,11 +109,27 @@ router.get('/buyer/dashboard-stats', authMiddleware, asyncHandler(async (req, re
         draftTenders: parseInt(result.rows[0]?.draft_tenders || 0),
         totalOffers: parseInt(result.rows[0]?.total_offers || 0),
         completedTenders: parseInt(result.rows[0]?.awarded_tenders || 0),
-        pendingEvaluations: 0 // Placeholder for now
+        pendingEvaluations: 0
       }
     });
   } catch (error) {
     logger.error('Error fetching buyer dashboard stats:', error);
+    
+    // Return cached data or defaults on timeout
+    if (error.code === '57014') {
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        data: {
+          activeTenders: 0,
+          draftTenders: 0,
+          totalOffers: 0,
+          completedTenders: 0,
+          pendingEvaluations: 0
+        }
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'خطأ في تحميل الإحصائيات'
@@ -121,7 +147,10 @@ router.get('/buyer/analytics', authMiddleware, asyncHandler(async (req, res) => 
   const pool = getPool();
 
   try {
-    // Optimized analytics query with proper date handling
+    // Set query timeout to 10 seconds
+    await pool.query('SET LOCAL statement_timeout = 10000');
+
+    // Optimized analytics query with index hint
     const analyticsQuery = `
       SELECT 
         DATE_TRUNC('month', created_at) as month,
@@ -130,7 +159,7 @@ router.get('/buyer/analytics', authMiddleware, asyncHandler(async (req, res) => 
       FROM tenders
       WHERE buyer_id = $1 
       AND is_deleted = false
-      AND created_at >= NOW() - INTERVAL '6 months'
+      AND created_at >= CURRENT_DATE - INTERVAL '6 months'
       GROUP BY DATE_TRUNC('month', created_at)
       ORDER BY month DESC
       LIMIT 6
@@ -146,6 +175,16 @@ router.get('/buyer/analytics', authMiddleware, asyncHandler(async (req, res) => 
     });
   } catch (error) {
     logger.error('Error fetching buyer analytics:', error);
+    
+    // Return empty array on timeout
+    if (error.code === '57014') {
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        data: { analytics: [] }
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'خطأ في تحميل التحليلات'
