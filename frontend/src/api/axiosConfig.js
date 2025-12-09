@@ -1,8 +1,7 @@
+
 import axios from 'axios';
-import { API_BASE_URL } from './constants';
 
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,7 +9,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-console.log('✅ Axios configured with baseURL:', API_BASE_URL);
+console.log('✅ Axios configured for Vite proxy');
 
 // Add token to requests
 axiosInstance.interceptors.request.use(
