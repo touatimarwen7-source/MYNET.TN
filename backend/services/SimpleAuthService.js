@@ -69,12 +69,21 @@ class SimpleAuthService {
   async authenticate(email, password) {
     try {
       console.log('🔍 SimpleAuthService: Authenticating user:', email);
+      
+      // Reload users to ensure fresh data
+      this.users = this.loadUsers();
       console.log('📁 Total users loaded:', this.users.length);
       
-      const user = this.users.find(u => u.email === email);
+      if (!email || !password) {
+        console.log('❌ Missing email or password');
+        return null;
+      }
+
+      const user = this.users.find(u => u.email.toLowerCase() === email.toLowerCase());
       
       if (!user) {
         console.log('❌ User not found:', email);
+        console.log('Available users:', this.users.map(u => u.email));
         return null;
       }
 
@@ -93,11 +102,16 @@ class SimpleAuthService {
 
       console.log('✅ Password matched for:', email);
 
+      // Update last login
+      user.last_login = new Date().toISOString();
+      this.saveUsers();
+
       // Return user without password
       const { password: _, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (error) {
       console.error('❌ Authentication error:', error);
+      console.error('Stack:', error.stack);
       return null;
     }
   }

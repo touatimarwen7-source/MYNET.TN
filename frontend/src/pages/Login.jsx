@@ -64,7 +64,20 @@ export default function Login() {
       }
 
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Email ou mot de passe incorrect';
+      console.error('❌ Login error:', error);
+      let errorMessage = 'Email ou mot de passe incorrect';
+      
+      if (error.response) {
+        // Server responded with error
+        errorMessage = error.response.data?.message || error.response.data?.error || errorMessage;
+      } else if (error.request) {
+        // Request made but no response
+        errorMessage = 'Impossible de se connecter au serveur. Vérifiez votre connexion.';
+      } else {
+        // Other errors
+        errorMessage = error.message || errorMessage;
+      }
+      
       setApiError(errorMessage);
       addToast(errorMessage, 'error');
     }

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import procurementAPI from '../api/procurementApi';
+import bidAPI from '../api/bidApi';
 
 /**
  * Custom hook to manage the state and logic of the secure bid submission form.
@@ -20,8 +22,6 @@ export const useBidForm = () => {
     attachments: [],
   });
   const [loading, setLoading] = useState(true);
-  import procurementAPI from '../api/procurementApi';
-  import bidAPI from '../api/bidApi';
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 

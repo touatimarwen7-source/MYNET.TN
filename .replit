@@ -298,7 +298,7 @@ mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && node server.js"
+args = "pkill -9 -f \"node.*server.js\" 2>/dev/null || true && sleep 2 && cd backend && node server.js"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

@@ -485,15 +485,9 @@ export default function BuyerDashboard() {
                     sx={{
                       p: 2,
                       border: '1px solid',
-                      borderColor: institutionalTheme.palette.divider,
-                      borderRadius: 2,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        borderColor: institutionalTheme.palette.primary.main,
-                        backgroundColor: `${institutionalTheme.palette.primary.main}08`,
-                        transform: 'translateY(-2px)',
-                      }
+                      borderColor: institutionalTheme.palette.primary.main,
+                      backgroundColor: `${institutionalTheme.palette.primary.main}08`,
+                      transform: 'translateY(-2px)',
                     }}
                     onClick={() => navigate('/create-tender')}
                   >
@@ -516,15 +510,9 @@ export default function BuyerDashboard() {
                     sx={{
                       p: 2,
                       border: '1px solid',
-                      borderColor: institutionalTheme.palette.divider,
-                      borderRadius: 2,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        borderColor: institutionalTheme.palette.info.main,
-                        backgroundColor: `${institutionalTheme.palette.info.main}08`,
-                        transform: 'translateY(-2px)',
-                      }
+                      borderColor: institutionalTheme.palette.info.main,
+                      backgroundColor: `${institutionalTheme.palette.info.main}08`,
+                      transform: 'translateY(-2px)',
                     }}
                     onClick={() => navigate('/buyer-active-tenders')}
                   >
@@ -547,15 +535,9 @@ export default function BuyerDashboard() {
                     sx={{
                       p: 2,
                       border: '1px solid',
-                      borderColor: institutionalTheme.palette.divider,
-                      borderRadius: 2,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        borderColor: institutionalTheme.palette.success.main,
-                        backgroundColor: `${institutionalTheme.palette.success.main}08`,
-                        transform: 'translateY(-2px)',
-                      }
+                      borderColor: institutionalTheme.palette.success.main,
+                      backgroundColor: `${institutionalTheme.palette.success.main}08`,
+                      transform: 'translateY(-2px)',
                     }}
                     onClick={() => navigate('/buyer-analytics')}
                   >
