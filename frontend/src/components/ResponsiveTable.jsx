@@ -97,16 +97,25 @@ export const ResponsiveTable = ({
     return emptyState;
   }
 
-  // Mobile: Card-based stack view
+  // Mobile: Card-based stack view with enhanced touch UX
   if (isMobile) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(2) }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(2), pb: 2 }}>
         {rows.map((row, rowIndex) => {
           const rowId = getRowId ? getRowId(row) : rowIndex;
           const isExpanded = expandedRows[rowId];
 
           return (
-            <Card key={rowId} sx={CONSISTENT_SX.card(theme)}>
+            <Card 
+              key={rowId} 
+              sx={{
+                ...CONSISTENT_SX.card(theme),
+                transition: 'all 0.2s ease',
+                '&:active': {
+                  transform: 'scale(0.98)',
+                  boxShadow: theme.shadows[2]
+                }
+              }}>
               <CardContent sx={{ p: theme.spacing(2) }}>
                 {/* Header row with expand button */}
                 <Box

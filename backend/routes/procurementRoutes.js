@@ -2,6 +2,13 @@
 // PROCUREMENT ROUTES
 // ============================================================================
 
+/**
+ * @swagger
+ * tags:
+ *   name: Procurement
+ *   description: Gestion des appels d'offres et des offres
+ */
+
 const express = require('express');
 const router = express.Router();
 const { authMiddleware, verifyToken, roleMiddleware, requireOwnership } = require('../middleware/authMiddleware');

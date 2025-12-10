@@ -13,6 +13,7 @@ import { DarkModeProvider } from './contexts/DarkModeContext';
 import { SuperAdminProvider } from './contexts/SuperAdminContext';
 import { AppProvider, useApp } from './contexts/AppContext';
 import TokenManager from './services/tokenManager';
+import { handleVirtualKeyboard } from './utils/mobileUXEnhancements';
 
 // Import role-specific dashboards
 import BuyerDashboard from './pages/BuyerDashboard';
@@ -560,6 +561,11 @@ function AppToastContainer() {
 
 // Main App with AppProvider wrapper
 export default function App() {
+  // Initialize mobile UX enhancements
+  useEffect(() => {
+    handleVirtualKeyboard();
+  }, []);
+
   return (
     <AppProvider>
       <AppContent />

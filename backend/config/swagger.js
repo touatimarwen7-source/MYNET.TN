@@ -102,15 +102,8 @@ const options = {
     security: [{ bearerAuth: [] }, { cookieAuth: [] }],
   },
   apis: [
-    './routes/authRoutes.js',
-    './routes/procurementRoutes.js',
-    './routes/adminRoutes.js',
-    './routes/messagesRoutes.js',
-    './routes/purchaseOrdersRoutes.js',
-    './routes/analyticsRoutes.js',
-    './routes/exportRoutes.js',
-    './routes/reviewsRoutes.js',
-    './routes/companyProfileRoutes.js',
+    './routes/*.js',
+    './routes/webhooks/*.js',
   ],
 };
 
