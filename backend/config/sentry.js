@@ -23,7 +23,7 @@ function initializeSentry(app) {
   Sentry.init({
     dsn: sentryDSN,
     environment: environment,
-    tracesSampleRate: environment === 'production' ? 0.1 : 1.0, // 10% in prod, 100% in dev
+    tracesSampleRate: environment === 'production' ? 0.1 : 1.0,
     profilesSampleRate: environment === 'production' ? 0.1 : 1.0,
     maxBreadcrumbs: 50,
     integrations: [
@@ -31,17 +31,32 @@ function initializeSentry(app) {
       nodeProfilingIntegration(),
       new Sentry.Integrations.OnUncaughtException(),
       new Sentry.Integrations.OnUnhandledRejection(),
+      new Sentry.Integrations.Postgres(),
+      new Sentry.Integrations.Express({ app }),
     ],
     beforeSend(event) {
       // Filter out known non-critical errors
       if (event.exception) {
         const error = event.exception.values?.[0]?.value;
         if (error?.includes('ECONNREFUSED') || error?.includes('timeout')) {
-          return null; // Don't send connection errors
+          return null;
         }
       }
       return event;
     },
+    // Performance monitoring
+    beforeSendTransaction(transaction) {
+      // Filter out health check transactions
+      if (transaction.transaction === 'GET /health') {
+        return null;
+      }
+      return transaction;
+    },
+    // Error sampling
+    sampleRate: environment === 'production' ? 0.8 : 1.0,
+    // Performance tracking options
+    enableTracing: true,
+    tracePropagationTargets: ['localhost', /^\//],
   });
 
   // Attach Sentry request handler (must be first middleware)
